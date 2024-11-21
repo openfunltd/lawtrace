@@ -7,12 +7,14 @@
       </p>
     </div>
     <div class="col-6 bg-white rounded-4">
-      <div class="p-5">
-        <div class="input-group">
-          <span class="input-group-text material-symbols-outlined">search</span>
-          <input type="text" class="form-control">
+      <form action="/search" method="get">
+        <div class="p-5">
+          <div class="input-group">
+            <span class="input-group-text material-symbols-outlined">search</span>
+            <input type="text" class="form-control" placeholder="請輸入關鍵字" name="q" required>
+          </div>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </div>
