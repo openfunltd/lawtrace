@@ -1,7 +1,15 @@
 <?php
 $q = $this->q;
+$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&limit=10", "查詢 laws 關鍵字：{$q}");
+$laws = $res->laws;
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
+<style>
+  em {
+    font-style: normal;
+    color: red;
+  }
+</style>
 <div class="container bg-light bg-gradient my-5 rounded-3">
   <div class="row p-5">
     <div class="p-4">
@@ -18,4 +26,9 @@ $q = $this->q;
     </div>
   </div>
 </div>
+<?php
+foreach ($laws as $law) {
+    echo $this->partial('partial/search_result', ['law' => $law, 'q' => $q]);
+}
+?>
 <?= $this->partial('common/footer') ?>
