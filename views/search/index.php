@@ -1,3 +1,6 @@
+<?php
+$q = $this->q;
+?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
 <div class="container bg-light bg-gradient my-5 rounded-3">
   <div class="row p-5">
@@ -9,6 +12,9 @@
           <input type="text" class="form-control" placeholder="請輸入關鍵字" name="q" required>
         </div>
       </form>
+      <div class="mt-2 fs-4">
+        <span class="badge rounded-pill text-bg-primary fw-normal">關鍵字：<?= $this->escape($q) ?></span>
+      </div>
     </div>
   </div>
 </div>

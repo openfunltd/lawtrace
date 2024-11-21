@@ -4,6 +4,6 @@ class SearchController extends MiniEngine_Controller
 {
     public function indexAction()
     {
-        $this->view->fruit = 'apple';
+        $this->view->q = filter_input(INPUT_GET, 'q', FILTER_SANITIZE_STRING) ?? '';
     }
 }
