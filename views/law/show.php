@@ -20,15 +20,8 @@ if ($res_error) {
 
 $law = $res->data;
 $res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
-$version_cnt = $res->total ?? 0;
-if ($version_cnt == 0) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No version data with law_id {$law_id}</p>";
-    exit;
-}
-
-$versions = $res->lawversions;
+$versions = $res->lawversions ?? [];
+//TODO 當 API 回傳空的 law_versions 時要在頁面上呈現/說明
 if ($version_id_input != 'latest') {
     $invalid_version = true;
     foreach ($versions as $version) {
@@ -64,6 +57,14 @@ if ($version_id_input == 'latest') {
         }
     }
 }
+
+$res = LYAPI::apiQuery(
+    "/law_contents?版本編號={$version_id_selected}&limit=200",
+    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
+);
+$contents = $res->lawcontents ?? [];
+//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
+
 
 $aliases = $law->其他名稱 ?? [];
 ?>
