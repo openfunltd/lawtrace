@@ -1,16 +1,11 @@
 <?php
 $law_id = $this->law_id;
-$res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
-$law = $res->data ?? new stdClass();
+$version_id_selected = $this->version_id_selected;
+$law = $this->law;
+$versions = $this->versions;
+$version_selected = $this->version_selected;
+
 $aliases = $law->其他名稱 ?? [];
-$res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
-$versions = $res->lawversions ?? [];
-//order by date DESC
-usort($versions, function($v1, $v2) {
-    $date_v1 = $v1->日期 ?? '';
-    $date_v2 = $v2->日期 ?? '';
-    return $date_v2 <=> $date_v1;
-});
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
 <div class="container bg-light bg-gradient my-5 rounded-3">
@@ -25,7 +20,7 @@ usort($versions, function($v1, $v2) {
       <?php } ?>
       <div class="mt-3 mb-0 fs-5 btn-group">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          版本：<?= $this->escape("{$versions[0]->日期} {$versions[0]->動作}") ?>
+          版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
         </button>
         <ul class="dropdown-menu">
           <?php foreach ($versions as $version) { ?>
