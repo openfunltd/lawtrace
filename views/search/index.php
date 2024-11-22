@@ -29,8 +29,17 @@ $laws = $res->laws;
 <?php foreach($laws as $law) { ?>
   <div class="container my-3">
     <div class="row border px-5 py-0 rounded-top-2">
-      <div class="col m-0">
-        <h2 class="h4 mt-3 mb-0"><?= nl2br(strip_tags($law->{'名稱:highlight'}[0], '<em>')) ?></h2>
+      <div class="col-10 m-0">
+        <h2 class="h4 mt-4 mb-0">
+          <?php
+          $law_name_highlights = $law->{'名稱:highlight'} ?? [];
+          if (empty($law_name_highlights)) {
+              echo $this->escape($law->名稱);
+          } else {
+              echo nl2br(strip_tags($law->{'名稱:highlight'}[0], '<em>'));
+          }
+          ?>
+        </h2>
         <?php if ($aliases = $law->其他名稱) { ?>
           <p class="mt-3 mb-0">
             別名：
@@ -38,6 +47,11 @@ $laws = $res->laws;
           </p>
         <?php } ?>
         <p class="mt-1 mb-0"><?= $this->escape($law->最新版本->版本編號 ?? '') ?><p>
+      </div>
+      <div class="col-2 d-flex justify-content-center align-items-center">
+        <a href="/law/show/<?= $this->escape($law->法律編號) ?>">
+          <span class="material-symbols-outlined display-4">arrow_forward</span>
+        </a>
       </div>
     </div>
     <?php
