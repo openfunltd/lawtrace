@@ -21,7 +21,6 @@ if ($res_error) {
 $law = $res->data;
 $res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
 $versions = $res->lawversions ?? [];
-//TODO 當 API 回傳空的 law_versions 時要在頁面上呈現/說明
 if ($version_id_input != 'latest') {
     $invalid_version = true;
     foreach ($versions as $version) {
@@ -79,23 +78,29 @@ $aliases = $law->其他名稱 ?? [];
           <?= $this->escape(implode('、', $aliases)) ?>
         </p>
       <?php } ?>
-      <div class="mt-3 mb-0 fs-5 btn-group">
-        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-          版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
-        </button>
-        <ul class="dropdown-menu">
-          <?php foreach ($versions as $version) { ?>
-            <li>
-              <a
-                class="dropdown-item"
-                href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
-              >
-                <?= $this->escape("{$version->日期} {$version->動作}") ?>
-              </a>
-            </li>
-          <?php } ?>
-        </ul>
-      </div>
+      <?php if (!empty($versions)) { ?>
+        <div class="mt-3 mb-0 fs-5 btn-group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
+          </button>
+          <ul class="dropdown-menu">
+            <?php foreach ($versions as $version) { ?>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
+                >
+                  <?= $this->escape("{$version->日期} {$version->動作}") ?>
+                </a>
+              </li>
+            <?php } ?>
+          </ul>
+        </div>
+      <?php } else { ?>
+        <div class="mt-3 mb-0 fs-4">
+          <button type="button" class="btn btn-danger" disabled>無版本資料</button>
+        </div>
+      <?php } ?>
     </div>
   </div>
 </div>
