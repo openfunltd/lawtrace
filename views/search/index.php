@@ -1,6 +1,6 @@
 <?php
 $q = $this->q;
-$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&limit=10", "查詢 laws 關鍵字：{$q}");
+$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&limit=100", "查詢 laws 關鍵字：{$q}");
 $laws = $res->laws;
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
