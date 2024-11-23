@@ -96,12 +96,35 @@ $aliases = $law->其他名稱 ?? [];
             <?php } ?>
           </ul>
         </div>
-      <?php } else { ?>
+      <?php } ?>
+      <?php if (empty($versions) or empty($contents)) { ?>
         <div class="mt-3 mb-0 fs-4">
-          <button type="button" class="btn btn-danger" disabled>無版本資料</button>
+          <?php if (empty($versions)) { ?>
+            <button type="button" class="btn btn-danger" disabled>無版本資料</button>
+          <?php } ?>
+          <?php if (empty($contents)) { ?>
+            <button type="button" class="btn btn-danger" disabled>無條文資料</button>
+          <?php } ?>
         </div>
       <?php } ?>
     </div>
   </div>
 </div>
+<?php if (!empty($contents)) { ?>
+  <div class="container my-3">
+    <div class="row border px-5 py-0">
+      <table class="table fs-6">
+        <tbody>
+          <?php foreach ($contents as $content) { ?>
+            <tr>
+              <td style="width: 10%;"><?= $this->escape($content->章名 ?? '') ?></td>
+              <td style="width: 10%;"><?= $this->escape($content->條號 ?? '') ?></td>
+              <td><?= nl2br($this->escape($content->內容 ?? '')) ?></td>
+            </tr>
+          <?php } ?>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<?php } ?>
 <?= $this->partial('common/footer') ?>
