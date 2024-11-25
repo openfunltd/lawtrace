@@ -59,6 +59,12 @@ if ($version_id_input == 'latest') {
 }
 $histories = $version_selected->歷程 ?? [];
 $histories = array_reverse($histories);
+//histories order by date DESC
+usort($histories, function($h1, $h2) {
+    $date_h1 = $h1->會議日期 ?? '';
+    $date_h2 = $h2->會議日期 ?? '';
+    return $date_h2 <=> $date_h1;
+});
 
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
@@ -101,7 +107,7 @@ $histories = array_reverse($histories);
 </div>
 <?php if (!empty($histories)) { ?>
   <div class="container my-3">
-    <div class="row border px-5 py-0">
+    <div class="row border px-5 py-0 rounded-2">
       <table class="table table-sm fs-6">
         <thead>
           <tr>
