@@ -125,7 +125,7 @@ $aliases = $law->其他名稱 ?? [];
         <tbody>
           <?php foreach ($contents as $content) { ?>
             <tr>
-              <td style="width: 10%;"><?= $this->escape($content->章名 ?? '') ?></td>
+              <td class="fw-bold" style="width: 10%;"><?= $this->escape($content->章名 ?? '') ?></td>
               <td style="width: 10%;"><?= $this->escape($content->條號 ?? '') ?></td>
               <td><?= nl2br($this->escape($content->內容 ?? '')) ?></td>
             </tr>
