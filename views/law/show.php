@@ -68,7 +68,7 @@ $contents = $res->lawcontents ?? [];
 $aliases = $law->其他名稱 ?? [];
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
-<div class="container bg-light bg-gradient my-5 rounded-3">
+<div class="container bg-light bg-gradient mt-5 mb-3 rounded-3">
   <div class="row p-5">
     <div class="p-4">
       <h1 class="fw-bold display-6"><?= $this->escape($law->名稱 ?? '') ?></h1>
@@ -110,9 +110,17 @@ $aliases = $law->其他名稱 ?? [];
     </div>
   </div>
 </div>
+<div class="container my-3">
+  <div class="btn-group">
+    <?php $endpoint = "{$law_id}?version={$version_id_selected}"; ?>
+    <a href="#" class="btn btn-primary active" aria-current="page">完整條文</a>
+    <a href="/law/history/<?= $this->escape($endpoint) ?>" class="btn btn-primary">編修歷程</a>
+    <a href="/law/bill/<?= $this->escape($law_id) ?>" class="btn btn-primary">關聯議案</a>
+  </div>
+</div>
 <?php if (!empty($contents)) { ?>
   <div class="container my-3">
-    <div class="row border px-5 py-0">
+    <div class="row border px-5 py-0 rounded-2">
       <table class="table fs-6">
         <tbody>
           <?php foreach ($contents as $content) { ?>

@@ -57,7 +57,7 @@ usort($bills, function($b1, $b2) {
 
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
-<div class="container bg-light bg-gradient my-5 rounded-3">
+<div class="container bg-light bg-gradient mt-5 mb-3 rounded-3">
   <div class="row p-5">
     <div class="p-4">
       <h1 class="fw-bold display-6"><?= $this->escape($law->名稱 ?? '') ?></h1>
@@ -73,6 +73,13 @@ usort($bills, function($b1, $b2) {
         </div>
       <?php } ?>
     </div>
+  </div>
+</div>
+<div class="container my-3">
+  <div class="btn-group">
+    <a href="/law/show/<?= $this->escape($law_id) ?>" class="btn btn-primary" aria-current="page">完整條文</a>
+    <a href="/law/history/<?= $this->escape($law_id) ?>" class="btn btn-primary">編修歷程</a>
+    <a href="#" class="btn btn-primary active">關聯議案</a>
   </div>
 </div>
 <?php if (!empty($bills)) { ?>
