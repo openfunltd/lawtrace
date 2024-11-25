@@ -110,6 +110,7 @@ $histories = array_reverse($histories);
             <th>公報編號</th>
             <th>立法紀錄</th>
             <th>主提案</th>
+            <th>關係文書</th>
           </tr>
         <thead>
         <tbody>
@@ -120,6 +121,17 @@ $histories = array_reverse($histories);
               <td style="width: 10%;"><?= $this->escape($history->公報編號 ?? '') ?></td>
               <td><?= $this->escape($history->立法紀錄 ?? '') ?></td>
               <td><?= $this->escape($history->主提案 ?? '-') ?></td>
+              <td>
+                <?php
+                $related_docs = $history->關係文書 ?? [];
+                foreach ($related_docs as $related_doc) {
+                ?>
+                  <a href="<?= $this->escape($related_doc->連結 ?? '') ?>" target="_blank" >
+                    <span class="material-symbols-outlined">description</span>
+                    <?= $this->escape($related_doc->類型 ?? '') ?>
+                  </a>
+                <?php } ?>
+              </td>
             </tr>
           <?php } ?>
         </tbody>
