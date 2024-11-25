@@ -110,7 +110,7 @@ usort($histories, function($h1, $h2) {
     <?php $endpoint = "{$law_id}?version={$version_id_selected}"; ?>
     <a href="/law/show/<?= $this->escape($endpoint) ?>" class="btn btn-primary" aria-current="page">完整條文</a>
     <a href="#" class="btn btn-primary active">編修歷程</a>
-    <a href="/law/bill/<?= $this->escape($law_id) ?>" class="btn btn-primary">關聯議案</a>
+    <a href="/law/bill/<?= $this->escape($endpoint) ?>" class="btn btn-primary">關聯議案</a>
   </div>
 </div>
 <?php if (!empty($histories)) { ?>
