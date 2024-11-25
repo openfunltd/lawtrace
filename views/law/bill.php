@@ -1,5 +1,6 @@
 <?php
 $law_id = $this->law_id;
+$version_id_input = $this->version_id_input;
 
 if (! ctype_digit($law_id)) {
     header('HTTP/1.1 400 Bad Request');
@@ -18,6 +19,53 @@ if ($res_error) {
 }
 $law = $res->data;
 $aliases = $law->其他名稱 ?? [];
+
+$res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
+$versions = $res->lawversions ?? [];
+if ($version_id_input != 'latest') {
+    $invalid_version = true;
+    foreach ($versions as $version) {
+        $version_id = $version->版本編號 ?? NULL;
+        if ($version_id_input == $version_id) {
+            $invalid_version = false;
+            $version_id_selected = $version_id;
+            $version_selected = $version;
+            break;
+        }
+    }
+    if ($invalid_version) {
+        header('HTTP/1.1 404 No Found');
+        echo "<h1>404 No Found</h1>";
+        echo "<p>No version data with version_id {$version_id_input}</p>";
+        exit;
+    }
+}
+
+//versions order by date DESC
+usort($versions, function($v1, $v2) {
+    $date_v1 = $v1->日期 ?? '';
+    $date_v2 = $v2->日期 ?? '';
+    return $date_v2 <=> $date_v1;
+});
+if ($version_id_input == 'latest') {
+    foreach ($versions as $version) {
+        $version_id = $version->版本編號 ?? NULL;
+        if (isset($version_id)) {
+            $version_id_selected = $version_id;
+            $version_selected = $version;
+            break;
+        }
+    }
+}
+
+$version_end_date = $version_selected->日期;
+foreach ($versions as $idx => $version) {
+    if ($version->版本編號 == $version_selected->版本編號) {
+        $version_idx = $idx;
+        break;
+    }
+}
+$version_start_date = ($version_idx != count($versions) - 1) ? $versions[$version_idx + 1]->日期 : '1911-01-01';
 
 $bill_GET_params = [
     'output_fields' => [
@@ -45,8 +93,14 @@ foreach ($bill_GET_params as $key => $param) {
 $bill_GET_str = implode('&', $bill_GET_array);
 
 $res = LYAPI::apiQuery("/law/{$law_id}/bills?{$bill_GET_str}", "查詢關聯的提案 法律編號：{$law_id}");
-$bill_cnt = $res->total ?? 0;
 $bills = $res->bills ?? [];
+
+//filter bills' date within version
+$bills = array_filter($bills, function ($bill) use ($version_end_date, $version_start_date) {
+    $date = $bill->提案日期;
+    return $version_start_date < $date and $date <= $version_end_date;
+});
+$bill_cnt = count($bills);
 
 //bills order by date DESC
 usort($bills, function($b1, $b2) {
@@ -67,6 +121,25 @@ usort($bills, function($b1, $b2) {
           <?= $this->escape(implode('、', $aliases)) ?>
         </p>
       <?php } ?>
+      <?php if (!empty($versions)) { ?>
+        <div class="mt-3 mb-0 fs-5 btn-group">
+          <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
+          </button>
+          <ul class="dropdown-menu">
+            <?php foreach ($versions as $version) { ?>
+              <li>
+                <a
+                  class="dropdown-item"
+                  href="/law/bill/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
+                >
+                  <?= $this->escape("{$version->日期} {$version->動作}") ?>
+                </a>
+              </li>
+            <?php } ?>
+          </ul>
+        </div>
+      <?php } ?>
       <?php if (empty($bills)) { ?>
         <div class="mt-3 mb-0 fs-4">
           <button type="button" class="btn btn-danger" disabled>無議案資料</button>
@@ -77,8 +150,9 @@ usort($bills, function($b1, $b2) {
 </div>
 <div class="container my-3">
   <div class="btn-group">
-    <a href="/law/show/<?= $this->escape($law_id) ?>" class="btn btn-primary" aria-current="page">完整條文</a>
-    <a href="/law/history/<?= $this->escape($law_id) ?>" class="btn btn-primary">編修歷程</a>
+    <?php $endpoint = "{$law_id}?version={$version_id_selected}"; ?>
+    <a href="/law/show/<?= $this->escape($endpoint) ?>" class="btn btn-primary" aria-current="page">完整條文</a>
+    <a href="/law/history/<?= $this->escape($endpoint) ?>" class="btn btn-primary">編修歷程</a>
     <a href="#" class="btn btn-primary active">關聯議案</a>
   </div>
 </div>
