@@ -93,6 +93,16 @@ $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
     </div>
   </div>
 </div>
+<?php if ($no_result_from_law_name) { ?>
+  <div class="container my-3">
+    <div class="row border p-3 rounded-top-2 bg-warning-subtle bg-gradient">
+      <p class="my-1">
+        <span class="material-symbols-outlined align-middle">info</span>
+        無法律名稱與關鍵字相符的結果，以下為改搜尋條文內容的部分結果。
+      </p>
+    </div>
+  </div>
+<?php } ?>
 <?php foreach($laws as $law) { ?>
   <div class="container my-3">
     <div class="row border px-5 py-0 rounded-top-2">
