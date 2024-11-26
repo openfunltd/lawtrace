@@ -128,6 +128,18 @@ $aliases = $law->其他名稱 ?? [];
               <td class="fw-bold" style="width: 10%;"><?= $this->escape($content->章名 ?? '') ?></td>
               <td style="width: 10%;"><?= $this->escape($content->條號 ?? '') ?></td>
               <td><?= nl2br($this->escape($content->內容 ?? '')) ?></td>
+              <?php
+              $chapter_name = $content->章名 ?? '';
+              $text = $content->條號 ?? '';
+              $law_content_id = $content->法條編號 ?? '';
+              ?>
+              <?php if ($chapter_name == '' and $text != '法律名稱') { ?>
+                <td style="width: 1%;">
+                  <a href="/lawarticle/show/<?= $this->escape($law_content_id) ?>">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                  </a>
+                </td>
+              <?php } ?>
             </tr>
           <?php } ?>
         </tbody>
