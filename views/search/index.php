@@ -62,14 +62,24 @@ foreach ($laws as $law) {
           if (empty($law_name_highlights)) {
               echo $this->escape($law->名稱);
           } else {
-              echo nl2br(strip_tags($law->{'名稱:highlight'}[0], '<em>'));
+              echo strip_tags($law->{'名稱:highlight'}[0], '<em>');
           }
           ?>
         </h2>
-        <?php if ($aliases = $law->其他名稱) { ?>
+        <?php
+        $aliases = $law->其他名稱 ?? [];
+        $alias_highlights = $law->{'其他名稱:highlight'} ?? [];
+        ?>
+        <?php if (!empty($aliases)) { ?>
           <p class="mt-3 mb-0">
             別名：
-            <?= $this->escape(implode('、', $aliases)) ?>
+            <?php
+            if (empty($alias_highlights)) {
+                echo $this->escape(implode('、', $aliases));
+            } else {
+                echo strip_tags(implode('、', $alias_highlights), '<em>');
+            }
+            ?>
           </p>
         <?php } ?>
         <p class="mt-1 mb-0"><?= $this->escape($law->最新版本->版本編號 ?? '') ?><p>
