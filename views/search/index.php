@@ -1,7 +1,33 @@
 <?php
 $q = $this->q;
-$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&limit=100", "查詢 laws 關鍵字：{$q}");
+$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&類別=母法&limit=100", "查詢 laws 關鍵字：{$q}");
 $laws = $res->laws;
+
+$laws = array_filter($laws, function($law) {
+    return isset($law->最新版本);
+});
+
+foreach ($laws as $law) {
+    $law_content_id =  "{$law->法律編號}:{$law->最新版本->版本編號}";
+    $res = LYAPI::apiQuery(
+        "/law_contents?q=\"{$q}\"&版本編號={$law_content_id}&limit=30",
+        "查詢 {$law->名稱}({$law->法律編號}) 的法條 關鍵字：{$q}"
+    );
+    $law_contents = [];
+    foreach ($res->lawcontents as $law_content) {
+        $chapter_name = $law_content->章名 ?? '';
+        $content_idx = $law_content->條號 ?? '';
+        $content_highlights = $law_content->{'內容:highlight'} ?? [];
+        if ($chapter_name != '' or $content_idx == '法律名稱' or empty($content_highlights)) {
+            continue;
+        }
+        $law_contents[] = $law_content;
+        if (count($law_contents) == 5) {
+            break;
+        }
+    }
+    $law->law_contents = $law_contents;
+}
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
 <style>
@@ -54,10 +80,7 @@ $laws = $res->laws;
         </a>
       </div>
     </div>
-    <?php
-    $res = LYAPI::apiQuery("/law_contents?q=\"{$q}\"&法律編號={$law->法律編號}&limit=5", "查詢 {$law->名稱}({$law->法律編號}) 的法條 關鍵字：{$q}");
-    $law_contents = $res->lawcontents ?? [];
-    ?>
+    <?php $law_contents = $law->law_contents; ?>
     <?php if (!empty($law_contents)) { ?>
       <div class="row border border-top-0 px-5 bg-light">
         <div class="col">
