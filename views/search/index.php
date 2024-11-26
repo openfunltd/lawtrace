@@ -1,5 +1,7 @@
 <?php
 $q = $this->q;
+
+$t1 = hrtime(true);
 $res = LYAPI::apiQuery("/laws?q=\"{$q}\"&類別=母法&limit=100", "查詢 laws 關鍵字：{$q}");
 $laws = $res->laws;
 
@@ -61,6 +63,9 @@ if ($no_result_from_law_name) {
         return !empty($law->law_contents);
     });
 }
+
+$t2 = hrtime(true);
+$elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
 <style>
@@ -81,6 +86,9 @@ if ($no_result_from_law_name) {
       </form>
       <div class="mt-2 fs-4">
         <span class="badge rounded-pill text-bg-primary fw-normal">關鍵字：<?= $this->escape($q) ?></span>
+      </div>
+      <div class="mt-2 fs-6 text-end">
+        搜尋時間花費 <?= $this->escape($elapsed_time) ?> 秒
       </div>
     </div>
   </div>
