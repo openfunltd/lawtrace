@@ -7,6 +7,33 @@ $laws = array_filter($laws, function($law) {
     return isset($law->最新版本);
 });
 
+//查詢 + filter 後如果沒有 law 則改搜尋 law_contents
+$no_result_from_law_name = empty($laws);
+if ($no_result_from_law_name) {
+    $res = LYAPI::apiQuery(
+        "/law_contents?q=\"{$q}\"&agg=法律編號",
+        "查詢 law_contents 關鍵字: {$q}"
+    );
+    $law_content_cnt = $res->total ?? 0;
+    if ($res->total > 0) {
+        $law_buckets = $res->aggs[0]->buckets;
+        $law_buckets = array_filter($law_buckets, function($bucket) {
+            $law_id = $bucket->法律編號 ?? '';
+            return mb_strlen($law_id) == 5;
+        });
+        $law_buckets = array_map(function ($bucket) {
+            return "法律編號={$bucket->法律編號}";
+        }, $law_buckets);
+        $query_laws = implode('&', $law_buckets);
+        $res = LYAPI::apiQuery("/laws?{$query_laws}", "直接透過 law_ids 查詢指定的 law 資料");
+        $laws = $res->laws;
+
+        $laws = array_filter($laws, function($law) {
+            return isset($law->最新版本);
+        });
+    }
+}
+
 foreach ($laws as $law) {
     $law_content_id =  "{$law->法律編號}:{$law->最新版本->版本編號}";
     $res = LYAPI::apiQuery(
@@ -27,6 +54,12 @@ foreach ($laws as $law) {
         }
     }
     $law->law_contents = $law_contents;
+}
+
+if ($no_result_from_law_name) {
+    $laws = array_filter($laws, function($law) {
+        return !empty($law->law_contents);
+    });
 }
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
