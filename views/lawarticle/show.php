@@ -15,6 +15,7 @@ $law_content = $res->data;
 $parts = explode(":", $law_content_id);
 $law_id =  $parts[0];
 $version_id = $parts[1] . ":" . $parts[2];
+$version_name = $parts[2];
 $law_content_order = $parts[3];
 
 $url = sprintf('/law_contents?法律編號=%s&順序=%s', urlencode($law_id), urlencode($law_content_order));
@@ -37,6 +38,7 @@ usort($law_contents, function($c1, $c2) {
         <?= $this->escape($law_content->{'法律編號:str'} ?? '') ?>
         <?= $this->escape($law_content->條號 ?? '') ?>
       </h1>
+      <p class="badge text-bg-primary fw-normal m-2 p-2 fs-6">版本：<?= $this->escape($version_name) ?></p>
     </div>
   </div>
 </div>
@@ -51,7 +53,12 @@ usort($law_contents, function($c1, $c2) {
 <?php if (isset($law_content)) { ?>
   <div class="container my-3">
     <div class="row border px-5 py-0 rounded-2">
+      <h3 class="py-3 fs-5">條文內容</h3>
       <p class="p-2 fs-5"><?= nl2br($this->escape($law_content->內容 ?? '')) ?></p>
+      <div class="bg-warning-subtle m-3 p-3 rounded-3">
+        <h3 class="py-3 fs-5">立法理由</h3>
+        <p class="p-2 fs-5"><?= nl2br($this->escape($law_content->立法理由 ?? '')) ?></p>
+      </div>
     </div>
   </div>
 <?php } ?>
