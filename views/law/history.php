@@ -124,7 +124,7 @@ usort($histories, function($h1, $h2) {
             <th>公報編號</th>
             <th>立法紀錄</th>
             <th>主提案</th>
-            <th>關係文書</th>
+            <th>連結</th>
           </tr>
         <thead>
         <tbody>
@@ -140,10 +140,25 @@ usort($histories, function($h1, $h2) {
                 $related_docs = $history->關係文書 ?? [];
                 foreach ($related_docs as $related_doc) {
                 ?>
-                  <a href="<?= $this->escape($related_doc->連結 ?? '') ?>" target="_blank" >
-                    <span class="material-symbols-outlined">description</span>
-                    <?= $this->escape($related_doc->類型 ?? '') ?>
-                  </a>
+                  <?php
+                  $url = $related_doc->連結 ?? '';
+                  $url_type = $related_doc->類型 ?? '';
+                  $bill_no = $related_doc->billNo ?? '';
+                  ?>
+                  <?php if ($url != '') { ?>
+                    <a href="<?= $this->escape($url) ?>" target="_blank" title="立法院法律系統:關係文書:<?= $this->escape($url_type) ?>">
+                      <span class="material-symbols-outlined">file_open</span><!--
+                    --></a>
+                  <?php } ?>
+                  <?php if ($bill_no != '') { ?>
+                    <a
+                      href="https://dataly.openfun.app/collection/item/bill/<?= $this->escape($bill_no) ?>"
+                      target="_blank"
+                      title="dataly:議案:<?= $this->escape($bill_no) ?>"
+                    >
+                      <span class="material-symbols-outlined">description</span>
+                    </a>
+                  <?php } ?>
                 <?php } ?>
               </td>
             </tr>
