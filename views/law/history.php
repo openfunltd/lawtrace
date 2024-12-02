@@ -152,9 +152,9 @@ usort($histories, function($h1, $h2) {
                   <?php } ?>
                   <?php if ($bill_no != '') { ?>
                     <a
-                      href="https://dataly.openfun.app/collection/item/bill/<?= $this->escape($bill_no) ?>"
+                      href="/lawdiff/show/<?= $this->escape($bill_no) ?>"
                       target="_blank"
-                      title="dataly:議案:<?= $this->escape($bill_no) ?>"
+                      title="lawdiff:議案:<?= $this->escape($bill_no) ?>"
                     >
                       <span class="material-symbols-outlined">description</span>
                     </a>
