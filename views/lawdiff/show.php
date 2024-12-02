@@ -67,14 +67,14 @@ $diff = LawDiffHelper::lawDiff($bill);
         <tbody>
           <tr>
             <td class="px-3">現行條文</td>
-            <td class="lh-lg"><?= $this->escape($current) ?></td>
+            <td><?= nl2br($this->escape($current)) ?></td>
           </tr>
           <tr>
             <td class="px-3"><?= $this->escape($bill->{'提案單位/提案委員'} ?? '')?></td>
             <td>
-              <div class="lh-lg"><?= strip_tags($commit, '<del><ins>') ?></div>
+              <div><?= nl2br(strip_tags($commit, '<del><ins>')) ?></div>
               <?php if (isset($reason)) { ?>
-                <div class="m-3 p-3 lh-lg reason-bg rounded-2"><?= $this->escape($reason) ?></div>
+                <div class="m-3 p-3 reason-bg rounded-2"><?= nl2br($this->escape($reason)) ?></div>
               <?php } ?>
             </td>
           </tr>
