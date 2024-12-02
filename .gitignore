@@ -1,3 +1,4 @@
 config.inc.php
 .*.swp
 .prompt_history
+/vendor
