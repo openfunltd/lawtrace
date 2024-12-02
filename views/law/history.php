@@ -145,19 +145,18 @@ usort($histories, function($h1, $h2) {
                   $url_type = $related_doc->類型 ?? '';
                   $bill_no = $related_doc->billNo ?? '';
                   ?>
+                  <?php if ($bill_no != '') { ?>
+                    <a
+                      href="/lawdiff/show/<?= $this->escape($bill_no) ?>"
+                      title="lawdiff:議案:<?= $this->escape($bill_no) ?>"
+                    >
+                      <span class="material-symbols-outlined">text_compare</span><!--
+                    --></a>
+                  <?php } ?>
                   <?php if ($url != '') { ?>
                     <a href="<?= $this->escape($url) ?>" target="_blank" title="立法院法律系統:關係文書:<?= $this->escape($url_type) ?>">
                       <span class="material-symbols-outlined">file_open</span><!--
                     --></a>
-                  <?php } ?>
-                  <?php if ($bill_no != '') { ?>
-                    <a
-                      href="/lawdiff/show/<?= $this->escape($bill_no) ?>"
-                      target="_blank"
-                      title="lawdiff:議案:<?= $this->escape($bill_no) ?>"
-                    >
-                      <span class="material-symbols-outlined">description</span>
-                    </a>
                   <?php } ?>
                 <?php } ?>
               </td>
