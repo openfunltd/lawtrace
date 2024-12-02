@@ -17,7 +17,9 @@ if ($res_error) {
 }
 
 $bill = $res->data;
-$comparations = $bill->對照表 ?? [];
+$compare = $bill->對照表 ?? [];
+
+$diff = LawDiffHelper::lawDiff($bill);
 ?>
 <?= $this->partial('common/header', ['title' => 'Law Diff']) ?>
 <div class="container bg-light bg-gradient my-5 rounded-3">
@@ -28,13 +30,57 @@ $comparations = $bill->對照表 ?? [];
     </div>
   </div>
 </div>
-<?php if (empty($comparations)) { ?>
+<?php if (empty($compare)) { ?>
   <div class="container my-3 p-3 bg-danger rounded-3">
     <span class="fs-5">無法律對照表</span>
   </div>
 <?php } else { ?>
+  <style>
+  del {
+    background-color: #fbb;
+  }
+  ins {
+    background-color: #d4fcbc;
+  }
+  .reason-bg {
+    background-color: #faf6f0;
+  }
+  </style>
   <div class="container my-3">
-    <p class="mt-2 mb-0 fs-5 fw-bold">法律對照表</p>
+    <p class="mt-2 mb-0 fs-4 fw-bold">法律對照表</p>
   </div>
+  <?php foreach($diff as $law_article_idx => $commit) { ?>
+    <div class="container my-3">
+      <h2 class="fs-5"><?= $this->escape($law_article_idx) ?></h2>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th class="text-center" style="width: 15%">版本名稱</th>
+            <th class="text-center">條文內容</th>
+          </tr>
+        </thead>
+        <?php
+        $current = (isset($commit->current)) ? $commit->current : '本條新增無現行版本';
+        $reason = $commit->reason;
+        $commit = $commit->diff ?? $commit->commit;
+        ?>
+        <tbody>
+          <tr>
+            <td class="px-3">現行條文</td>
+            <td class="lh-lg"><?= $this->escape($current) ?></td>
+          </tr>
+          <tr>
+            <td class="px-3"><?= $this->escape($bill->{'提案單位/提案委員'} ?? '')?></td>
+            <td>
+              <div class="lh-lg"><?= strip_tags($commit, '<del><ins>') ?></div>
+              <?php if (isset($reason)) { ?>
+                <div class="m-3 p-3 lh-lg reason-bg rounded-2"><?= $this->escape($reason) ?></div>
+              <?php } ?>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  <?php } ?>
 <?php } ?>
 <?= $this->partial('common/footer') ?>
