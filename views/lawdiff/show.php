@@ -45,42 +45,67 @@ $diff = LawDiffHelper::lawDiff($bill);
   .reason-bg {
     background-color: #faf6f0;
   }
+  .law-idx-list {
+      position: sticky;
+      top: 2rem;
+      max-height: calc(100vh - 12rem);
+      overflow-y: auto;
+  }
   </style>
   <div class="container my-3">
     <p class="mt-2 mb-0 fs-4 fw-bold">法律對照表</p>
   </div>
-  <?php foreach($diff as $law_article_idx => $commit) { ?>
-    <div class="container my-3">
-      <h2 class="fs-5"><?= $this->escape($law_article_idx) ?></h2>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th class="text-center" style="width: 15%">版本名稱</th>
-            <th class="text-center">條文內容</th>
-          </tr>
-        </thead>
-        <?php
-        $current = (isset($commit->current)) ? $commit->current : '本條新增無現行版本';
-        $reason = $commit->reason;
-        $commit = $commit->diff ?? $commit->commit;
-        ?>
-        <tbody>
-          <tr>
-            <td class="px-3">現行條文</td>
-            <td><?= nl2br($this->escape($current)) ?></td>
-          </tr>
-          <tr>
-            <td class="px-3"><?= $this->escape($bill->{'提案單位/提案委員'} ?? '')?></td>
-            <td>
-              <div><?= nl2br(strip_tags($commit, '<del><ins>')) ?></div>
-              <?php if (isset($reason)) { ?>
-                <div class="m-3 p-3 reason-bg rounded-2"><?= nl2br($this->escape($reason)) ?></div>
-              <?php } ?>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+  <div class="container my-3">
+    <div class="row">
+      <div class="col-2">
+        <div class="law-idx-list">
+          <p class="m-1 fs-5">
+            <span class="material-symbols-outlined">playlist_add_check</span>
+            條文索引
+          </p>
+          <hr>
+          <?php foreach ($diff as $law_article_idx => $commit) { ?>
+            <a class="fs-5" href="#<?= $this->escape($law_article_idx) ?>"><?= $this->escape($law_article_idx) ?></a>
+            <br>
+          <?php }?>
+        </div>
+      </div>
+      <div class="col-10">
+        <?php foreach($diff as $law_article_idx => $commit) { ?>
+          <div class="my-3">
+            <h2 id="<?= $this->escape($law_article_idx) ?>" class="fs-5"><?= $this->escape($law_article_idx) ?></h2>
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th class="text-center" style="width: 15%">版本名稱</th>
+                  <th class="text-center">條文內容</th>
+                </tr>
+              </thead>
+              <?php
+              $current = (isset($commit->current)) ? $commit->current : '本條新增無現行版本';
+              $reason = $commit->reason;
+              $commit = $commit->diff ?? $commit->commit;
+              ?>
+              <tbody>
+                <tr>
+                  <td class="px-3">現行條文</td>
+                  <td><?= nl2br($this->escape($current)) ?></td>
+                </tr>
+                <tr>
+                  <td class="px-3"><?= $this->escape($bill->{'提案單位/提案委員'} ?? '')?></td>
+                  <td>
+                    <div><?= nl2br(strip_tags($commit, '<del><ins>')) ?></div>
+                    <?php if (isset($reason)) { ?>
+                      <div class="m-3 p-3 reason-bg rounded-2"><?= nl2br($this->escape($reason)) ?></div>
+                    <?php } ?>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <?php } ?>
+      </div>
     </div>
-  <?php } ?>
+  </div>
 <?php } ?>
 <?= $this->partial('common/footer') ?>
