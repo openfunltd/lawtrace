@@ -17,12 +17,4 @@ class LawController extends MiniEngine_Controller
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
     }
-
-    public function billAction($law_id)
-    {
-        $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
-
-        $this->view->law_id = $law_id;
-        $this->view->version_id_input = $version_id_input;
-    }
 }
