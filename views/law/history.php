@@ -135,6 +135,17 @@ usort($histories, function($h1, $h2) {
               <td><?= $this->escape($history->立法紀錄 ?? '') ?></td>
               <td><?= $this->escape($history->主提案 ?? '-') ?></td>
               <td>
+                <?php $agenda_data = gazetteHelper::getAgendaData($history->立法紀錄); ?>
+                <?php if (isset($agenda_data[0])) { ?>
+                  <a href="<?= $agenda_data[0]  ?>" title="公報" target="_blank">
+                    <span class="material-symbols-outlined">full_coverage</span><!--
+                  --></a>
+                <?php } ?>
+                <?php if (isset($agenda_data[1])) { ?>
+                  <a href="<?= $agenda_data[1] ?>" title="公報章節" target="_blank">
+                    <span class="material-symbols-outlined">newspaper</span><!--
+                  --></a>
+                <?php } ?>
                 <?php
                 $related_docs = $history->關係文書 ?? [];
                 foreach ($related_docs as $related_doc) {
