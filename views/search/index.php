@@ -36,10 +36,11 @@ if ($no_result_from_law_name) {
     }
 }
 
+$matched_law_article_cnt = 0;
 foreach ($laws as $law) {
     $law_content_id =  "{$law->法律編號}:{$law->最新版本->版本編號}";
     $res = LYAPI::apiQuery(
-        "/law_contents?q=\"{$q}\"&版本編號={$law_content_id}&limit=30",
+        "/law_contents?q=\"{$q}\"&版本編號={$law_content_id}&limit=1000",
         "查詢 {$law->名稱}({$law->法律編號}) 的法條 關鍵字：{$q}"
     );
     $law_contents = [];
@@ -50,10 +51,13 @@ foreach ($laws as $law) {
         if ($chapter_name != '' or $content_idx == '法律名稱' or empty($content_highlights)) {
             continue;
         }
-        $law_contents[] = $law_content;
-        if (count($law_contents) == 5) {
-            break;
+        if (!empty($content_highlights)) {
+            $matched_law_article_cnt++; 
         }
+        if (count($law_contents) < 5 ) {
+            $law_contents[] = $law_content;
+        }
+
     }
     $law->law_contents = $law_contents;
 }
@@ -67,102 +71,68 @@ if ($no_result_from_law_name) {
 $t2 = hrtime(true);
 $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
 ?>
-<?= $this->partial('common/header-old', ['title' => 'Lawtrace 搜尋']) ?>
-<style>
-  em {
-    font-style: normal;
-    color: red;
-  }
-</style>
-<div class="container bg-light bg-gradient my-5 rounded-3">
-  <div class="row p-5">
-    <div class="p-4">
-      <p class="display-6">LawTrace 進階搜尋</p>
-      <form action="/search" method="get">
-        <div class="input-group">
-          <span class="input-group-text material-symbols-outlined">search</span>
-          <input type="text" class="form-control" placeholder="請輸入關鍵字" name="q" required>
-        </div>
-      </form>
-      <div class="mt-2 fs-4">
-        <span class="badge rounded-pill text-bg-primary fw-normal">關鍵字：<?= $this->escape($q) ?></span>
+<?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
+ <div class="main">
+   <section class="search-form">
+     <div class="container">
+       <form action="/search" method="get">
+         <div class="brand-name">
+           LawTrace
+         </div>
+         <h2>
+           你想暸解什麼法律的沿革或討論現狀？
+         </h2>
+         <div>
+           <input type="search" name="q" class="form-control search-input" placeholder="關鍵字">
+         </div>
+         <div class="text-end">
+           <button type="submit" class="btn btn-primary">
+             搜尋
+           </button>
+         </div>
+       </form>
+     </div>
+   </section>
+   <div class="main-content">
+     <section class="search-result">
+       <div class="container">
+         <div class="result-info">
+           <div>
+             <em><?= count($laws) ?> 個法律</em>中含有 <em><?= $matched_law_article_cnt ?> 筆法條內容</em>符合您關鍵字的搜尋結果。
+           </div>
+           <div>
+             請點選個法律查看詳細法條內容、法律歷程、相關議案等內容。
+           </div>
+         </div>
+         <?php foreach ($laws as $law) { ?>
+           <div class="search-result-card">
+             <div class="law-info">
+               <div class="title">
+                 <a href="/law/show/<?= $this->escape($law->法律編號) ?>">
+                   <?= $this->escape($law->名稱); ?>
+                 </a>
+               </div>
+               <?php $aliases = $law->其他名稱 ?? []; ?>
+               <?php if (!empty($aliases)) { ?>
+                 <div class="alias">別名： <?= $this->escape(implode('、', $aliases)) ?> </div>
+               <?php } ?>
+               <div class="update-date"><?= $this->escape($law->最新版本->版本編號 ?? '') ?></div>
+             </div>
+             <div class="law-list">
+               <?php $law_contents = $law->law_contents; ?>
+               <?php if (!empty($law_contents)) { ?>
+                 <?php foreach ($law_contents as $law_content) { ?>
+                   <div class="law-item">
+                     <div><?= $this->escape($law_content->條號?? '') ?></div>
+                     <div><?= nl2br(strip_tags($law_content->{'內容:highlight'}[0], '<em>')) ?></div>
+                   </div>
+                 <?php } ?>
+               <?php } ?>
+             </div>
+           </div>
+         <?php } ?>
       </div>
-      <div class="mt-2 fs-6 text-end">
-        搜尋時間花費 <?= $this->escape($elapsed_time) ?> 秒
-      </div>
-    </div>
+    </section>
   </div>
 </div>
-<?php if ($no_result_from_law_name) { ?>
-  <div class="container my-3">
-    <div class="row border p-3 rounded-top-2 bg-warning-subtle bg-gradient">
-      <p class="my-1">
-        <span class="material-symbols-outlined align-middle">info</span>
-        無法律名稱與關鍵字相符的結果，以下為改搜尋條文內容的部分結果。
-      </p>
-    </div>
-  </div>
-<?php } ?>
-<?php foreach($laws as $law) { ?>
-  <div class="container my-3">
-    <div class="row border px-5 py-0 rounded-top-2">
-      <div class="col-10 m-0">
-        <h2 class="h4 mt-4 mb-0">
-          <?php
-          $law_name_highlights = $law->{'名稱:highlight'} ?? [];
-          if (empty($law_name_highlights)) {
-              echo $this->escape($law->名稱);
-          } else {
-              echo strip_tags($law->{'名稱:highlight'}[0], '<em>');
-          }
-          ?>
-        </h2>
-        <?php
-        $aliases = $law->其他名稱 ?? [];
-        $alias_highlights = $law->{'其他名稱:highlight'} ?? [];
-        ?>
-        <?php if (!empty($aliases)) { ?>
-          <p class="mt-3 mb-0">
-            別名：
-            <?php
-            if (empty($alias_highlights)) {
-                echo $this->escape(implode('、', $aliases));
-            } else {
-                echo strip_tags(implode('、', $alias_highlights), '<em>');
-            }
-            ?>
-          </p>
-        <?php } ?>
-        <p class="mt-1 mb-0"><?= $this->escape($law->最新版本->版本編號 ?? '') ?><p>
-      </div>
-      <div class="col-2 d-flex justify-content-center align-items-center">
-        <a href="/law/show/<?= $this->escape($law->法律編號) ?>">
-          <span class="material-symbols-outlined display-4">arrow_forward</span>
-        </a>
-      </div>
-    </div>
-    <?php $law_contents = $law->law_contents; ?>
-    <?php if (!empty($law_contents)) { ?>
-      <div class="row border border-top-0 px-5 bg-light">
-        <div class="col">
-          <p class="h5 m-1 py-1">法條內容結果</p>
-        </div>
-      </div>
-      <div class="row border border-top-0 px-5 rounded-bottom-2">
-        <div class="col">
-          <table class="table table-sm mt-1 ms-3">
-            <tbody>
-              <?php foreach ($law_contents as $law_content) { ?>
-                <tr>
-                  <td style="width: 14%;"><?= $this->escape($law_content->條號?? '') ?></td>
-                  <td><?= nl2br(strip_tags($law_content->{'內容:highlight'}[0], '<em>')) ?></td>
-                </tr>
-              <?php } ?>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    <?php } ?>
-  </div>
-<?php } ?>
-<?= $this->partial('common/footer-old') ?>
+<?= $this->partial('common/footer') ?>
