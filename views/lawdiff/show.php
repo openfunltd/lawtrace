@@ -21,7 +21,7 @@ $compare = $bill->對照表 ?? [];
 
 $diff = LawDiffHelper::lawDiff($bill);
 ?>
-<?= $this->partial('common/header', ['title' => 'Law Diff']) ?>
+<?= $this->partial('common/header-old', ['title' => 'Law Diff']) ?>
 <div class="container bg-light bg-gradient my-5 rounded-3">
   <div class="row p-5">
     <div class="p-4">
@@ -108,4 +108,4 @@ $diff = LawDiffHelper::lawDiff($bill);
     </div>
   </div>
 <?php } ?>
-<?= $this->partial('common/footer') ?>
+<?= $this->partial('common/footer-old') ?>

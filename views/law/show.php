@@ -67,7 +67,7 @@ $contents = $res->lawcontents ?? [];
 
 $aliases = $law->其他名稱 ?? [];
 ?>
-<?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
+<?= $this->partial('common/header-old', ['title' => 'Lawtrace 搜尋']) ?>
 <div class="container bg-light bg-gradient mt-5 mb-3 rounded-3">
   <div class="row p-5">
     <div class="p-4">
@@ -146,4 +146,4 @@ $aliases = $law->其他名稱 ?? [];
     </div>
   </div>
 <?php } ?>
-<?= $this->partial('common/footer') ?>
+<?= $this->partial('common/footer-old') ?>

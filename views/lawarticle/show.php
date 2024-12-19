@@ -30,7 +30,7 @@ usort($law_contents, function($c1, $c2) {
 });
 
 ?>
-<?= $this->partial('common/header', ['title' => '單一法條']) ?>
+<?= $this->partial('common/header-old', ['title' => '單一法條']) ?>
 <div class="container bg-light bg-gradient mt-5 mb-3 rounded-3">
   <div class="row p-5">
     <div class="p-4">
@@ -84,4 +84,4 @@ usort($law_contents, function($c1, $c2) {
     </div>
   </div>
 <?php } ?>
-<?= $this->partial('common/footer') ?>
+<?= $this->partial('common/footer-old') ?>
