@@ -1,7 +1,7 @@
 <?= $this->partial('common/header', ['title' => 'Lawtrace 首頁']) ?>
 <div class="main">
   <section class="search-form">
-    <div class="container">
+    <div class="container container-sm">
       <form action="/search" method="get">
         <div class="brand-name">
           LawTrace
@@ -22,7 +22,7 @@
   </section>
 
   <div class="main-content">
-    <div class="container about-law-trace">
+    <div class="container container-sm about-law-trace">
       <section class="concept">
         <h2 class="title">
           一站式地查詢法律相關資料
