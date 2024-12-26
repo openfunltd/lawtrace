@@ -39,6 +39,24 @@ if ($version_id_input != 'latest') {
         exit;
     }
 }
+
+//versions order by date DESC
+usort($versions, function($v1, $v2) {
+    $date_v1 = $v1->日期 ?? '';
+    $date_v2 = $v2->日期 ?? '';
+    return $date_v2 <=> $date_v1;
+});
+if ($version_id_input == 'latest') {
+    foreach ($versions as $version) {
+        $version_id = $version->版本編號 ?? NULL;
+        if (isset($version_id)) {
+            $version_id_selected = $version_id;
+            $version_selected = $version;
+            break;
+        }
+    }
+}
+
 $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
 ?>
@@ -80,5 +98,31 @@ $vernaculars = $law->別名 ?? [];
       </div>
     </div>
   </section>
+
+  <div class="main-content">
+    <section class="law-details">
+      <div class="container">
+        <div class="law-version">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
+            </button>
+            <ul class="dropdown-menu">
+              <?php foreach ($versions as $version) { ?>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
+                  >
+                    <?= $this->escape("{$version->日期} {$version->動作}") ?>
+                  </a>
+                </li>
+              <?php } ?>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 <?= $this->partial('common/footer') ?>
