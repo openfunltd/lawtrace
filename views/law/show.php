@@ -39,111 +39,46 @@ if ($version_id_input != 'latest') {
         exit;
     }
 }
-
-//versions order by date DESC
-usort($versions, function($v1, $v2) {
-    $date_v1 = $v1->日期 ?? '';
-    $date_v2 = $v2->日期 ?? '';
-    return $date_v2 <=> $date_v1;
-});
-if ($version_id_input == 'latest') {
-    foreach ($versions as $version) {
-        $version_id = $version->版本編號 ?? NULL;
-        if (isset($version_id)) {
-            $version_id_selected = $version_id;
-            $version_selected = $version;
-            break;
-        }
-    }
-}
-
-$res = LYAPI::apiQuery(
-    "/law_contents?版本編號={$version_id_selected}&limit=200",
-    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
-);
-$contents = $res->lawcontents ?? [];
-//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
-
-
 $aliases = $law->其他名稱 ?? [];
+$vernaculars = $law->別名 ?? [];
 ?>
-<?= $this->partial('common/header-old', ['title' => 'Lawtrace 搜尋']) ?>
-<div class="container bg-light bg-gradient mt-5 mb-3 rounded-3">
-  <div class="row p-5">
-    <div class="p-4">
-      <h1 class="fw-bold display-6"><?= $this->escape($law->名稱 ?? '') ?></h1>
-      <?php if (!empty($aliases)) { ?>
-        <p class="mt-2 mb-0 fs-5">
-          別名：
-          <?= $this->escape(implode('、', $aliases)) ?>
-        </p>
-      <?php } ?>
-      <?php if (!empty($versions)) { ?>
-        <div class="mt-3 mb-0 fs-5 btn-group">
-          <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
-          </button>
-          <ul class="dropdown-menu">
-            <?php foreach ($versions as $version) { ?>
-              <li>
-                <a
-                  class="dropdown-item"
-                  href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
-                >
-                  <?= $this->escape("{$version->日期} {$version->動作}") ?>
-                </a>
-              </li>
-            <?php } ?>
-          </ul>
-        </div>
-      <?php } ?>
-      <?php if (empty($versions) or empty($contents)) { ?>
-        <div class="mt-3 mb-0 fs-4">
-          <?php if (empty($versions)) { ?>
-            <button type="button" class="btn btn-danger" disabled>無版本資料</button>
-          <?php } ?>
-          <?php if (empty($contents)) { ?>
-            <button type="button" class="btn btn-danger" disabled>無條文資料</button>
-          <?php } ?>
-        </div>
-      <?php } ?>
+<?= $this->partial('common/header', ['title' => '法律內容']) ?>
+<div class="main">
+  <section class="page-hero law-details-info">
+    <div class="container">
+      <nav class="breadcrumb-wrapper">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <a href="index.html">
+              <i class="bi bi-house-door"></i>
+            </a>
+          </li>
+          <li class="breadcrumb-item active">
+            法律資訊
+          </li>
+        </ol>
+      </nav>
+      <h2 class="light">
+        <?= $this->escape($law->名稱 ?? '') ?>
+      </h2>
+      <div class="info">
+        <?php if (!empty($aliases)) { ?>
+          <div class="alias">
+            別名：<?= $this->escape(implode('、', $aliases)) ?>
+          </div>
+        <?php } ?>
+        <?php if (!empty($vernaculars)) { ?>
+          <div class="vernacular">
+            俗名：<?= $this->escape(implode('、', $vernaculars)) ?>
+          </div>
+        <?php } ?>
+      </div>
+      <div class="btn-group law-pages">
+        <a href="#" class="btn btn-outline-primary active">
+          瀏覽法律
+        </a>
+      </div>
     </div>
-  </div>
+  </section>
 </div>
-<div class="container my-3">
-  <div class="btn-group">
-    <?php $endpoint = "{$law_id}?version={$version_id_selected}"; ?>
-    <a href="#" class="btn btn-primary active" aria-current="page">完整條文</a>
-    <a href="/law/history/<?= $this->escape($endpoint) ?>" class="btn btn-primary">編修歷程</a>
-  </div>
-</div>
-<?php if (!empty($contents)) { ?>
-  <div class="container my-3">
-    <div class="row border px-5 py-0 rounded-2">
-      <table class="table fs-6">
-        <tbody>
-          <?php foreach ($contents as $content) { ?>
-            <tr>
-              <td class="fw-bold" style="width: 10%;"><?= $this->escape($content->章名 ?? '') ?></td>
-              <td style="width: 10%;"><?= $this->escape($content->條號 ?? '') ?></td>
-              <td><?= nl2br($this->escape($content->內容 ?? '')) ?></td>
-              <?php
-              $chapter_name = $content->章名 ?? '';
-              $text = $content->條號 ?? '';
-              $law_content_id = $content->法條編號 ?? '';
-              ?>
-              <?php if ($chapter_name == '' and $text != '法律名稱') { ?>
-                <td style="width: 1%;">
-                  <a href="/lawarticle/show/<?= $this->escape($law_content_id) ?>">
-                    <span class="material-symbols-outlined">arrow_forward</span>
-                  </a>
-                </td>
-              <?php } ?>
-            </tr>
-          <?php } ?>
-        </tbody>
-      </table>
-    </div>
-  </div>
-<?php } ?>
-<?= $this->partial('common/footer-old') ?>
+<?= $this->partial('common/footer') ?>
