@@ -73,8 +73,8 @@ $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
 ?>
 <?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
  <div class="main">
-   <section class="search-form">
-     <div class="container">
+   <section class="page-hero search-form">
+     <div class="container container-sm">
        <form action="/search" method="get">
          <div class="brand-name">
            LawTrace
@@ -95,7 +95,7 @@ $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
    </section>
    <div class="main-content">
      <section class="search-result">
-       <div class="container">
+       <div class="container container-sm">
          <div class="result-info">
            <div>
              <em><?= count($laws) ?> 個法律</em>中含有 <em><?= $matched_law_article_cnt ?> 筆法條內容</em>符合您關鍵字的搜尋結果。

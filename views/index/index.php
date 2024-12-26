@@ -1,6 +1,6 @@
 <?= $this->partial('common/header', ['title' => 'Lawtrace 首頁']) ?>
 <div class="main">
-  <section class="search-form">
+  <section class="page-hero search-form">
     <div class="container container-sm">
       <form action="/search" method="get">
         <div class="brand-name">

@@ -29,7 +29,7 @@
       <div class="dropdown">
         <a href="#" class="lt-nav-items" data-bs-toggle="dropdown">
           關於
-          <i class="fa fa-chevron-down dropdown-icon"></i>
+          <i class="bi bi-chevron-down dropdown-icon"></i>
         </a>
         <ul class="dropdown-menu">
           <li>
