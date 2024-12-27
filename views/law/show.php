@@ -57,6 +57,22 @@ if ($version_id_input == 'latest') {
     }
 }
 
+$res = LYAPI::apiQuery(
+    "/law_contents?版本編號={$version_id_selected}&limit=1000",
+    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
+);
+$contents = $res->lawcontents ?? [];
+//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
+
+$chapters = array_filter($contents, function($content) {
+    $chapter_name = $content->章名 ?? '';
+    $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
+
+    //要剔除把法律名稱又放進去章名的狀況 example: 民法第二編 債 law_id:04509
+    return !in_array($chapter_unit, ['','法']);
+});
+$chapter_units = LawChapterHelper::getChapterUnits($chapters);
+
 $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
 ?>
@@ -120,6 +136,14 @@ $vernaculars = $law->別名 ?? [];
               <?php } ?>
             </ul>
           </div>
+        </div>
+        <div class="law-list-wrapper">
+          <?=
+          $this->partial('partial/side',[
+              'chapters' => $chapters,
+              'chapter_units' =>$chapter_units,
+          ])
+          ?>
         </div>
       </div>
     </section>
