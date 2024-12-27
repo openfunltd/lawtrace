@@ -144,6 +144,24 @@ $vernaculars = $law->別名 ?? [];
               'chapter_units' =>$chapter_units,
           ])
           ?>
+          <div class="law-list">
+            <?php foreach ($contents as $content) { ?>
+              <?php
+              $content_order = $content->順序;
+              $chapter_name = $content->章名 ?? '';
+              $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
+              $title_level = array_search($chapter_unit, $chapter_units);
+              ?>
+              <?php if ($title_level !== false) { ?>
+                <div
+                  id="contentOrder-<?= $this->escape($content_order) ?>"
+                  class="title-level-<?= $this->escape($title_level + 1) ?>"
+                >
+                  <?= $this->escape($chapter_name) ?>
+                </div>
+              <?php } ?>
+            <?php } ?>
+          </div>
         </div>
       </div>
     </section>

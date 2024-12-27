@@ -6,6 +6,7 @@ $layers = array_fill(0, $layer_cnt, []);
 
 $dom = new DOMDocument('1.0', 'UTF-8');
 foreach ($chapters as $chapter) {
+    $content_order = $chapter->順序;
     $chapter_name = $chapter->章名;
     $unit = LawChapterHelper::getChapterUnit($chapter_name);
     $layer_idx = array_search($unit, $chapter_units);
@@ -23,7 +24,7 @@ foreach ($chapters as $chapter) {
     $head_div = $dom->createElement('div');
     $head_div->setAttribute('class', 'menu-head');
     $anchor = $dom->createElement('a');
-    $anchor->setAttribute('href', '#layer' . ($layer_idx + 1) . '-index' . (count($layers[$layer_idx]) + 1));
+    $anchor->setAttribute('href', "#contentOrder-{$content_order}");
     $anchor->textContent = $chapter_name;
     //append elements
     $head_div->appendChild($anchor);
