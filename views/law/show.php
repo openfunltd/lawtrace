@@ -151,6 +151,8 @@ $vernaculars = $law->別名 ?? [];
               $chapter_name = $content->章名 ?? '';
               $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
               $title_level = array_search($chapter_unit, $chapter_units);
+              $law_index = $content->條號 ?? '';
+              $law_content = $content->內容 ?? '';
               ?>
               <?php if ($title_level !== false) { ?>
                 <div
@@ -158,6 +160,18 @@ $vernaculars = $law->別名 ?? [];
                   class="title-level-<?= $this->escape($title_level + 1) ?>"
                 >
                   <?= $this->escape($chapter_name) ?>
+                </div>
+              <?php } ?>
+              <?php if (!in_array($law_index, ['', '法律名稱'])) { ?>
+                <div class="info-card">
+                  <div class="card-head">
+                    <div class="title">
+                      <?= $this->escape($law_index)?>
+                    </div>
+                  </div>
+                  <div class="card-body">
+                    <?= nl2br($this->escape($law_content))?>
+                  </div>
                 </div>
               <?php } ?>
             <?php } ?>
