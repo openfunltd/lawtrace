@@ -5,14 +5,15 @@ $id_array = explode(':', $law_content_id);
 $law_id = $id_array[0];
 
 $res = LYAPI::apiQuery("/law_content/{$law_content_id}" ,"查詢法律條文：{$law_content_id} ");
-$res_error = $res->error ?? true;
-if ($res_error) {
+$law_content = $res->data ?? new stdClass();
+$chapter_name = $law_content->章名 ?? '';
+$is_chapter = ($chapter_name != '');
+if (empty($law_content) or $is_chapter) {
     header('HTTP/1.1 404 No Found');
     echo "<h1>404 No Found</h1>";
     echo "<p>No law_content data with law_content_id {$law_content_id}</p>";
     exit;
 }
-$law_content = $res->data;
 
 $res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
 $res_error = $res->error ?? true;
@@ -41,6 +42,51 @@ if (is_null($version_selected)) {
     exit;
 }
 
+$res = LYAPI::apiQuery(
+    "/law_contents?版本編號={$version_id_selected}&limit=1000",
+    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
+);
+$contents = $res->lawcontents ?? [];
+//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
+
+$chapters = array_filter($contents, function($content) {
+    $chapter_name = $content->章名 ?? '';
+    $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
+
+    //要剔除把法律名稱又放進去章名的狀況 example: 民法第二編 債 law_id:04509
+    return !in_array($chapter_unit, ['','法']);
+});
+$chapter_units = LawChapterHelper::getChapterUnits($chapters);
+$law_content_order = $law_content->順序;
+$target_unit = '';
+$chapter_breadcrumbs = [];
+while(!empty($chapters)) {
+    $chapters_above = array_filter($chapters, function ($chapter) use ($law_content_order, $target_unit){
+        $is_target_unit = true;
+        if ($target_unit != '') {
+            $chapter_name = $chapter->章名;
+            $chapter_unit = LawChapterHelper::getChapterUnit($chapter_name);
+            $is_target_unit = ($chapter_unit == $target_unit);
+        }
+        $distance = $law_content_order - ($chapter->順序);
+        return $distance > 0 and $is_target_unit;
+    });
+    if (empty($chapters_above)) {
+        break;
+    }
+    $target_chapter = end($chapters_above);
+    $target_chapter_name = $target_chapter->章名;
+    $chapter_breadcrumbs[] = $target_chapter_name;
+
+    $target_unit = LawChapterHelper::getChapterUnit($target_chapter_name);
+    $target_unit_idx = array_search($target_unit, $chapter_units);
+    if ($target_unit_idx === 0) {
+        break;
+    }
+    $target_unit = $chapter_units[$target_unit_idx - 1];
+}
+$chapter_breadcrumbs = array_reverse($chapter_breadcrumbs);
+
 $law_name = $law->名稱 ?? '';
 $law_content_name = $law_content->條號 ?? '';
 ?>
@@ -56,7 +102,7 @@ $law_content_name = $law_content->條號 ?? '';
             </a>
           </li>
           <li class="breadcrumb-item">
-            <a href="/law/show/<?= $law_id ?>">
+            <a href="/law/show/<?= $this->escape($law_id) ?>">
               法律資訊
             </a>
           </li>
@@ -93,6 +139,22 @@ $law_content_name = $law_content->條號 ?? '';
               <?php } ?>
             </ul>
           </div>
+        </div>
+        <div class="single-law">
+          <nav class="breadcrumb-wrapper">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <a href="/law/show/<?= $this->escape($law_id) ?>">
+                  <?= $this->escape($law_name) ?>
+                </a>
+              </li>
+              <?php foreach ($chapter_breadcrumbs as $breadcrumb) { ?>
+                <li class="breadcrumb-item">
+                  <?= $this->escape($breadcrumb) ?>
+                </li>
+              <?php } ?>
+            </ol>
+          </nav>
         </div>
       </div>
     </section>
