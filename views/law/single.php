@@ -1,6 +1,6 @@
 <?php
-$law_content_id = $this->law_content_id;
-$law_content_id = $this->escape($law_content_id);
+$law_content_id = $this->escape($this->law_content_id);
+$version_id_input = $this->escape($this->version_id_input);
 $id_array = explode(':', $law_content_id);
 $law_id = $id_array[0];
 
@@ -23,6 +23,23 @@ if ($res_error) {
     exit;
 }
 $law = $res->data;
+
+$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+if (is_null($versions_data)) {
+    header('HTTP/1.1 404 No Found');
+    echo "<h1>404 No Found</h1>";
+    echo "<p>No versions data with law_id {$law_id}</p>";
+    exit;
+}
+$versions = $versions_data->versions;
+$version_selected = $versions_data->version_selected;
+$version_id_selected = $versions_data->version_id_selected;
+if (is_null($version_selected)) {
+    header('HTTP/1.1 404 No Found');
+    echo "<h1>404 No Found</h1>";
+    echo "<p>No version data with version_id {$version_id_input}</p>";
+    exit;
+}
 
 $law_name = $law->名稱 ?? '';
 $law_content_name = $law_content->條號 ?? '';
@@ -53,5 +70,32 @@ $law_content_name = $law_content->條號 ?? '';
       </h2>
     </div>
   </section>
+
+  <div class="main-content">
+    <section class="law-details">
+      <div class="container">
+        <div class="law-version">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              版本：<?= $this->escape("{$version_selected->民國日期} {$version_selected->動作}") ?>
+              <?= ($version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
+            </button>
+            <ul class="dropdown-menu">
+              <?php foreach ($versions as $version) { ?>
+                <li>
+                  <a
+                    class="dropdown-item"
+                    href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
+                  >
+                    <?= $this->escape("{$version->民國日期} {$version->動作}") ?>
+                  </a>
+                </li>
+              <?php } ?>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 <?= $this->partial('common/footer') ?>
