@@ -153,6 +153,7 @@ $vernaculars = $law->別名 ?? [];
               $title_level = array_search($chapter_unit, $chapter_units);
               $law_index = $content->條號 ?? '';
               $law_content = $content->內容 ?? '';
+              $law_content_id = $content->法條編號 ?? '';
               ?>
               <?php if ($title_level !== false) { ?>
                 <div
@@ -167,6 +168,24 @@ $vernaculars = $law->別名 ?? [];
                   <div class="card-head">
                     <div class="title">
                       <?= $this->escape($law_index)?>
+                    </div>
+                    <div class="actions">
+                      <a href="/law/single/<?= $this->escape($law_content_id) ?>">
+                        只顯示此法條內容
+                        <i class="bi bi-box-arrow-up-right"></i>
+                      </a>
+                      <div class="dropdown">
+                        <span data-bs-toggle="dropdown">
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </span>
+                        <ul class="dropdown-menu">
+                          <li>
+                            <a class="dropdown-item" href="/law/single/<?= $this->escape($law_content_id) ?>">
+                              只顯示此法條內容
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
                   <div class="card-body">
