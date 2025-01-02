@@ -60,6 +60,48 @@ class LawVersionHelper
         ];
     }
 
+    public static function getVersionsForSingle($law_id, $version_id_input, $law_content_name)
+    {
+        $versions_data = self::getVersions($law_id, $version_id_input);
+        $versions = $versions_data->versions;
+        $version_id_selected = $versions_data->version_id_selected;
+        if (is_null($versions)) {
+            return NULL;
+        }
+        $law_content_name_encoded = mb_ereg_replace(' ', '%20', $law_content_name);
+        $versions = array_map(function ($version) use ($law_content_name, $law_content_name_encoded){
+            $version_id = $version->版本編號;
+            $res = LYAPI::apiQuery("/law_contents?版本編號={$version_id}&條號={$law_content_name_encoded}",
+                "查詢 law_content: 版本編號:{$version_id}, 條號:{$law_content_name}"
+            );
+            $res_total = $res->total ?? 0;
+            if ($res_total > 0) {
+                $law_contents = $res->lawcontents ?? [];
+                $version->law_content_id = $law_contents[0]->法條編號;
+            }
+            return $version;
+        }, $versions);
+        $versions = array_filter($versions, function ($version) {
+            return property_exists($version, 'law_content_id');
+        });
+
+        if (isset($version_id_selected)) {
+            $version_selected = array_filter($versions, function ($version) use ($version_id_selected) {
+                $version_id = $version->版本編號;
+                return ($version_id == $version_id_selected);
+            });
+            if (empty($version_selected)) {
+                unset($versions_data->version_id_selected);
+                unset($versions_data->version_selected);
+            } else {
+                $versions_data->version_selected = $version_selected[0];
+            }
+        }
+
+        $versions_data->versions = $versions;
+        return $versions_data;
+    }
+
     public static function getMinguoDate($version_date)
     {
         [$year, $month, $day] = explode('-', $version_date);

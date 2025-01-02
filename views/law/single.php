@@ -25,7 +25,8 @@ if ($res_error) {
 }
 $law = $res->data;
 
-$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+$law_content_name = $law_content->條號 ?? '';
+$versions_data = LawVersionHelper::getVersionsForSingle($law_id, $version_id_input, $law_content_name);
 if (is_null($versions_data)) {
     header('HTTP/1.1 404 No Found');
     echo "<h1>404 No Found</h1>";
@@ -88,7 +89,6 @@ while(!empty($chapters)) {
 $chapter_breadcrumbs = array_reverse($chapter_breadcrumbs);
 
 $law_name = $law->名稱 ?? '';
-$law_content_name = $law_content->條號 ?? '';
 $law_content_text = $law_content->內容 ?? '';
 ?>
 <?= $this->partial('common/header', ['title' => '法律內容']) ?>
@@ -129,10 +129,11 @@ $law_content_text = $law_content->內容 ?? '';
             </button>
             <ul class="dropdown-menu">
               <?php foreach ($versions as $version) { ?>
+                <?php $law_content_id = $version->law_content_id; ?>
                 <li>
                   <a
                     class="dropdown-item"
-                    href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
+                    href="/law/single/<?= $this->escape($law_content_id) ?>"
                   >
                     <?= $this->escape("{$version->民國日期} {$version->動作}") ?>
                   </a>
