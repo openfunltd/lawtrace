@@ -89,6 +89,7 @@ $chapter_breadcrumbs = array_reverse($chapter_breadcrumbs);
 
 $law_name = $law->名稱 ?? '';
 $law_content_name = $law_content->條號 ?? '';
+$law_content_text = $law_content->內容 ?? '';
 ?>
 <?= $this->partial('common/header', ['title' => '法律內容']) ?>
 <div class="main">
@@ -155,6 +156,16 @@ $law_content_name = $law_content->條號 ?? '';
               <?php } ?>
             </ol>
           </nav>
+          <div class="info-card">
+            <div class="card-head">
+              <div class="title">
+                <?= $this->escape($law_content_name) ?>
+              </div>
+            </div>
+            <div class="card-body">
+              <?= nl2br($this->escape($law_content_text)) ?>
+            </div>
+          </div>
         </div>
       </div>
     </section>
