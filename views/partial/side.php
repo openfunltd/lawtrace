@@ -63,7 +63,7 @@ foreach ($layers as $idx => $layer) {
             }
             $upper_item_div = $upper_item->item_div;
             $upper_icon = $dom->createElement('i');
-            $upper_icon->setAttribute('class', 'bi bi-chevron-down icon');
+            $upper_icon->setAttribute('class', 'bi bi-chevron-up icon');
             $upper_head_div = $upper_item_div->getElementsByTagName('div')->item(0);
             $upper_head_div->appendChild($upper_icon);
             $upper_item_div->appendChild($upper_body_div);
