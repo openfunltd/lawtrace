@@ -1,16 +1,22 @@
 function init () {
+  const closeIcon = 'bi-chevron-down';
+  const openIcon = 'bi-chevron-up';
+  const hide = 'd-none';
+  const block = 'd-block';
+  const show = 'show';
+
   // 顯示範圍區塊下拉選單
   $(document).on('click', '.dropdown-select .selected-item', (event) => {
     const select = $(event.currentTarget.parentNode);
     const icon = select.find('.icon');
     const menu = select.find('.select-list');
 
-    if (icon.hasClass('bi-chevron-up')) {
-      icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
-      menu.addClass('show')
+    if (icon.hasClass(closeIcon)) {
+      icon.removeClass(closeIcon).addClass(openIcon);
+      menu.addClass(show);
     } else {
-      icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
-      menu.removeClass('show')
+      icon.removeClass(openIcon).addClass(closeIcon);
+      menu.removeClass(show);
     }
   });
 
@@ -20,12 +26,12 @@ function init () {
     const icon = menuItem.find('> .menu-head > .icon');
     const menuBody = menuItem.find('> .menu-body');
 
-    if (icon.hasClass('bi-chevron-up')) {
-      icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
-      menuBody.removeClass('d-none')
+    if (icon.hasClass(closeIcon)) {
+      icon.removeClass(closeIcon).addClass(openIcon);
+      menuBody.removeClass(hide);
     } else {
-      icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
-      menuBody.addClass('d-none')
+      icon.removeClass(openIcon).addClass(closeIcon);
+      menuBody.addClass(hide);
     }
   });
 
@@ -35,12 +41,12 @@ function init () {
     const icon = help.find('.icon');
     const body = help.find('.help-body');
 
-    if (icon.hasClass('bi-chevron-up')) {
-      icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
-      body.addClass('d-block')
+    if (icon.hasClass(closeIcon)) {
+      icon.removeClass(closeIcon).addClass(openIcon);
+      body.addClass(block);
     } else {
-      icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
-      body.removeClass('d-block')
+      icon.removeClass(openIcon).addClass(closeIcon);
+      body.removeClass(block);
     }
   });
 
@@ -50,12 +56,12 @@ function init () {
     const icon = help.find('.icon');
     const body = help.find('.grid-body');
 
-    if (icon.hasClass('bi-chevron-up')) {
-      icon.removeClass('bi-chevron-up').addClass('bi-chevron-down');
-      body.removeClass('d-none')
+    if (icon.hasClass(closeIcon)) {
+      icon.removeClass(closeIcon).addClass(openIcon);
+      body.removeClass(hide);
     } else {
-      icon.removeClass('bi-chevron-down').addClass('bi-chevron-up');
-      body.addClass('d-none')
+      icon.removeClass(openIcon).addClass(closeIcon);
+      body.addClass(hide);
     }
   });
 }
