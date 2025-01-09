@@ -19,42 +19,15 @@ if ($res_error) {
 }
 
 $law = $res->data;
-$res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
-$versions = $res->lawversions ?? [];
-if ($version_id_input != 'latest') {
-    $invalid_version = true;
-    foreach ($versions as $version) {
-        $version_id = $version->版本編號 ?? NULL;
-        if ($version_id_input == $version_id) {
-            $invalid_version = false;
-            $version_id_selected = $version_id;
-            $version_selected = $version;
-            break;
-        }
-    }
-    if ($invalid_version) {
-        header('HTTP/1.1 404 No Found');
-        echo "<h1>404 No Found</h1>";
-        echo "<p>No version data with version_id {$version_id_input}</p>";
-        exit;
-    }
-}
-
-//versions order by date DESC
-usort($versions, function($v1, $v2) {
-    $date_v1 = $v1->日期 ?? '';
-    $date_v2 = $v2->日期 ?? '';
-    return $date_v2 <=> $date_v1;
-});
-if ($version_id_input == 'latest') {
-    foreach ($versions as $version) {
-        $version_id = $version->版本編號 ?? NULL;
-        if (isset($version_id)) {
-            $version_id_selected = $version_id;
-            $version_selected = $version;
-            break;
-        }
-    }
+$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+$versions = $versions_data->versions;
+$version_selected = $versions_data->version_selected;
+$version_id_selected = $versions_data->version_id_selected;
+if (is_null($version_selected)) {
+    header('HTTP/1.1 404 No Found');
+    echo "<h1>404 No Found</h1>";
+    echo "<p>No version data with version_id {$version_id_input}</p>";
+    exit;
 }
 
 $res = LYAPI::apiQuery(
@@ -121,7 +94,8 @@ $vernaculars = $law->別名 ?? [];
         <div class="law-version">
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              版本：<?= $this->escape("{$version_selected->日期} {$version_selected->動作}") ?>
+              版本：<?= $this->escape("{$version_selected->民國日期} {$version_selected->動作}") ?>
+              <?= ($version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
             </button>
             <ul class="dropdown-menu">
               <?php foreach ($versions as $version) { ?>
@@ -130,7 +104,7 @@ $vernaculars = $law->別名 ?? [];
                     class="dropdown-item"
                     href="/law/show/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>"
                   >
-                    <?= $this->escape("{$version->日期} {$version->動作}") ?>
+                    <?= $this->escape("{$version->民國日期} {$version->動作}") ?>
                   </a>
                 </li>
               <?php } ?>
