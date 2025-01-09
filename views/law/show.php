@@ -189,6 +189,7 @@ $vernaculars = $law->別名 ?? [];
                     </div>
                   </div>
                   <div class="card-body">
+                    <?php $law_content = mb_ereg_replace('　', '', $law_content); ?>
                     <?= nl2br($this->escape($law_content))?>
                   </div>
                 </div>

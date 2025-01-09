@@ -164,6 +164,7 @@ $law_content_text = $law_content->內容 ?? '';
               </div>
             </div>
             <div class="card-body">
+              <?php $law_content_text = mb_ereg_replace('　', '', $law_content_text); ?>
               <?= nl2br($this->escape($law_content_text)) ?>
             </div>
           </div>
