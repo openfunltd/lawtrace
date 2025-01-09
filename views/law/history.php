@@ -18,60 +18,34 @@ if ($res_error) {
     exit;
 }
 $law = $res->data;
-$aliases = $law->其他名稱 ?? [];
-$vernaculars = $law->別名 ?? [];
 
-$res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
-$versions = $res->lawversions ?? [];
-if ($version_id_input != 'latest') {
-    $invalid_version = true;
-    foreach ($versions as $version) {
-        $version_id = $version->版本編號 ?? NULL;
-        if ($version_id_input == $version_id) {
-            $invalid_version = false;
-            $version_id_selected = $version_id;
-            $version_selected = $version;
-            break;
-        }
-    }
-    if ($invalid_version) {
-        header('HTTP/1.1 404 No Found');
-        echo "<h1>404 No Found</h1>";
-        echo "<p>No version data with version_id {$version_id_input}</p>";
-        exit;
-    }
+$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+$versions = $versions_data->versions;
+$version_selected = $versions_data->version_selected;
+$version_id_selected = $versions_data->version_id_selected;
+if (is_null($version_selected)) {
+    header('HTTP/1.1 404 No Found');
+    echo "<h1>404 No Found</h1>";
+    echo "<p>No version data with version_id {$version_id_input}</p>";
+    exit;
 }
 
-//versions order by date DESC
-usort($versions, function($v1, $v2) {
-    $date_v1 = $v1->日期 ?? '';
-    $date_v2 = $v2->日期 ?? '';
-    return $date_v2 <=> $date_v1;
-});
-if ($version_id_input == 'latest') {
-    foreach ($versions as $version) {
-        $version_id = $version->版本編號 ?? NULL;
-        if (isset($version_id)) {
-            $version_id_selected = $version_id;
-            $version_selected = $version;
-            break;
-        }
-    }
-}
 $histories = $version_selected->歷程 ?? [];
-$histories = array_reverse($histories);
-//histories order by date DESC
+//histories order by date ASC
 usort($histories, function($h1, $h2) {
     $date_h1 = $h1->會議日期 ?? '';
     $date_h2 = $h2->會議日期 ?? '';
-    return $date_h2 <=> $date_h1;
+    return $date_h1 <=> $date_h2;
 });
+
+$aliases = $law->其他名稱 ?? [];
+$vernaculars = $law->別名 ?? [];
 $show_endpoint = "/law/show/{$law_id}";
 if ($version_id_input != 'latest') {
     $show_endpoint = $show_endpoint . "?version={$version_id_input}";
 }
 ?>
-<?= $this->partial('common/header', ['title' => '法律內容']) ?>
+<?= $this->partial('common/header', ['title' => '經歷過程']) ?>
 <div class="main">
   <section class="page-hero law-details-info">
     <div class="container">
