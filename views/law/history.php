@@ -31,12 +31,7 @@ if (is_null($version_selected)) {
 }
 
 $histories = $version_selected->歷程 ?? [];
-//histories order by date ASC
-usort($histories, function($h1, $h2) {
-    $date_h1 = $h1->會議日期 ?? '';
-    $date_h2 = $h2->會議日期 ?? '';
-    return $date_h1 <=> $date_h2;
-});
+$histories = LawHistoryHelper::getDetailedHistories($histories);
 
 $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
@@ -109,6 +104,37 @@ if ($version_id_input != 'latest') {
                     </div>
                   </div>
                 <?php } ?>
+              </div>
+            </div>
+          </div>
+          <div>
+            <ul class="nav nav-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" href="#">經歷過程</a>
+              </li>
+            </ul>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="item-head">
+                  <span class="title">全部經歷</span>
+                </div>
+                <div class="item-body">
+                  <div class="history-grid">
+                    <div class="grid-head">
+                      相關議案及其提案之條文
+                    </div>
+                    <div class="grid-body">
+                      <?php foreach ($histories as $history) { ?>
+                        <div class="grid-row">
+                          <div class="party-img"></div>
+                          <div class="party"><?= $this->escape($history->proposer) ?></div>
+                          <div class="sections"></div>
+                          <div class="details"></div>
+                        </div>
+                      <?php } ?>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
