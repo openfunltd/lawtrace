@@ -86,5 +86,35 @@ if ($version_id_input != 'latest') {
       </div>
     </div>
   </section>
+  <div class="main-content">
+    <section class="law-details">
+      <div class="container">
+        <div class="law-list-wrapper">
+          <div class="side">
+            <div class="law-sections">
+              <div class="title">
+                選擇版本
+              </div>
+              <div class="side-menu version-menu">
+                <?php foreach ($versions as $version) { ?>
+                  <div class="menu-item level-1">
+                    <?php if ($version->版本編號 == $version_id_input) {?>
+                      <div class="menu-head active">
+                    <?php } else {?>
+                      <div class="menu-head">
+                    <?php }?>
+                      <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                        <?= $this->escape("{$version->日期} {$version->動作}") ?>
+                      </a>
+                    </div>
+                  </div>
+                <?php } ?>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 <?= $this->partial('common/footer') ?>
