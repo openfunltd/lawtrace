@@ -126,8 +126,12 @@ if ($version_id_input != 'latest') {
                     <div class="grid-body">
                       <?php foreach ($histories as $history) { ?>
                         <div class="grid-row">
-                          <div class="party-img"></div>
-                          <div class="party"><?= $this->escape($history->proposer) ?></div>
+                          <div class="party-img">
+                            <?php if (property_exists($history, 'party_img_path')) { ?>
+                              <img src="<?= $history->party_img_path ?>">
+                            <?php } ?>
+                          </div>
+                          <div class="party"><?= $this->escape($history->proposer_or_progress) ?></div>
                           <div class="sections"></div>
                           <div class="details"></div>
                         </div>

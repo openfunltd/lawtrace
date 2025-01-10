@@ -2,7 +2,18 @@
 
 class PartyHelper
 {
-    public static $icon_files = [
+    public static function getImage($input)
+    {
+        $img_paths = self::$img_paths;
+        foreach ($img_paths as $key_name => $path) {
+            if (mb_strpos($input, $key_name) !== false) {
+                return $path;
+            }
+        }
+        return NULL;
+    }
+
+    public static $img_paths = [
         '民主進步黨' => '/static/images/party/dpp.svg',
         '民進黨' => '/static/images/party/dpp.svg',
         '中國國民黨' => '/static/images/party/kmt.svg',
