@@ -132,7 +132,9 @@ if ($version_id_input != 'latest') {
                             <?php } ?>
                           </div>
                           <div class="party"><?= $this->escape($history->proposer_or_progress) ?></div>
-                          <div class="sections"></div>
+                          <?php if (property_exists($history, 'article_numbers')) { ?>
+                            <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
+                          <?php } ?>
                           <div class="details"></div>
                         </div>
                       <?php } ?>

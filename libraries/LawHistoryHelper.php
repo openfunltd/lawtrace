@@ -26,7 +26,7 @@ class LawHistoryHelper
                 }
             }
 
-            if (!isset($bill)) {
+            if (!isset($bill_id) or !isset($bill)) {
                 continue;
             }
 
@@ -55,6 +55,15 @@ class LawHistoryHelper
             if (isset($party_img_path)) {
                 $history->party_img_path = $party_img_path;
             }
+
+            //取得條號 Array: 第一條, 第二十條 => [1, 20]
+            $bill_source = $bill->提案來源 ?? '';
+            $amendment = $bill->對照表 ?? [];
+            $amendment = $amendment[0] ?? new stdClass();
+            if ($bill_source == '委員提案' and !empty($amendment)) {
+                $article_numbers = self::getArticleNumbers($amendment);
+                $history->article_numbers = $article_numbers;
+            }
         }
 
         return $histories;
@@ -69,5 +78,30 @@ class LawHistoryHelper
             }
         }
         return $proposer;
+    }
+
+    private static function getArticleNumbers($amendment)
+    {
+        $type = $amendment->立法種類;
+        $rows = $amendment->rows;
+        $key = '修正'; // if type == '修正條文'
+        if ($type == '增訂條文') {
+            $key = '增訂';
+        }
+        $article_numbers = array_map(function($row) use ($key) {
+            $text = $row->{$key};
+            $text = mb_ereg_replace('　', ' ', $text);
+            $article_number = explode(' ', $text)[0];
+            $article_number = mb_ereg_replace('第', '', $article_number);
+            $article_number = mb_ereg_replace('條', '', $article_number);
+            $article_number_arr = explode('之', $article_number);
+            foreach ($article_number_arr as $idx => $number) {
+                $article_number_arr[$idx] = NumeralTransformHelper::zhtwToArabic($number);
+            }
+            $article_number = implode('-', $article_number_arr);
+            return $article_number;
+        }, $rows);
+
+        return $article_numbers;
     }
 }
