@@ -25,6 +25,7 @@ class PartyHelper
         '親民黨' => '/static/images/party/pfp.svg',
         '社會民主黨' => '/static/images/party/sd.svg',
         '台灣民眾黨' => '/static/images/party/tpp.svg',
+        '民眾黨' => '/static/images/party/tpp.svg',
         '台灣基進' => '/static/images/party/tsp.svg',
         '台灣團結聯盟' => '/static/images/party/tsu.svg',
         '正神名黨' => '/static/images/party/zsm.svg',
