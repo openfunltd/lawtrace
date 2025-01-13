@@ -43,6 +43,7 @@ class LawVersionHelper
 
         $versions = array_map(function ($version){
             $version->民國日期 = self::getMinguoDate($version->日期);
+            $version->民國日期_format2 = self::getMinguoDateFormat2($version->日期);
             return $version;
         }, $versions);
 
@@ -108,5 +109,12 @@ class LawVersionHelper
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "民國 {$minguo} 年 {$month} 月 {$day} 日";
+    }
+
+    public static function getMinguoDateFormat2($version_date)
+    {
+        [$year, $month, $day] = explode('-', $version_date);
+        $minguo = intval($year) - 1911;
+        return "{$minguo}/{$month}/{$day}";
     }
 }
