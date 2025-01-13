@@ -126,6 +126,7 @@ if ($version_id_input != 'latest') {
                       <div class="history-grid">
                         <div class="grid-head">
                           相關議案及其提案之條文 (共 <?= count($timeline->items) ?> 案)
+                          <i class="bi bi-chevron-up icon"></i>
                         </div>
                         <div class="grid-body">
                           <?php foreach ($timeline->items as $history) { ?>
