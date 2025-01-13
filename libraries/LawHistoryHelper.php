@@ -15,7 +15,8 @@ class LawHistoryHelper
             $related_doc = $history->關係文書 ?? [];
             $related_doc = $related_doc[0] ?? new stdClass();
             $bill_id = $related_doc->billNo ?? null;
-            $history->proposer_or_progress = $history->進度;
+            $date = $history->會議日期;
+            $history->會議民國日期 = self::getMinguoDateFormat2($date);
 
             if (isset($bill_id)) {
                 $res = LYAPI::apiQuery("/bill/{$bill_id}","查詢提案詳細資訊 bill_id: {$bill_id}");
@@ -33,7 +34,7 @@ class LawHistoryHelper
             //get proposer or progress title
             $proposer = $bill->{'提案單位/提案委員'} ?? '';
             $proposer = self::trimProposer($proposer);
-            $history->proposer_or_progress = $proposer;
+            $history->proposers_str = $proposer;
 
             //determine party image
             $party_img_path = PartyHelper::getImage($proposer);
@@ -60,7 +61,7 @@ class LawHistoryHelper
             $bill_source = $bill->提案來源 ?? '';
             $amendment = $bill->對照表 ?? [];
             $amendment = $amendment[0] ?? new stdClass();
-            if ($bill_source == '委員提案' and !empty((array)$amendment)) {
+            if (!empty((array)$amendment)) {
                 $article_numbers = self::getArticleNumbers($amendment);
                 $history->article_numbers = $article_numbers;
             }
@@ -109,5 +110,39 @@ class LawHistoryHelper
         }, $rows);
 
         return $article_numbers;
+    }
+
+    public static function groupByTimeline($histories)
+    {
+        $timeline = [];
+        foreach ($histories as $history) {
+            $minguo_date = $history->會議民國日期;
+            $progress = $history->進度;
+            $need_new_segment = true;
+            foreach ($timeline as $timeline_segment) {
+                if ($minguo_date == $timeline_segment->會議民國日期 and $progress == $timeline_segment->進度) {
+                    $timeline_segment->items[] = $history;
+                    $need_new_segment = false;
+                    break;
+                }
+            }
+            if ($need_new_segment) {
+                $timeline[] = (object) [
+                    '會議民國日期' => $minguo_date,
+                    '進度' => $progress,
+                    'items' => [
+                        $history,
+                    ],
+                ];
+            }
+        }
+        return $timeline;
+    }
+
+    public static function getMinguoDateFormat2($version_date)
+    {
+        [$year, $month, $day] = explode('-', $version_date);
+        $minguo = intval($year) - 1911;
+        return "{$minguo}/{$month}/{$day}";
     }
 }

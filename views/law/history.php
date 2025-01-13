@@ -32,6 +32,7 @@ if (is_null($version_selected)) {
 
 $histories = $version_selected->歷程 ?? [];
 $histories = LawHistoryHelper::getDetailedHistories($histories);
+$timelined_histories = LawHistoryHelper::groupByTimeline($histories);
 
 $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
@@ -114,41 +115,46 @@ if ($version_id_input != 'latest') {
               </li>
             </ul>
             <div class="timeline">
-              <div class="timeline-item">
-                <div class="item-head">
-                  <span class="title">全部經歷</span>
-                </div>
-                <div class="item-body">
-                  <div class="history-grid">
-                    <div class="grid-head">
-                      相關議案及其提案之條文
-                    </div>
-                    <div class="grid-body">
-                      <?php foreach ($histories as $history) { ?>
-                        <div class="grid-row">
-                          <div class="party-img">
-                            <?php if (property_exists($history, 'party_img_path')) { ?>
-                              <img src="<?= $history->party_img_path ?>">
-                            <?php } ?>
-                          </div>
-                          <div class="party"><?= $this->escape($history->proposer_or_progress) ?></div>
-                          <?php if (property_exists($history, 'article_numbers')) { ?>
-                            <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
-                          <?php } ?>
-                          <?php if (property_exists($history, 'ppg_url')) { ?>
-                            <div class="details">
-                              <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
-                                議案詳細資訊
-                                <i class="bi bi-arrow-right"></i>
-                              </a>
+              <?php foreach ($timelined_histories as $timeline) { ?>
+                <div class="timeline-item">
+                  <div class="item-head">
+                    <span class="title"><?= $this->escape($timeline->進度) ?></span>
+                    <small><?= $this->escape($timeline->會議民國日期) ?></small>
+                  </div>
+                  <?php if ($timeline->進度 == '一讀') {?>
+                    <div class="item-body">
+                      <div class="history-grid">
+                        <div class="grid-head">
+                          相關議案及其提案之條文 (共 <?= count($timeline->items) ?> 案)
+                        </div>
+                        <div class="grid-body">
+                          <?php foreach ($timeline->items as $history) { ?>
+                            <div class="grid-row">
+                              <div class="party-img">
+                                <?php if (property_exists($history, 'party_img_path')) { ?>
+                                  <img src="<?= $history->party_img_path ?>">
+                                <?php } ?>
+                              </div>
+                              <div class="party"><?= $this->escape($history->proposers_str) ?></div>
+                              <?php if (property_exists($history, 'article_numbers')) { ?>
+                                <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
+                              <?php } ?>
+                              <?php if (property_exists($history, 'ppg_url')) { ?>
+                                <div class="details">
+                                  <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
+                                    議案詳細資訊
+                                    <i class="bi bi-arrow-right"></i>
+                                  </a>
+                                </div>
+                              <?php } ?>
                             </div>
                           <?php } ?>
                         </div>
-                      <?php } ?>
+                      </div>
                     </div>
-                  </div>
+                  <?php } ?>
                 </div>
-              </div>
+              <?php } ?>
             </div>
           </div>
         </div>
