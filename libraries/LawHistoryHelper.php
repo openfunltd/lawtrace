@@ -109,6 +109,18 @@ class LawHistoryHelper
             return $article_number;
         }, $rows);
 
+        //filter out chapters
+        //TODO 確認是否要呈現修改章節名稱
+        $article_numbers = array_filter($article_numbers, function($article_number) {
+            $chapter_units = ['篇', '章', '節', '款', '目'];
+            foreach ($chapter_units as $unit) {
+                if (mb_strpos($article_number, $unit) !== false) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
         return $article_numbers;
     }
 
