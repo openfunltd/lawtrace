@@ -64,6 +64,12 @@ class LawHistoryHelper
                 $article_numbers = self::getArticleNumbers($amendment);
                 $history->article_numbers = $article_numbers;
             }
+
+            //議案詳細資訊連結到議事公報網
+            $ppg_url = $bill->url ?? '';
+            if ($ppg_url != '') {
+                $history->ppg_url = $ppg_url;
+            }
         }
 
         return $histories;

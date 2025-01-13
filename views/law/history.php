@@ -135,7 +135,14 @@ if ($version_id_input != 'latest') {
                           <?php if (property_exists($history, 'article_numbers')) { ?>
                             <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
                           <?php } ?>
-                          <div class="details"></div>
+                          <?php if (property_exists($history, 'ppg_url')) { ?>
+                            <div class="details">
+                              <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
+                                議案詳細資訊
+                                <i class="bi bi-arrow-right"></i>
+                              </a>
+                            </div>
+                          <?php } ?>
                         </div>
                       <?php } ?>
                     </div>
