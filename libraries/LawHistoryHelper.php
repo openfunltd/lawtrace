@@ -60,7 +60,7 @@ class LawHistoryHelper
             $bill_source = $bill->提案來源 ?? '';
             $amendment = $bill->對照表 ?? [];
             $amendment = $amendment[0] ?? new stdClass();
-            if ($bill_source == '委員提案' and !empty($amendment)) {
+            if ($bill_source == '委員提案' and !empty((array)$amendment)) {
                 $article_numbers = self::getArticleNumbers($amendment);
                 $history->article_numbers = $article_numbers;
             }
