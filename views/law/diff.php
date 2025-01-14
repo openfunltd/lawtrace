@@ -39,7 +39,7 @@ if ($version_id_input != 'latest') {
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
 }
 ?>
-<?= $this->partial('common/header', ['title' => '經歷過程']) ?>
+<?= $this->partial('common/header', ['title' => '異動條文']) ?>
 <div class="main">
   <section class="page-hero law-details-info">
     <div class="container">

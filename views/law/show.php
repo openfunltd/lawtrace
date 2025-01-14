@@ -48,9 +48,9 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
 
 $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
-$history_endpoint = "/law/history/{$law_id}";
+$diff_endpoint = "/law/diff/{$law_id}";
 if ($version_id_input != 'latest') {
-    $history_endpoint = $history_endpoint . "?version={$version_id_input}";
+    $diff_endpoint = $diff_endpoint . "?version={$version_id_input}";
 }
 ?>
 <?= $this->partial('common/header', ['title' => '法律內容']) ?>
@@ -88,7 +88,7 @@ if ($version_id_input != 'latest') {
         <a href="#" class="btn btn-outline-primary active">
           瀏覽法律
         </a>
-        <a href="<?= $this->escape($history_endpoint) ?>" class="btn btn-outline-primary">
+        <a href="<?= $this->escape($diff_endpoint) ?>" class="btn btn-outline-primary">
           查看修訂歷程
         </a>
       </div>
