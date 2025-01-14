@@ -1,6 +1,4 @@
 <?php
-use cogpowered\FineDiff\Diff;
-
 $law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
 
@@ -67,13 +65,13 @@ $modified_contents = array_filter($law_contents, function($content) {
 });
 
 $commit = [];
-$fine_diff = new Diff();
 $html_patterns = [
     '<ins>' => '<span class="add">',
     '<\/ins>' => '</span>',
     '<del>' => '<span class="remove">',
     '<\/del>' => '</span>',
 ];
+$amendment_idx = 0;
 foreach ($modified_contents as $content) {
     $modification = new stdClass();
     $article_number = $content->條號;
@@ -117,12 +115,8 @@ foreach ($modified_contents as $content) {
     $article_number = mb_ereg_replace('[ 　]', '', $article_number); //remove 全形與半形空白
     $modification->article_number = $article_number;
     if ($type == 'amendment') {
-        $diff_html = $fine_diff->render($base_text, $modified_text);
-        $diff_html = preg_replace('/\\\\n/', "\n", $diff_html);
-        foreach ($html_patterns as $pattern => $replacement) {
-            $diff_html = mb_ereg_replace($pattern, $replacement, $diff_html);
-        }
-        $modification->diff_html = $diff_html;
+        $modification->amendment_idx = $amendment_idx;
+        $amendment_idx++;
     }
     $modification->reason = $reason;
     $commit[] = $modification; 
@@ -253,11 +247,12 @@ if ($version_id_input != 'latest') {
                    <?= $this->escape($version_selected->民國日期_format2 . ' ' . $version_selected->動作 . '版本') ?>
                  </div>
                </div>
-               <div class="card-body">
-                 <?php if ($modification->type == 'amendment') { ?>
-                    <?php $diff_html = mb_ereg_replace('　', '', $modification->diff_html); ?>
-                    <?= nl2br($diff_html) ?>
-                 <?php } elseif ($modification->type == 'addition') { ?>
+               <?php if (!property_exists($modification, 'amendment_idx')) { ?>
+                 <div class="card-body">
+               <?php } else { ?>
+                 <div class="card-body <?= 'amendment-' . $modification->amendment_idx?>">
+               <?php } ?>
+                 <?php if ($modification->type == 'addition') { ?>
                    <?php $modified_text = mb_ereg_replace('　', '', $modification->modified_text); ?>
                    <span class="add"><?= nl2br($this->escape($modified_text)) ?></span>
                  <?php } elseif ($modification->type == 'deletion') { ?>
@@ -285,3 +280,41 @@ if ($version_id_input != 'latest') {
   </div>
 </div>
 <?= $this->partial('common/footer') ?>
+<?php
+$commit = array_filter($commit, function($modification) {
+    return property_exists($modification, 'amendment_idx');
+});
+?>
+<script
+  type="module"
+  integrity="sha384-OBDIiiw8eyL4gibOdkiy41jBwG6oslrlO4W6aKvgB4b+NP8iIhZ4mW1IOwPGlEhO"
+  crossorigin="anonymous"
+>
+  import Diff from 'https://cdn.jsdelivr.net/npm/text-diff@1.0.1/+esm';
+  window.Diff = Diff;
+</script>
+<script>
+  window.onload = function(){
+    const htmlPatterns = {
+      '<ins>': '<span class="add">',
+      '</ins>': '</span>',
+      '<del>': '<span class="remove">',
+      '</del>': '</span>',
+    };
+    const commit = <?= json_encode($commit) ?>;
+    for (const [idx, modification] of Object.entries(commit)) {
+      const targetClass = 'amendment-' + modification['amendment_idx'];
+      const diff = new Diff();
+      const textDiff = diff.main(modification['base_text'], modification['modified_text']);
+      let diff_in_html = diff.prettyHtml(textDiff);
+      for (const pattern in htmlPatterns) {
+        const replacement = htmlPatterns[pattern];
+        const regex = new RegExp(pattern, 'g');
+        diff_in_html = diff_in_html.replace(regex, replacement);
+      }
+      diff_in_html = diff_in_html.replace(/　/g, '');
+      $('.card-body.' + targetClass).html(diff_in_html);
+    }
+  }
+
+</script>
