@@ -75,11 +75,8 @@
           LawTrace 的資料來源
         </h3>
         <ul>
-          <li>agsadfgahadhah</li>
-          <li>agsadfgahadhah</li>
-          <li>agsadfgahadhah</li>
-          <li>agsadfgahadhah</li>
-          <li>agsadfgahadhah</li>
+          <li><a href="https://lis.ly.gov.tw/lglawc/lglawkm" target="_blank">立法院法律系統</a></li>
+          <li><a href="https://ppg.ly.gov.tw/ppg/" target="_blank">立法院議事暨公報資訊網</a></li>
         </ul>
       </section>
     </div>
