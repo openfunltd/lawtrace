@@ -97,7 +97,7 @@ if ($version_id_input != 'latest') {
                     <?php } else {?>
                       <div class="menu-head">
                     <?php }?>
-                      <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                      <a href="/law/diff/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
                         <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
                       </a>
                     </div>
