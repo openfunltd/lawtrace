@@ -82,22 +82,27 @@ foreach ($modified_contents as $content) {
         $modified_text = mb_substr($modified_text, mb_strlen($article_number) + 1);
     }
     $reason = $content->立法理由;
-    $is_addition = (mb_strpos($reason, '本條新增') !== false);
-    $is_deletion = (mb_strpos($reason, '本條刪除') !== false);
-    $type = 'amendment';
-    $type = ($is_addition) ? 'addition' : $type;
-    $type = ($is_deletion) ? 'deletion' : $type;
 
     $base_content = new stdClass();
     if (!is_null($law_contents_previous)) {
         foreach ($law_contents_previous as $previous_content) {
             $previous_article_number = $previous_content->條號;
-            if (!$is_addition and $previous_article_number == $article_number) {
+            if ($previous_article_number == $article_number) {
                 $base_content = $previous_content;
+                $type = 'amendment';
                 break;
             }
         }
     }
+    if (!isset($type)) {
+        if (empty((array) $base_content)) {
+            $type = 'addition';
+        }
+        if (mb_strpos($reason, '本條刪除') !== false or (mb_strpos($reason, '刪除') !== false and mb_strlen($modified_text) <= 6)) {
+            $type = 'deletion';
+        }
+    }
+
     $modification->type = $type;
     $modification->modified_text = $modified_text;
     if (!empty((array) $base_content)) {
