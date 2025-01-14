@@ -25,31 +25,7 @@
       <a class="logo" href="/">
         LawTrace
       </a>
-      
-      <div class="dropdown">
-        <a href="#" class="lt-nav-items" data-bs-toggle="dropdown">
-          關於
-          <i class="bi bi-chevron-down dropdown-icon"></i>
-        </a>
-        <ul class="dropdown-menu">
-          <li>
-            <a class="dropdown-item" href="#">
-              Menu Item 1
-            </a>
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">
-              Menu Item 2
-            </a>
-          </li>
-          <li>
-            <hr class="dropdown-divider">
-          </li>
-          <li>
-            <a class="dropdown-item" href="#">
-              Menu Item 3
-            </a>
-          </li>
-        </ul>
-      </div>
+      <a href="/about" class="lt-nav-items">
+        關於我們
+      </a>
     </nav>
