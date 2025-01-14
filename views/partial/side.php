@@ -71,12 +71,23 @@ foreach ($layers as $idx => $layer) {
         }
     }
 }
+
 ?>
 <div class="side">
   <div class="law-sections">
     <div class="title">
       選擇章節
     </div>
-    <?= $dom->saveHTML($side_div) ?>
+    <?php if (count($layers) > 0) { ?>
+      <?= $dom->saveHTML($side_div) ?>
+    <?php } elseif (count($layers) == 0) { ?>
+      <div class="side-menu">
+        <div class="menu-item">
+          <div class="menu-head">
+            本法律無章節編目
+          </div>
+        </div>
+      </div>
+    <?php } ?>
   </div>
 </div>
