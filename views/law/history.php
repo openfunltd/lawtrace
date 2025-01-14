@@ -96,7 +96,7 @@ if ($version_id_input != 'latest') {
               <div class="side-menu version-menu">
                 <?php foreach ($versions as $version) { ?>
                   <div class="menu-item level-1">
-                    <?php if ($version->版本編號 == $version_id_input) {?>
+                    <?php if ($version->版本編號 == $version_id_selected) {?>
                       <div class="menu-head active">
                     <?php } else {?>
                       <div class="menu-head">
