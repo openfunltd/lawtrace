@@ -1,4 +1,6 @@
 <?php
+use cogpowered\FineDiff\Diff;
+
 $law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
 
@@ -23,11 +25,88 @@ $versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
 $versions = $versions_data->versions;
 $version_selected = $versions_data->version_selected;
 $version_id_selected = $versions_data->version_id_selected;
+$version_id_previous = $versions_data->version_id_previous;
 if (is_null($version_selected)) {
     header('HTTP/1.1 404 No Found');
     echo "<h1>404 No Found</h1>";
     echo "<p>No version data with version_id {$version_id_input}</p>";
     exit;
+}
+
+$res = LYAPI::apiQuery(
+    "/law_version/{$version_id_selected}/contents",
+    "查詢版本條文 版本：{$version_id_selected}"
+);
+$res_total = $res->total ?? 0;
+if ($res_total == 0) {
+    header('HTTP/1.1 404 No Found');
+    echo "<h1>404 No Found</h1>";
+    echo "<p>No law_conetnts with law_version_id {$version_id_selected}</p>";
+    exit;
+}
+$law_contents = $res->lawcontents;
+
+if (!is_null($version_id_previous)) {
+    $res = LYAPI::apiQuery(
+        "/law_version/{$version_id_previous}/contents",
+        "查詢上一個版本條文 版本：{$version_id_previous}"
+    );
+    if ($res_total == 0) {
+        header('HTTP/1.1 404 No Found');
+        echo "<h1>404 No Found</h1>";
+        echo "<p>No law_conetnts with previous law_version_id {$version_id_previous}</p>";
+        exit;
+    }
+    $law_contents_previous = $res->lawcontents;
+}
+
+//filter contents, retrieve new modified contents in this version
+$modified_contents = array_filter($law_contents, function($content) {
+    return ($content->版本追蹤 == 'new');
+});
+
+$commit = [];
+$fine_diff = new Diff();
+foreach ($modified_contents as $content) {
+    $modification = new stdClass();
+    $article_number = $content->條號;
+    $modified_text = $content->內容;
+    if (mb_strpos($modified_text, $article_number) === 0) {
+        $modified_text = mb_substr($modified_text, mb_strlen($article_number) + 1);
+    }
+    $reason = $content->立法理由;
+    $is_addition = (mb_strpos($reason, '本條新增') !== false);
+    $is_deletion = (mb_strpos($reason, '本條刪除') !== false);
+    $type = 'amendment';
+    $type = ($is_addition) ? 'addition' : $type;
+    $type = ($is_deletion) ? 'deletion' : $type;
+
+    $base_content = new stdClass();
+    if (!is_null($law_contents_previous)) {
+        foreach ($law_contents_previous as $previous_content) {
+            $previous_article_number = $previous_content->條號;
+            if (!$is_addition and $previous_article_number == $article_number) {
+                $base_content = $previous_content;
+                break;
+            }
+        }
+    }
+    $modification->type = $type;
+    $modification->modified_text = $modified_text;
+    if (!empty((array) $base_content)) {
+        $base_text = $base_content->內容;
+        if (mb_strpos($base_text, $article_number) === 0) {
+            $base_text = mb_substr($base_text, mb_strlen($article_number) + 1);
+        }
+        $modification->base_text = $base_text;
+    }
+    $article_number = mb_ereg_replace('[ 　]', '', $article_number); //remove 全形與半形空白
+    $modification->article_number = $article_number;
+    if ($type == 'amendment') {
+        $diff_html = $fine_diff->render($base_text, $modified_text);
+        $modification->diff = preg_replace('/\\\\n/', "\n", $diff_html);
+    }
+    $commit[] = $modification; 
 }
 
 $aliases = $law->其他名稱 ?? [];
@@ -115,6 +194,12 @@ if ($version_id_input != 'latest') {
                 <a class="nav-link" href="<?= $this->escape($history_endpoint) ?>">經歷過程</a>
               </li>
             </ul>
+
+            <div class="law-diff-wrapper">
+              <div class="diff-info">
+                <span class="add">綠色</span>為新增 <span class="remove">紅色</span>為刪除
+              </div>
+            </div>
           </div>
         </div>
       </div>

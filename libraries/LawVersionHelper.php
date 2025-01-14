@@ -11,31 +11,40 @@ class LawVersionHelper
         }
 
         $versions = $res->lawversions ?? [];
-        if ($version_id_input != 'latest') {
-            $invalid_version = true;
-            foreach ($versions as $version) {
-                $version_id = $version->版本編號 ?? NULL;
-                if ($version_id_input == $version_id) {
-                    $invalid_version = false;
-                    $version_id_selected = $version_id;
-                    $version_selected = $version;
-                    break;
-                }
-            }
-        }
-
+        $version_cnt = count($versions);
         usort($versions, function($v1, $v2) {
             $date_v1 = $v1->日期 ?? '';
             $date_v2 = $v2->日期 ?? '';
             return $date_v2 <=> $date_v1;
         });
 
-        if ($version_id_input == 'latest') {
-            foreach ($versions as $version) {
+        if ($version_id_input != 'latest') {
+            $invalid_version = true;
+            foreach ($versions as $idx => $version) {
                 $version_id = $version->版本編號 ?? NULL;
-                if (isset($version_id)) {
+                if ($version_id_input == $version_id) {
+                    $invalid_version = false;
                     $version_id_selected = $version_id;
                     $version_selected = $version;
+                    if ($idx < $version_cnt - 1) {
+                        $version_id_previous = $versions[$idx + 1]->版本編號 ?? NULL;
+                        $version_previous = $versions[$idx + 1];
+                    }
+                    break;
+                }
+            }
+        }
+
+        if ($version_id_input == 'latest') {
+            foreach ($versions as $idx => $version) {
+                $version_id = $version->版本編號 ?? NULL;
+                if (!is_null($version_id)) {
+                    $version_id_selected = $version_id;
+                    $version_selected = $version;
+                    if ($idx < $version_cnt - 1) {
+                        $version_id_previous = $versions[$idx + 1]->版本編號 ?? NULL;
+                        $version_previous = $versions[$idx + 1];
+                    }
                     break;
                 }
             }
@@ -54,12 +63,21 @@ class LawVersionHelper
         }
 
         $version_selected->民國日期 = self::getMinguoDate($version_selected->日期);
+        $version_selected->民國日期_format2 = self::getMinguoDateFormat2($version_selected->日期);
 
-        return (object) [
+        $versions_data = (object) [
             'versions' => $versions,
             'version_selected' => $version_selected,
             'version_id_selected' => $version_id_selected,
         ];
+
+        if (!is_null($version_id_previous)) {
+            $version_previous->民國日期 = self::getMinguoDate($version_previous->日期);
+            $version_previous->民國日期_format2 = self::getMinguoDateFormat2($version_previous->日期);
+            $versions_data->version_id_previous = $version_id_previous;
+        }
+
+        return $versions_data;
     }
 
     public static function getVersionsForSingle($law_id, $version_id_input, $law_content_name)
