@@ -72,9 +72,10 @@ class LawVersionHelper
         ];
 
         if (!is_null($version_id_previous)) {
+            $versions_data->version_id_previous = $version_id_previous;
             $version_previous->民國日期 = self::getMinguoDate($version_previous->日期);
             $version_previous->民國日期_format2 = self::getMinguoDateFormat2($version_previous->日期);
-            $versions_data->version_id_previous = $version_id_previous;
+            $versions_data->version_previous = $version_previous;
         }
 
         return $versions_data;

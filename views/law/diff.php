@@ -24,6 +24,7 @@ $law = $res->data;
 $versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
 $versions = $versions_data->versions;
 $version_selected = $versions_data->version_selected;
+$version_previous = $versions_data->version_previous;
 $version_id_selected = $versions_data->version_id_selected;
 $version_id_previous = $versions_data->version_id_previous;
 if (is_null($version_selected)) {
@@ -106,6 +107,7 @@ foreach ($modified_contents as $content) {
         $diff_html = $fine_diff->render($base_text, $modified_text);
         $modification->diff = preg_replace('/\\\\n/', "\n", $diff_html);
     }
+    $modification->reason = $reason;
     $commit[] = $modification; 
 }
 
@@ -200,6 +202,65 @@ if ($version_id_input != 'latest') {
                 <span class="add">綠色</span>為新增 <span class="remove">紅色</span>為刪除
               </div>
             </div>
+
+           <?php foreach ($commit as $modification) { ?>
+           <div class="law-diff-title">
+             <?= $this->escape($modification->article_number) ?>
+           </div>
+           <div class="law-diff-row">
+             <?php if (in_array($modification->type, ['amendment', 'deletion'])) { ?>
+             <div class="info-card">
+               <div class="card-head">
+                 <div class="title">
+                   原條文
+                   <small>
+                     <?= $this->escape($version_previous->民國日期_format2 . ' ' . $version_previous->動作 . '版本') ?>
+                   </small>
+                 </div>
+               </div>
+               <div class="card-body">
+                 <?php $base_text = mb_ereg_replace('　', '', $modification->base_text); ?>
+                 <?= nl2br($this->escape($base_text)) ?>
+               </div>
+             </div>
+             <?php } elseif ($modification->type == 'addition') { ?>
+               <div class="info-card disabled">
+                 <div class="card-body">
+                   此條文為新增條文，無原條文可比對。
+                 </div>
+               </div>
+             <?php } ?>
+             <div class="info-card">
+               <div class="card-head">
+                 <div class="title">
+                   <?= $this->escape($version_selected->民國日期_format2 . ' ' . $version_selected->動作 . '版本') ?>
+                 </div>
+               </div>
+               <div class="card-body">
+                 <?php if ($modification->type == 'amendment') { ?>
+                    <?php $diff_html = mb_ereg_replace('　', '', $modification->diff); ?>
+                    <?= nl2br($diff_html) ?>
+                 <?php } elseif ($modification->type == 'addition') { ?>
+                   <?php $modified_text = mb_ereg_replace('　', '', $modification->modified_text); ?>
+                   <span class="add"><?= nl2br($this->escape($modified_text)) ?></span>
+                 <?php } elseif ($modification->type == 'deletion') { ?>
+                   <?php $modified_text = mb_ereg_replace('　', '', $modification->modified_text); ?>
+                   <span class="remove-all"><?= nl2br($this->escape($modified_text)) ?></span>
+                 <?php } ?>
+               </div>
+               <div class="card-help">
+                 <div class="help-title">
+                   說明
+                   <i class="bi bi-chevron-down icon"></i>
+                 </div>
+                 <div class="help-body">
+                   <?php $reason = mb_ereg_replace('　', '', $modification->reason); ?>
+                   <?= nl2br($this->escape($reason)) ?>
+                 </div>
+               </div>
+             </div>
+           </div>
+           <?php } ?>
           </div>
         </div>
       </div>
