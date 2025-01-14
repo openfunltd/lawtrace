@@ -68,6 +68,12 @@ $modified_contents = array_filter($law_contents, function($content) {
 
 $commit = [];
 $fine_diff = new Diff();
+$html_patterns = [
+    '<ins>' => '<span class="add">',
+    '<\/ins>' => '</span>',
+    '<del>' => '<span class="remove">',
+    '<\/del>' => '</span>',
+];
 foreach ($modified_contents as $content) {
     $modification = new stdClass();
     $article_number = $content->條號;
@@ -105,7 +111,11 @@ foreach ($modified_contents as $content) {
     $modification->article_number = $article_number;
     if ($type == 'amendment') {
         $diff_html = $fine_diff->render($base_text, $modified_text);
-        $modification->diff = preg_replace('/\\\\n/', "\n", $diff_html);
+        $diff_html = preg_replace('/\\\\n/', "\n", $diff_html);
+        foreach ($html_patterns as $pattern => $replacement) {
+            $diff_html = mb_ereg_replace($pattern, $replacement, $diff_html);
+        }
+        $modification->diff_html = $diff_html;
     }
     $modification->reason = $reason;
     $commit[] = $modification; 
@@ -238,7 +248,7 @@ if ($version_id_input != 'latest') {
                </div>
                <div class="card-body">
                  <?php if ($modification->type == 'amendment') { ?>
-                    <?php $diff_html = mb_ereg_replace('　', '', $modification->diff); ?>
+                    <?php $diff_html = mb_ereg_replace('　', '', $modification->diff_html); ?>
                     <?= nl2br($diff_html) ?>
                  <?php } elseif ($modification->type == 'addition') { ?>
                    <?php $modified_text = mb_ereg_replace('　', '', $modification->modified_text); ?>
