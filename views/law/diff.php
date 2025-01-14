@@ -89,17 +89,19 @@ foreach ($modified_contents as $content) {
             $previous_article_number = $previous_content->條號;
             if ($previous_article_number == $article_number) {
                 $base_content = $previous_content;
-                $type = 'amendment';
                 break;
             }
         }
     }
-    if (!isset($type)) {
-        if (empty((array) $base_content)) {
-            $type = 'addition';
-        }
+
+    //determin type is amendment, addition or deletion
+    if (empty((array) $base_content)) {
+        $type = 'addition';
+    } else {
         if (mb_strpos($reason, '本條刪除') !== false or (mb_strpos($reason, '刪除') !== false and mb_strlen($modified_text) <= 6)) {
             $type = 'deletion';
+        } else {
+            $type = 'amendment';
         }
     }
 
