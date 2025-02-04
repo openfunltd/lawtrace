@@ -1,8 +1,9 @@
 <?php
 $q = $this->q;
+$q_url_encoded = urlencode($q);
 
 $t1 = hrtime(true);
-$res = LYAPI::apiQuery("/laws?q=\"{$q}\"&類別=母法&limit=100", "查詢 laws 關鍵字：{$q}");
+$res = LYAPI::apiQuery("/laws?q=\"{$q_url_encoded}\"&類別=母法&limit=100", "查詢 laws 關鍵字：{$q}");
 $laws = $res->laws;
 
 $laws = array_filter($laws, function($law) {
