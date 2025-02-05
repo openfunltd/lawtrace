@@ -60,7 +60,7 @@ if ($version_id_input != 'latest') {
       <nav class="breadcrumb-wrapper">
         <ol class="breadcrumb">
           <li class="breadcrumb-item">
-            <a href="index.html">
+            <a href="/">
               <i class="bi bi-house-door"></i>
             </a>
           </li>
