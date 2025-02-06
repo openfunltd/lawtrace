@@ -131,7 +131,8 @@ if ($version_id_input != 'latest') {
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
 }
 ?>
-<?= $this->partial('common/header', ['title' => '異動條文']) ?>
+<?php $law_name = $this->escape($law->名稱 ?? ''); ?>
+<?= $this->partial('common/header', ['title' => "{$law_name} - 異動條文"]) ?>
 <div class="main">
   <section class="page-hero law-details-info">
     <div class="container">

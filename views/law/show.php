@@ -53,7 +53,8 @@ if ($version_id_input != 'latest') {
     $diff_endpoint = $diff_endpoint . "?version={$version_id_input}";
 }
 ?>
-<?= $this->partial('common/header', ['title' => '法律內容']) ?>
+<?php $law_name = $this->escape($law->名稱 ?? ''); ?>
+<?= $this->partial('common/header', ['title' => "{$law_name} - 瀏覽法律"]) ?>
 <div class="main">
   <section class="page-hero law-details-info">
     <div class="container">

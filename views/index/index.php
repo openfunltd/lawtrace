@@ -1,4 +1,4 @@
-<?= $this->partial('common/header', ['title' => 'Lawtrace 首頁']) ?>
+<?= $this->partial('common/header', ['title' => 'Lawtrace']) ?>
 <div class="main">
   <section class="page-hero search-form">
     <div class="container container-sm">

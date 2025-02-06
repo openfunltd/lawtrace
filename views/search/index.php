@@ -72,7 +72,7 @@ if ($no_result_from_law_name) {
 $t2 = hrtime(true);
 $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
 ?>
-<?= $this->partial('common/header', ['title' => 'Lawtrace 搜尋']) ?>
+<?= $this->partial('common/header', ['title' => "$q - Lawtrace 搜尋"]) ?>
  <div class="main">
    <section class="page-hero search-form">
      <div class="container container-sm">
