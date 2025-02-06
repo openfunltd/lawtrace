@@ -11,6 +11,32 @@ class LawHistoryHelper
             return $date_h1 <=> $date_h2;
         });
 
+        //batch retrieve bills within histories
+        $bill_ids = [];
+        foreach ($histories as $history) {
+            $related_doc = $history->關係文書 ?? [];
+            $related_doc = $related_doc[0] ?? new stdClass();
+            $bill_id = $related_doc->billNo ?? null;
+            if (isset($bill_id)) {
+                $bill_ids[] = $bill_id;
+            }
+        }
+        //get bills' data within one query
+        $output_fields = [
+            '提案單位/提案委員',
+            '提案人',
+            '屆',
+            '提案來源',
+            '對照表',
+        ];
+        $url = sprintf('/bills?output_fields=%s&議案編號=%s',
+            implode('&output_fields=', $output_fields),
+            implode('&議案編號=', $bill_ids)
+        );
+        $res = LYAPI::apiQuery($url, "整批查詢提案詳細資訊");
+        $res_total = $res->total ?? 0;
+        $bills = ($res_total > 0) ? $res->bills : [];
+
         foreach ($histories as $history) {
             $related_doc = $history->關係文書 ?? [];
             $related_doc = $related_doc[0] ?? new stdClass();
@@ -18,13 +44,13 @@ class LawHistoryHelper
             $date = $history->會議日期;
             $history->會議民國日期 = self::getMinguoDateFormat2($date);
 
-            if (isset($bill_id)) {
-                $res = LYAPI::apiQuery("/bill/{$bill_id}","查詢提案詳細資訊 bill_id: {$bill_id}");
-                $res_error = $res->error ?? true;
-                if (!$res_error) {
-                    $history->bill_id = $bill_id;
-                    $bill = $res->data;
-                }
+            //filter to get desired bill data
+            $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {
+                return $bill->議案編號 === $bill_id;
+            });
+            if (!empty($bill_filtered)) {
+                $bill = reset($bill_filtered);
+                $history->bill_id = $bill_id;
             }
 
             if (!isset($bill_id) or !isset($bill)) {
