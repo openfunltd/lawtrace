@@ -261,16 +261,18 @@ if ($version_id_input != 'latest') {
                    <span class="remove-all"><?= nl2br($this->escape($modified_text)) ?></span>
                  <?php } ?>
                </div>
-               <div class="card-help">
-                 <div class="help-title">
-                   說明
-                   <i class="bi bi-chevron-down icon"></i>
+               <?php $reason = mb_ereg_replace('　', '', $modification->reason); ?>
+               <?php if (trim($reason) != '') { ?>
+                 <div class="card-help">
+                   <div class="help-title">
+                     說明
+                     <i class="bi bi-chevron-down icon"></i>
+                   </div>
+                   <div class="help-body">
+                     <?= nl2br($this->escape($reason)) ?>
+                   </div>
                  </div>
-                 <div class="help-body">
-                   <?php $reason = mb_ereg_replace('　', '', $modification->reason); ?>
-                   <?= nl2br($this->escape($reason)) ?>
-                 </div>
-               </div>
+               <?php } ?>
              </div>
            </div>
            <?php } ?>
