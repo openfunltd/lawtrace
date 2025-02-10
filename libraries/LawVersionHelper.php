@@ -123,6 +123,61 @@ class LawVersionHelper
         return $versions_data;
     }
 
+    public static function getVersionsWithProgresses($law_id, $version_id_input)
+    {
+        $versions_data = self::getVersions($law_id, $version_id_input);
+        $versions = $versions_data->versions;
+        $version_selected = $versions_data->version_selected;
+        $version_id_selected = $versions_data->version_id_selected;
+
+        $term_dates = LyDateHelper::$term_dates;
+        $versions_in_terms = array_fill_keys(array_keys($term_dates), []);
+        foreach ($versions as $version) {
+            $version_date = $version->日期;
+            foreach ($term_dates as $term => $interval) {
+                if ($interval[0] <= $version_date and $version_date <= $interval[1]) {
+                    $versions_in_terms[$term][] = $version;
+                    if ($version_id_selected == $version->版本編號) {
+                        $term_selected = $term;
+                    }
+                    break;
+                }
+            }
+        }
+
+        foreach ($versions_in_terms as $term => $versions) {
+            $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
+            $bill_log = $res->歷程[0]->bill_log;
+            $has_progress = !empty($bill_log);
+            if ($has_progress) {
+                $version_id = "{$law_id}:{$term}-progress";
+                $version = (object) [
+                    '版本編號' => $version_id,
+                    'bill_log' => $bill_log,
+                ];
+                $versions_in_terms[$term][] = $version;
+                if (is_null($version_id_selected) and $version_id_input == $version_id) {
+                    $version_selected = $version;
+                    $version_id_selected = $version_id;
+                    $term_selected = $term;
+                }
+            }
+        }
+
+        //filter out term with no version to choose
+        $versions_in_terms = array_filter($versions_in_terms, function($versions) {
+            return !empty($versions);
+        });
+
+        //repack versions_data
+        $versions_data->versions_in_terms = $versions_in_terms;
+        $versions_data->version_selected = $version_selected;
+        $versions_data->version_id_selected = $version_id_selected;
+        $versions_data->term_selected = $term_selected;
+
+        return $versions_data;
+    }
+
     public static function getMinguoDate($version_date)
     {
         [$year, $month, $day] = explode('-', $version_date);

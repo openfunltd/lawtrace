@@ -19,10 +19,12 @@ if ($res_error) {
 }
 $law = $res->data;
 
-$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+$versions_data = LawVersionHelper::getVersionsWithProgresses($law_id, $version_id_input);
 $versions = $versions_data->versions;
+$versions_in_terms = $versions_data->versions_in_terms;
 $version_selected = $versions_data->version_selected;
 $version_id_selected = $versions_data->version_id_selected;
+$term_selected = $versions_data->term_selected;
 if (is_null($version_selected)) {
     header('HTTP/1.1 404 No Found');
     echo "<h1>404 No Found</h1>";
@@ -95,16 +97,26 @@ if ($version_id_input != 'latest') {
                 選擇版本
               </div>
               <div class="side-menu version-menu">
-                <?php foreach ($versions as $version) { ?>
+                <?php foreach ($versions_in_terms as $term => $versions) { ?>
                   <div class="menu-item level-1">
-                    <?php if ($version->版本編號 == $version_id_selected) {?>
-                      <div class="menu-head active">
-                    <?php } else {?>
-                      <div class="menu-head">
-                    <?php }?>
-                      <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
-                        <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
-                      </a>
+                    <div class="menu-head">
+                      第<?= $term ?>屆
+                      <i class="bi icon bi-chevron-up"></i>
+                    </div>
+                    <div class="menu-body">
+                      <?php foreach ($versions as $version) { ?>
+                        <div class="menu-item level-3">
+                          <div class="menu-head <?= ($version->版本編號 == $version_id_selected) ? 'active' : '' ?>">
+                            <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                              <?php if (property_exists($version, '動作')) { ?>
+                                <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
+                              <?php } else { ?>
+                                尚未議決議案
+                              <?php } ?>
+                            </a>
+                          </div>
+                        </div>
+                      <?php } ?>
                     </div>
                   </div>
                 <?php } ?>
