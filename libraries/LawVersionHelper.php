@@ -153,7 +153,7 @@ class LawVersionHelper
                 $version_id = "{$law_id}:{$term}-progress";
                 $version = (object) [
                     '版本編號' => $version_id,
-                    'bill_log' => $bill_log,
+                    '歷程' => $bill_log,
                 ];
                 $versions_in_terms[$term][] = $version;
                 if (is_null($version_id_selected) and $version_id_input == $version_id) {

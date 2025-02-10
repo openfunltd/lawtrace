@@ -15,7 +15,9 @@ class LawHistoryHelper
         $bill_ids = [];
         foreach ($histories as $history) {
             $related_doc = $history->關係文書 ?? [];
-            $related_doc = $related_doc[0] ?? new stdClass();
+            if (is_array($related_doc)) {
+                $related_doc = $related_doc[0] ?? new stdClass();
+            }
             $bill_id = $related_doc->billNo ?? null;
             if (isset($bill_id)) {
                 $bill_ids[] = $bill_id;
@@ -39,7 +41,9 @@ class LawHistoryHelper
 
         foreach ($histories as $history) {
             $related_doc = $history->關係文書 ?? [];
-            $related_doc = $related_doc[0] ?? new stdClass();
+            if (is_array($related_doc)) {
+                $related_doc = $related_doc[0] ?? new stdClass();
+            }
             $bill_id = $related_doc->billNo ?? null;
             $date = $history->會議日期;
             $history->會議民國日期 = self::getMinguoDateFormat2($date);
