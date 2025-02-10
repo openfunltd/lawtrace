@@ -40,7 +40,7 @@ $aliases = $law->其他名稱 ?? [];
 $vernaculars = $law->別名 ?? [];
 $show_endpoint = "/law/show/{$law_id}";
 $diff_endpoint = "/law/diff/{$law_id}";
-if ($version_id_input != 'latest') {
+if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === false) {
     $show_endpoint = $show_endpoint . "?version={$version_id_input}";
     $diff_endpoint = $diff_endpoint . "?version={$version_id_input}";
 }
