@@ -25,7 +25,7 @@
     <div class="container container-sm about-law-trace">
       <section class="concept">
         <h2 class="title">
-          一站式地查詢法律相關資料
+          降低倡議團體、媒體、立法團隊取得資料的門檻
         </h2>
         <div class="desc">
           法律相關的資料時常散落在各處，找起來挺不簡單的，所以 LawTrace 將資訊彙整在一處，讓找尋資料時，能少開幾個分頁、更有效率。祝查找愉快！
