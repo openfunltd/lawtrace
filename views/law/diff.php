@@ -59,6 +59,12 @@ if (!is_null($version_id_previous)) {
     $law_contents_previous = $res->lawcontents;
 }
 
+$selected_version_law_name = $law_contents[0]->內容;
+if (!is_null($law_contents_previous)) {
+    $previous_law_name = $law_contents_previous[0]->內容;
+}
+$law_name_changed_flag = (isset($previous_law_name) and ($selected_version_law_name != $previous_law_name));
+
 //filter contents, retrieve new modified contents in this version
 $modified_contents = array_filter($law_contents, function($content) {
     return ($content->版本追蹤 == 'new');
@@ -215,6 +221,30 @@ if ($version_id_input != 'latest') {
               </div>
             </div>
 
+            <?php if ($law_name_changed_flag) { ?>
+              <div class="law-diff-title">法律名稱</div>
+              <div class="law-diff-row">
+                <div class="info-card">
+                  <div class="card-head">
+                    <div class="title">
+                      原名稱
+                      <small>
+                        <?= $this->escape($version_previous->民國日期_format2 . ' ' . $version_previous->動作 . '版本') ?>
+                      </small>
+                    </div>
+                  </div>
+                  <div class="card-body big"><?= $this->escape($previous_law_name) ?></div>
+                </div>
+                <div class="info-card">
+                  <div class="card-head">
+                    <div class="title">
+                      <?= $this->escape($version_selected->民國日期_format2 . ' ' . $version_selected->動作 . '版本') ?>
+                    </div>
+                  </div>
+                  <div class="card-body big law-name-diff"></div>
+                </div>
+              </div>
+            <?php } ?>
            <?php foreach ($commit as $modification) { ?>
            <div class="law-diff-title">
              <?= $this->escape($modification->article_number) ?>
@@ -297,27 +327,41 @@ $commit = array_filter($commit, function($modification) {
   window.Diff = Diff;
 </script>
 <script>
-  window.onload = function(){
+  function swapHtml(diffHtml){
     const htmlPatterns = {
       '<ins>': '<span class="add">',
       '</ins>': '</span>',
       '<del>': '<span class="remove">',
       '</del>': '</span>',
     };
+    for (const pattern in htmlPatterns) {
+      const replacement = htmlPatterns[pattern];
+      const regex = new RegExp(pattern, 'g');
+      diffHtml = diffHtml.replace(regex, replacement);
+    }
+    return diffHtml;
+  }
+
+  window.onload = function(){
     const commit = <?= json_encode($commit) ?>;
     for (const [idx, modification] of Object.entries(commit)) {
       const targetClass = 'amendment-' + modification['amendment_idx'];
       const diff = new Diff();
       const textDiff = diff.main(modification['base_text'], modification['modified_text']);
-      let diff_in_html = diff.prettyHtml(textDiff);
-      for (const pattern in htmlPatterns) {
-        const replacement = htmlPatterns[pattern];
-        const regex = new RegExp(pattern, 'g');
-        diff_in_html = diff_in_html.replace(regex, replacement);
-      }
-      diff_in_html = diff_in_html.replace(/　/g, '');
-      $('.card-body.' + targetClass).html(diff_in_html);
+      let diffHtml = diff.prettyHtml(textDiff);
+      diffHtml = swapHtml(diffHtml);
+      diffHtml = diffHtml.replace(/　/g, '');
+      $('.card-body.' + targetClass).html(diffHtml);
     }
+    <?php if ($law_name_changed_flag) { ?>
+      const previousLawName = '<?= $this->escape($previous_law_name) ?>';
+      const selectedVersionLawName = '<?= $this->escape($selected_version_law_name) ?>';
+      const diff = new Diff();
+      const lawNameDiff = diff.main(previousLawName, selectedVersionLawName);
+      let lawNameDiffHtml = diff.prettyHtml(lawNameDiff);
+      lawNameDiffHtml = swapHtml(lawNameDiffHtml);
+      $('.law-name-diff').html(lawNameDiffHtml);
+    <?php } ?>
   }
 
 </script>
