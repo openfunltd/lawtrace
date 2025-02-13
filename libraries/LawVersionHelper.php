@@ -2,7 +2,7 @@
 
 class LawVersionHelper
 {
-    public static function getVersions($law_id, $version_id_input)
+    public static function getVersionsData($law_id, $version_id_input)
     {
         $res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
         $res_total = $res->total ?? 0;
@@ -56,9 +56,31 @@ class LawVersionHelper
             return $version;
         }, $versions);
 
+        $term_dates = LyDateHelper::$term_dates;
+        $versions_in_terms = array_fill_keys(array_keys($term_dates), []);
+        foreach ($versions as $version) {
+            $version_date = $version->日期;
+            foreach ($term_dates as $term => $interval) {
+                if ($interval[0] <= $version_date and $version_date <= $interval[1]) {
+                    $versions_in_terms[$term][] = $version;
+                    if ($version_id_selected == $version->版本編號) {
+                        $term_selected = $term;
+                    }
+                    break;
+                }
+            }
+        }
+
+        //filter out term with no version to choose
+        $versions_in_terms_filtered = array_filter($versions_in_terms, function($versions) {
+            return !empty($versions);
+        });
+
         if ($invalid_version) {
             return (object) [
                 'versions' => $versions,
+                'versions_in_terms' => $versions_in_terms,
+                'versions_in_terms_filtered' => $versions_in_terms_filtered,
             ];
         }
 
@@ -67,6 +89,8 @@ class LawVersionHelper
 
         $versions_data = (object) [
             'versions' => $versions,
+            'versions_in_terms' => $versions_in_terms,
+            'versions_in_terms_filtered' => $versions_in_terms_filtered,
             'version_selected' => $version_selected,
             'version_id_selected' => $version_id_selected,
         ];
@@ -83,7 +107,7 @@ class LawVersionHelper
 
     public static function getVersionsForSingle($law_id, $version_id_input, $law_content_name)
     {
-        $versions_data = self::getVersions($law_id, $version_id_input);
+        $versions_data = self::getVersionsData($law_id, $version_id_input);
         $versions = $versions_data->versions;
         $version_id_selected = $versions_data->version_id_selected;
         if (is_null($versions)) {
@@ -125,25 +149,12 @@ class LawVersionHelper
 
     public static function getVersionsWithProgresses($law_id, $version_id_input)
     {
-        $versions_data = self::getVersions($law_id, $version_id_input);
-        $versions = $versions_data->versions;
+        $versions_data = self::getVersionsData($law_id, $version_id_input);
+        $versions_in_terms = $versions_data->versions_in_terms;
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
 
         $term_dates = LyDateHelper::$term_dates;
-        $versions_in_terms = array_fill_keys(array_keys($term_dates), []);
-        foreach ($versions as $version) {
-            $version_date = $version->日期;
-            foreach ($term_dates as $term => $interval) {
-                if ($interval[0] <= $version_date and $version_date <= $interval[1]) {
-                    $versions_in_terms[$term][] = $version;
-                    if ($version_id_selected == $version->版本編號) {
-                        $term_selected = $term;
-                    }
-                    break;
-                }
-            }
-        }
 
         foreach ($versions_in_terms as $term => $versions) {
             $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");

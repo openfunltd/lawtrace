@@ -19,8 +19,8 @@ if ($res_error) {
 }
 $law = $res->data;
 
-$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
-$versions = $versions_data->versions;
+$versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
+$versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
 $version_selected = $versions_data->version_selected;
 $version_previous = $versions_data->version_previous;
 $version_id_selected = $versions_data->version_id_selected;
@@ -189,16 +189,28 @@ if ($version_id_input != 'latest') {
                 選擇版本
               </div>
               <div class="side-menu version-menu">
-                <?php foreach ($versions as $version) { ?>
+                <?php $is_current_term = true; ?>
+                <?php foreach ($versions_in_terms_filtered as $term => $versions) { ?>
                   <div class="menu-item level-1">
-                    <?php if ($version->版本編號 == $version_id_selected) {?>
-                      <div class="menu-head active">
-                    <?php } else {?>
-                      <div class="menu-head">
-                    <?php }?>
-                      <a href="/law/diff/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
-                        <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
-                      </a>
+                    <div class="menu-head">
+                      <?php if ($is_current_term) { ?>
+                        第<?= $term ?>屆 (目前屆期)
+                        <?php $is_current_term = false; ?>
+                      <?php } else { ?>
+                        第<?= $term ?>屆
+                      <?php } ?>
+                      <i class="bi icon bi-chevron-up"></i>
+                    </div>
+                    <div class="menu-body">
+                      <?php foreach ($versions as $version) { ?>
+                        <div class="menu-item level-3">
+                          <div class="menu-head <?= ($version->版本編號 == $version_id_selected) ? 'active' : '' ?>">
+                            <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                              <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
+                            </a>
+                          </div>
+                        </div>
+                      <?php } ?>
                     </div>
                   </div>
                 <?php } ?>

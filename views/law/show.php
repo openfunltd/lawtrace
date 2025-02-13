@@ -19,7 +19,7 @@ if ($res_error) {
 }
 
 $law = $res->data;
-$versions_data = LawVersionHelper::getVersions($law_id, $version_id_input);
+$versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
 $versions = $versions_data->versions;
 $version_selected = $versions_data->version_selected;
 $version_id_selected = $versions_data->version_id_selected;
