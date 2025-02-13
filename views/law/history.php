@@ -97,10 +97,16 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                 選擇版本
               </div>
               <div class="side-menu version-menu">
+                <?php $is_current_term = true; ?>
                 <?php foreach ($versions_in_terms as $term => $versions) { ?>
                   <div class="menu-item level-1">
                     <div class="menu-head">
-                      第<?= $term ?>屆
+                      <?php if ($is_current_term) { ?>
+                        第<?= $term ?>屆 (目前屆期)
+                        <?php $is_current_term = false; ?>
+                      <?php } else { ?>
+                        第<?= $term ?>屆
+                      <?php } ?>
                       <i class="bi icon bi-chevron-up"></i>
                     </div>
                     <div class="menu-body">
