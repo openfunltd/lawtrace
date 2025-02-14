@@ -23,53 +23,6 @@
 
   <div class="main-content">
     <div class="container container-sm about-law-trace">
-      <section class="concept">
-        <h2 class="title">
-          降低倡議團體、媒體、立法團隊取得資料的門檻
-        </h2>
-        <div class="desc">
-          法律相關的資料時常散落在各處，找起來挺不簡單的，所以 LawTrace 將資訊彙整在一處，讓找尋資料時，能少開幾個分頁、更有效率。祝查找愉快！
-        </div>
-      </section>
-
-      <section class="features">
-        <div class="feature-item">
-          <div class="icon">
-            <img src="static/images/feature1.svg" alt="瀏覽各版本的法律內容">
-          </div>
-          <div class="title">
-            瀏覽各版本的法律內容
-          </div>
-          <div class="desc">
-            從新增條文到後續所有修正版本，均可一覽無遺，快速掌握條文的演變過程。
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="icon">
-            <img src="static/images/feature2.svg" alt="查看修訂歷程">
-          </div>
-          <div class="title">
-            查看修訂歷程
-          </div>
-          <div class="desc">
-            一覽法律/法條修訂過程中變更的細節，以及經歷的流程，如：一二三讀、審查會議、公聽會等等。
-          </div>
-        </div>
-
-        <div class="feature-item">
-          <div class="icon">
-            <img src="static/images/feature3.svg" alt="比較相關議案/條文">
-          </div>
-          <div class="title">
-            比較相關議案/條文
-          </div>
-          <div class="desc">
-            將各議案中的條文草案或不同版本的條文並排呈現，比較差異。
-          </div>
-        </div>
-      </section>
-
       <section class="refer">
         <h3 class="title">
           LawTrace 的資料來源

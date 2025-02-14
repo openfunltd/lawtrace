@@ -17,9 +17,53 @@
           專案緣起
         </h2>
         <div class="desc">
-          <p>我們透過研究發現，即使是倡議團體、媒體記者、立委助理、事實查核團體等經常查詢立法院資料的專業工作者，在檢索法案資料時，依舊需要耗費大量時間，跨越多個網站與開啟一長串的分頁，或是埋首在數百頁的文件中才能找到所需資訊。</p>
+          <p>我們<a href="https://openfun.tw/ly-user-study/" target="_blank">透過研究</a>發現，即使是倡議團體、媒體記者、立委助理、事實查核團體等經常查詢立法院資料的專業工作者，在檢索法案資料時，依舊需要耗費大量時間，跨越多個網站與開啟一長串的分頁，或是埋首在數百頁的文件中才能找到所需資訊。</p>
           <p>對於不常使用立法院網站的一般民眾來說，想查法案資料更是困難重重。資料難以取得，背離立法院公開資料的初衷，公民因此難以關注修法進程，民主精神難以落實。</p>
-          <p>完整研究報告可<a href="https://openfun.tw/ly-user-study/" target="_blank">由此下載</a>。</p>
+        </div>
+      </section>
+      <section class="concept">
+        <h2 class="title">
+          降低倡議團體、媒體、立法團隊取得資料的門檻
+        </h2>
+        <div class="desc">
+          LawTrace 將資訊彙整在一處。找尋資料時，我們可以少開幾個分頁、更有效率，查找的更愉快！
+        </div>
+      </section>
+      <section class="features">
+        <div class="feature-item">
+          <div class="icon">
+            <img src="static/images/feature1.svg" alt="瀏覽各版本的法律內容">
+          </div>
+          <div class="title">
+            瀏覽各版本的法律內容
+          </div>
+          <div class="desc">
+            從新增條文到後續所有修正版本，均可一覽無遺，快速掌握條文的演變過程。
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="icon">
+            <img src="static/images/feature2.svg" alt="查看修訂歷程">
+          </div>
+          <div class="title">
+            查看修訂歷程
+          </div>
+          <div class="desc">
+            一覽法律/法條修訂過程中變更的細節，以及經歷的流程，如：一二三讀、審查會議、公聽會等等。
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="icon">
+            <img src="static/images/feature3.svg" alt="比較相關議案/條文">
+          </div>
+          <div class="title">
+            比較相關議案/條文
+          </div>
+          <div class="desc">
+            將各議案中的條文草案或不同版本的條文並排呈現，比較差異。
+          </div>
         </div>
       </section>
       <section class="concept">
