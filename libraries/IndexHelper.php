@@ -2,6 +2,81 @@
 
 class IndexHelper
 {
+    public static function getExammedLaws()
+    {
+        $url = 'https://v2.ly.govapi.tw/bills/?提案來源=審查報告&議案類別=法律案&sort=提案日期&output_fields=法律編號&output_fields=議案名稱&output_fields=提案日期&output_fields=議案狀態&output_fields=提案單位/提案委員&output_fields=議案編號';
+        $ret = json_decode(file_get_contents($url));
+        $laws = [];
+        foreach ($ret->bills as $bill) {
+            if (!($bill->{'法律編號:str'}[0] ?? false)) {
+                continue;
+            }
+            $laws[] = $bill;
+        }
+        return $laws;
+    }
+
+    public static function getExammingLaws()
+    {
+        $url = 'https://v2.ly.govapi.tw/meets?會議種類=委員會&limit=100';
+        $ret = json_decode(file_get_contents($url));
+        $meet_laws = [];
+        $bills = [];
+        foreach ($ret->meets as $meet) {
+            if (!($meet->議事網資料 ?? false)) {
+                continue;
+            }
+            $meet_id = $meet->會議代碼;
+            $laws = [];
+            foreach ($meet->議事網資料 as $data) {
+                foreach ($data->關係文書->議案 ?? [] as $bill) {
+                    if (!($bill->法律編號 ?? false)) {
+                        continue;
+                    }
+                    $law_id = $bill->法律編號[0];
+                    if (!array_key_exists("{$meet_id}-{$law_id}", $meet_laws)) {
+                        $meet_laws["{$meet_id}-{$law_id}"] = [
+                            'law_id' => $law_id,
+                            'law_name' => $bill->{'法律編號:str'}[0],
+                            'meet' => $meet,
+                            'status' => '審查中',
+                            'proposors' => [],
+                            'bills' => [],
+                        ];
+                    }
+                    $meet_laws["{$meet_id}-{$law_id}"]['bills'][] = $bill->議案編號;
+                    $bills[$bill->議案編號] = null;
+                }
+            }
+        }
+
+        foreach (array_chunk(array_keys($bills), 100) as $chunked_bills) {
+            $bill_params = array_map(function ($bill) {
+                return "議案編號={$bill}";
+            }, $chunked_bills);
+
+            $bill_data = json_decode(file_get_contents('https://v2.ly.govapi.tw/bills?limit=300&' . implode('&', $bill_params)));
+            foreach ($bill_data->bills as $bill) {
+                $bills[$bill->議案編號] = $bill;
+            }
+        }
+        foreach ($meet_laws as $key => $meet_law) {
+            foreach ($meet_law['bills'] as $bill_id) {
+                $meet_laws[$key]['bills'][] = $bills[$bill_id];
+                if ($bills[$bill_id]->議案狀態 == '審查完畢') {
+                    $meet_laws[$key]['status'] = '審查完畢';
+                }
+
+                if ($bills[$bill_id]->提案人[0] ?? false) {
+                    $meet_laws[$key]['proposors'][] = $bills[$bill_id]->提案人[0];
+                } else {
+                    $meet_laws[$key]['proposors'][] = $bills[$bill_id]->{'提案單位/提案委員'};
+                }
+            }
+        }
+        return $meet_laws;
+    }
+
     public static function getThirdReadList()
     {
         $limit = 100;

@@ -53,46 +53,16 @@
             <div class="refer">
               動態資訊來源：立法院議事暨公報資訊網
             </div>
-            <a href="#" class="law">
+            <?php foreach ($this->exammed_laws as $law) { ?>
+            <a href="/law/compare?source=bill:<?= $law->議案編號 ?>" class="law">
               <div class="title">
-                野生動物保育法
+                  <?= $this->escape($law->{'法律編號:str'}[0]) ?>
               </div>
               <div class="date">
-                審查報告出爐日期：113/08/07
+                  審查報告出爐日期：<?= LawVersionHelper::getMinguoDate($law->提案日期) ?>
               </div>
             </a>
-            <a href="#" class="law">
-              <div class="title">
-                國家運動產業發展中心設置條例
-              </div>
-              <div class="date">
-                審查報告出爐日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                運動部全民運動署組織法
-              </div>
-              <div class="date">
-                審查報告出爐日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                壯世代政策與產業發展促進法
-              </div>
-              <div class="date">
-                審查報告出爐日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                野生動物保育法
-              </div>
-              <div class="date">
-                審查報告出爐日期：113/08/07
-              </div>
-            </a>
+            <?php } ?>
           </div>
           <div class="law-status-info-list">
             <span class="tag tag-brown">
@@ -101,61 +71,19 @@
             <div class="refer">
               動態資訊來源：立法院議事暨公報資訊網
             </div>
+            <?php foreach ($this->examming_laws as $law) { ?>
             <a href="#" class="law">
               <div class="title">
-                野生動物保育法
+                  <?= $this->escape($law['law_name']) ?>
               </div>
               <div class="committee">
-                審查委員會：ＯＯＯＯ委員會
+                  審查委員會：<?= $this->escape(implode(',', $law['meet']->{'委員會代號:str'})) ?>
               </div>
               <div class="date">
-                開會日期：113/08/07
+              開會日期：<?= LawVersionHelper::getMinguoDate($law['meet']->日期[0]) ?>
               </div>
             </a>
-            <a href="#" class="law">
-              <div class="title">
-                國家運動產業發展中心設置條例
-              </div>
-              <div class="committee">
-                審查委員會：ＯＯＯＯ委員會
-              </div>
-              <div class="date">
-                開會日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                運動部全民運動署組織法
-              </div>
-              <div class="committee">
-                審查委員會：ＯＯＯＯ委員會
-              </div>
-              <div class="date">
-                開會日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                壯世代政策與產業發展促進法
-              </div>
-              <div class="committee">
-                審查委員會：ＯＯＯＯ委員會
-              </div>
-              <div class="date">
-                開會日期：113/08/07
-              </div>
-            </a>
-            <a href="#" class="law">
-              <div class="title">
-                野生動物保育法
-              </div>
-              <div class="committee">
-                審查委員會：ＯＯＯＯ委員會
-              </div>
-              <div class="date">
-                開會日期：113/08/07
-              </div>
-            </a>
+            <?php } ?>
           </div>
         </div>
       </section>
