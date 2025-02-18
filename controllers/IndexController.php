@@ -5,6 +5,7 @@ class IndexController extends MiniEngine_Controller
     public function indexAction()
     {
         $this->view->app_name = getenv('APP_NAME');
+        $this->view->third_read_laws = IndexHelper::getThirdReadList();
     }
 
     public function robotsAction()
