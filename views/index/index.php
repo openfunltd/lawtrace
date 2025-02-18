@@ -72,7 +72,7 @@
               動態資訊來源：立法院議事暨公報資訊網
             </div>
             <?php foreach ($this->examming_laws as $law) { ?>
-            <a href="#" class="law">
+            <a href="/law/compare?source=meet:<?= $law['meet']->會議代碼 ?>:<?= $law['law_id'] ?>" class="law">
               <div class="title">
                   <?= $this->escape($law['law_name']) ?>
               </div>
