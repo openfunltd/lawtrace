@@ -23,7 +23,8 @@
   <div class="wrapper">
     <nav class="lt-navbar">
       <a class="logo" href="/">
-        LawTrace
+        <img src="/static/images/logo_b.svg" alt="LawTrace">
+        立法歷程查詢
       </a>
       <a href="/about" class="lt-nav-items">
         關於我們
