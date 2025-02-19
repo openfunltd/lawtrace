@@ -5,6 +5,9 @@ function init () {
   const block = 'd-block';
   const show = 'show';
 
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+
   // 顯示範圍區塊下拉選單
   $(document).on('click', '.dropdown-select .selected-item', (event) => {
     const select = $(event.currentTarget.parentNode);
@@ -63,6 +66,38 @@ function init () {
       icon.removeClass(openIcon).addClass(closeIcon);
       body.addClass(hide);
     }
+  });
+
+  // 比較議案/條文 的表格分為上下兩塊，在此將上下設為同步滑動
+  const compareLawDiffHeaderRow = document.querySelector('.law-compare-wrapper .law-diff-header-row');
+  const compareLawDiffRow = document.querySelector('.law-compare-wrapper .law-diff-row:not(.law-diff-header-row)');
+
+  if (compareLawDiffHeaderRow && compareLawDiffRow) {
+    compareLawDiffHeaderRow.addEventListener('scroll', (event) => {
+      compareLawDiffRow.scrollLeft = event.target.scrollLeft;
+    });
+    compareLawDiffRow.addEventListener('scroll', (event) => {
+      compareLawDiffHeaderRow.scrollLeft = event.target.scrollLeft;
+    });
+  }
+
+  const smallPageHero = $('.small-page-hero');
+  const mainContent = $('.main-content');
+
+  if (smallPageHero.length && mainContent.length) {
+    window.addEventListener('scroll', () => {
+      const mainContentY = mainContent[0].offsetTop - smallPageHero[0].offsetHeight - 60;
+
+      if (document.documentElement.scrollTop > mainContentY) {
+        $('.small-page-hero').addClass('active');
+      } else {
+        $('.small-page-hero').removeClass('active');
+      }
+    });
+  }
+
+  $('.add-compare-target, .set-compare-target').on('click', () => {
+    $('.compare-target-modal').modal('show');
   });
 }
 
