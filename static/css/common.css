@@ -20882,7 +20882,7 @@ h6, .h6 {
 }
 .law-diff-row .law-diff-head .title {
   white-space: nowrap;
-  overflow: scroll;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 .law-diff-row .law-diff-head .title small, .law-diff-row .law-diff-head .title .small {
@@ -20890,7 +20890,7 @@ h6, .h6 {
   font-size: var(--Font-Small);
   font-weight: 400;
   white-space: nowrap;
-  overflow: scroll;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 .law-diff-row .law-diff-head .dropdown-menu {
@@ -20959,7 +20959,7 @@ h6, .h6 {
 }
 .law-compare-wrapper .compare-range .range-info > * {
   white-space: nowrap;
-  overflow: scroll;
+  overflow: hidden;
   text-overflow: ellipsis;
 }
 .law-compare-wrapper .compare-range .options {
