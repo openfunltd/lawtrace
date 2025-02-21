@@ -60,8 +60,7 @@ class LawController extends MiniEngine_Controller
         }, $versions);
 
         // 整合出對照表需要的資料
-        $diff = DiffHelper::mergeVersionsToTable($versions);
-
+        $this->view->diff = DiffHelper::mergeVersionsToTable($versions);
         $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
     }
 }
