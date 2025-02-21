@@ -1,9 +1,9 @@
 <?php
 $this->aliases = $this->law->其他名稱 ?? [];
 $this->vernaculars = $this->law->別名 ?? [];
-$this->diff_endpoint = "/law/diff/{$law_id}";
-if ($version_id_input != 'latest') {
-    $this->diff_endpoint = $this->diff_endpoint . "?version={$version_id_input}";
+$this->diff_endpoint = "/law/diff/{$this->law_id}";
+if ($this->version_id_input != 'latest') {
+    $this->diff_endpoint = $this->diff_endpoint . "?version={$this->version_id_input}";
 }
 ?>
     <section class="page-hero law-details-info">

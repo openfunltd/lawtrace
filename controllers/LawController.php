@@ -43,7 +43,8 @@ class LawController extends MiniEngine_Controller
 
         // 透過議案編號取得版本資訊
         $all_versions = DiffHelper::getVersionsFromBillNos($billNos);
-        $law_id = $all_versions[0]->law_id;
+        $this->view->law_id = $law_id = $all_versions[0]->law_id;
+        $this->view->version_id_input = 'latest';
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表
         if ($_GET['version'] ?? false) {
             $versions = array_filter($all_versions, function ($version) {
