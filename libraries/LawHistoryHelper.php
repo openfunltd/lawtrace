@@ -16,7 +16,7 @@ class LawHistoryHelper
             "/legislators?屆={$term_selected}",
             "查詢第 {$term_selected} 屆立委基本資料（主要查詢黨籍）"
         );
-        $legislators = $res->legislators;
+        $legislators = $res->legislators ?? [];
 
         //batch retrieve bills within histories
         $bill_ids = [];

@@ -93,6 +93,7 @@ class LawVersionHelper
             'versions_in_terms_filtered' => $versions_in_terms_filtered,
             'version_selected' => $version_selected,
             'version_id_selected' => $version_id_selected,
+            'term_selected' => $term_selected,
         ];
 
         if (!is_null($version_id_previous)) {
@@ -153,6 +154,7 @@ class LawVersionHelper
         $versions_in_terms = $versions_data->versions_in_terms;
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
+        $term_selected = $versions_data->term_selected;
 
         $term_dates = LyDateHelper::$term_dates;
 
@@ -161,7 +163,6 @@ class LawVersionHelper
             $version = (object) [
                 '版本編號' => $version_id,
             ];
-            $versions_in_terms[$term][] = $version;
             if (is_null($version_id_selected) and $version_id_input == $version_id) {
                 $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
                 $bill_log = $res->歷程[0]->bill_log;
@@ -170,6 +171,7 @@ class LawVersionHelper
                 $version_id_selected = $version_id;
                 $term_selected = $term;
             }
+            $versions_in_terms[$term][] = $version;
         }
 
         //filter out term with no version to choose
