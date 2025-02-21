@@ -136,6 +136,7 @@ if ($version_id_input != 'latest') {
               $law_index = $content->條號 ?? '';
               $law_content = $content->內容 ?? '';
               $law_content_id = $content->法條編號 ?? '';
+              $law_reason = $content->立法理由 ?? '';
               ?>
               <?php if ($title_level !== false) { ?>
                 <div
@@ -149,13 +150,9 @@ if ($version_id_input != 'latest') {
                 <div class="info-card">
                   <div class="card-head">
                     <div class="title">
-                      <?= $this->escape($law_index)?>
+                      <?= $this->escape($law_index) ?>
                     </div>
                     <div class="actions">
-                      <a href="/law/single/<?= $this->escape($law_content_id) ?>">
-                        只顯示此法條內容
-                        <i class="bi bi-box-arrow-up-right"></i>
-                      </a>
                       <div class="dropdown">
                         <span data-bs-toggle="dropdown">
                           <i class="bi bi-three-dots-vertical"></i>
@@ -173,6 +170,18 @@ if ($version_id_input != 'latest') {
                   <div class="card-body">
                     <?php $law_content = mb_ereg_replace('　', '', $law_content); ?>
                     <?= nl2br($this->escape($law_content))?>
+                    <?php if ($law_reason != '') { ?>
+                      <div class="card-help">
+                        <div class="help-title">
+                          立法說明
+                          <i class="bi bi-chevron-down icon"></i>
+                        </div>
+                        <div class="help-body">
+                          <?php $law_reason = mb_ereg_replace('　', '', $law_reason); ?>
+                          <?= nl2br($this->escape($law_reason))?>
+                        </div>
+                      </div>
+                    <?php } ?>
                   </div>
                 </div>
               <?php } ?>
