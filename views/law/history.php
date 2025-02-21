@@ -103,7 +103,6 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                     <div class="menu-head">
                       <?php if ($is_current_term) { ?>
                         第<?= $term ?>屆 (目前屆期)
-                        <?php $is_current_term = false; ?>
                       <?php } else { ?>
                         第<?= $term ?>屆
                       <?php } ?>
@@ -116,8 +115,10 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                             <a href="/law/history/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
                               <?php if (property_exists($version, '動作')) { ?>
                                 <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
-                              <?php } else { ?>
+                              <?php } elseif ($is_current_term) { ?>
                                 尚未議決議案
+                              <?php } else { ?>
+                                未議決議案
                               <?php } ?>
                             </a>
                           </div>
@@ -125,6 +126,7 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                       <?php } ?>
                     </div>
                   </div>
+                  <?php $is_current_term = false; ?>
                 <?php } ?>
               </div>
             </div>
