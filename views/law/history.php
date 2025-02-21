@@ -33,7 +33,7 @@ if (is_null($version_selected)) {
 }
 
 $histories = $version_selected->歷程 ?? [];
-$histories = LawHistoryHelper::getDetailedHistories($histories);
+$histories = LawHistoryHelper::getDetailedHistories($histories, $term_selected);
 $timelined_histories = LawHistoryHelper::groupByTimeline($histories);
 
 $aliases = $law->其他名稱 ?? [];

@@ -2,7 +2,7 @@
 
 class LawHistoryHelper
 {
-    public static function getDetailedHistories($histories)
+    public static function getDetailedHistories($histories, $term_selected)
     {
         //histories order by date ASC
         usort($histories, function($h1, $h2) {
@@ -10,6 +10,13 @@ class LawHistoryHelper
             $date_h2 = $h2->會議日期 ?? '';
             return $date_h1 <=> $date_h2;
         });
+
+        //get legislators' data for checking party later
+        $res = LYAPI::apiQuery(
+            "/legislators?屆={$term_selected}",
+            "查詢第 {$term_selected} 屆立委基本資料（主要查詢黨籍）"
+        );
+        $legislators = $res->legislators;
 
         //batch retrieve bills within histories
         $bill_ids = [];
@@ -68,17 +75,14 @@ class LawHistoryHelper
 
             //determine party image
             $party_img_path = PartyHelper::getImage($proposer);
-            $term = $bill->屆 ?? 0;
             $proposers = $bill->提案人 ?? [];
             $leading_proposer = $proposers[0] ?? NULL;
-            if (is_null($party_img_path) and $term != 0 and isset($leading_proposer)) {
-                $res = LYAPI::apiQuery(
-                    "/legislator/{$term}-{$leading_proposer}",
-                    "查詢 {$term}-{$leading_proposer} 黨籍"
-                );
-                $res_error = $res->error ?? true;
-                if (!$res_error) {
-                    $legislator = $res->data;
+            if (is_null($party_img_path) and isset($leading_proposer)) {
+                $legislators_filtered = array_filter($legislators, function ($legislator) use ($leading_proposer) {
+                    return $legislator->委員姓名 == $leading_proposer;
+                });
+                $legislator = reset($legislators_filtered);
+                if ($legislator !== false) {
                     $party = $legislator->黨籍;
                     $party_img_path = PartyHelper::getImage($party);
                 }
