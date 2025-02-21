@@ -3,52 +3,7 @@ $source_input = $this->source_input;
 ?>
 <?= $this->partial('common/header', ['title' => "比較議案／條文"]) ?>
     <div class="main">
-      <section class="page-hero law-details-info">
-        <div class="container">
-          <nav class="breadcrumb-wrapper">
-            <ol class="breadcrumb">
-              <li class="breadcrumb-item">
-                <a href="index.html">
-                  <i class="bi bi-house-door"></i>
-                </a>
-              </li>
-              <li class="breadcrumb-item active">
-                法律資訊
-              </li>
-            </ol>
-          </nav>
-          <h2 class="light">
-            兒童及少年性剝削防制條例
-          </h2>
-          <div class="info">
-            <div class="alias">
-              其他名稱
-              <i class="bi bi-info-circle" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="過往曾在三讀通過的版本中使用的名稱，或是在提案、公文中曾出現的其他稱呼。"></i>
-              ：ＯＯＯ、ＯＯＯＯＯ、ＯＯＯＯＯＯＯＯ
-            </div>
-            <div class="update-date">
-              最新修正日期：113/08/07
-            </div>
-          </div>
-          <div class="btn-group law-pages">
-            <a href="law_details.html" class="btn btn-outline-primary">
-              瀏覽法律
-            </a>
-            <a href="law_diff.html" class="btn btn-outline-primary">
-              查看修訂歷程
-            </a>
-            <a href="law_compare.html" class="btn btn-outline-primary active">
-              比較議案/條文
-            </a>
-          </div>
-        </div>
-      </section>
-      <section class="page-hero small-page-hero">
-        <div class="container">
-          兒童及少年性剝削防制條例
-        </div>
-      </section>
-
+      <?= $this->partial('law/law_hero', $this) ?>
       <div class="main-content">
         <section class="law-details">
           <div class="container">
