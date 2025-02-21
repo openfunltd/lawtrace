@@ -18,7 +18,7 @@ if ($res_error) {
     exit;
 }
 
-$law = $res->data;
+$this->law = $res->data;
 $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
 $versions = $versions_data->versions;
 $version_selected = $versions_data->version_selected;
@@ -46,56 +46,11 @@ $chapters = array_filter($contents, function($content) {
 });
 $chapter_units = LawChapterHelper::getChapterUnits($chapters);
 
-$aliases = $law->其他名稱 ?? [];
-$vernaculars = $law->別名 ?? [];
-$diff_endpoint = "/law/diff/{$law_id}";
-if ($version_id_input != 'latest') {
-    $diff_endpoint = $diff_endpoint . "?version={$version_id_input}";
-}
 ?>
 <?php $law_name = $this->escape($law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 瀏覽法律"]) ?>
 <div class="main">
-  <section class="page-hero law-details-info">
-    <div class="container">
-      <nav class="breadcrumb-wrapper">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="/">
-              <i class="bi bi-house-door"></i>
-            </a>
-          </li>
-          <li class="breadcrumb-item active">
-            法律資訊
-          </li>
-        </ol>
-      </nav>
-      <h2 class="light">
-        <?= $this->escape($law->名稱 ?? '') ?>
-      </h2>
-      <div class="info">
-        <?php if (!empty($aliases)) { ?>
-          <div class="alias">
-            別名：<?= $this->escape(implode('、', $aliases)) ?>
-          </div>
-        <?php } ?>
-        <?php if (!empty($vernaculars)) { ?>
-          <div class="vernacular">
-            俗名：<?= $this->escape(implode('、', $vernaculars)) ?>
-          </div>
-        <?php } ?>
-      </div>
-      <div class="btn-group law-pages">
-        <a href="#" class="btn btn-outline-primary active">
-          瀏覽法律
-        </a>
-        <a href="<?= $this->escape($diff_endpoint) ?>" class="btn btn-outline-primary">
-          查看修訂歷程
-        </a>
-      </div>
-    </div>
-  </section>
-
+  <?= $this->partial('law/law_hero', $this) ?>
   <div class="main-content">
     <section class="law-details">
       <div class="container">
