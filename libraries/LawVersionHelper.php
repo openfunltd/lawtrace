@@ -157,21 +157,18 @@ class LawVersionHelper
         $term_dates = LyDateHelper::$term_dates;
 
         foreach ($versions_in_terms as $term => $versions) {
-            $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
-            $bill_log = $res->歷程[0]->bill_log;
-            $has_progress = !empty($bill_log);
-            if ($has_progress) {
-                $version_id = "{$law_id}:{$term}-progress";
-                $version = (object) [
-                    '版本編號' => $version_id,
-                    '歷程' => $bill_log,
-                ];
-                $versions_in_terms[$term][] = $version;
-                if (is_null($version_id_selected) and $version_id_input == $version_id) {
-                    $version_selected = $version;
-                    $version_id_selected = $version_id;
-                    $term_selected = $term;
-                }
+            $version_id = "{$law_id}:{$term}-progress";
+            $version = (object) [
+                '版本編號' => $version_id,
+            ];
+            $versions_in_terms[$term][] = $version;
+            if (is_null($version_id_selected) and $version_id_input == $version_id) {
+                $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
+                $bill_log = $res->歷程[0]->bill_log;
+                $version->歷程 = $bill_log;
+                $version_selected = $version;
+                $version_id_selected = $version_id;
+                $term_selected = $term;
             }
         }
 
