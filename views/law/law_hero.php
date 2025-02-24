@@ -45,4 +45,8 @@ if ($this->version_id_input != 'latest') {
       </div>
     </div>
   </section>
-
+  <section class="page-hero small-page-hero">
+    <div class="container">
+        <?= $this->escape($this->law->名稱 ?? '') ?>
+    </div>
+  </section>
