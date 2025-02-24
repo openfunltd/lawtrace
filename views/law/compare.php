@@ -42,6 +42,16 @@ $version_count = count($this->diff->versions);
               </div>
               <div class="diff-info rwd-full">
                 <label>
+                  <input type="radio" class="form-check-input" name="content-type" value="origin" checked>
+                  不分段
+                </label>
+                <label>
+                  <input type="radio" class="form-check-input" name="content-type" value="section">
+                  分段
+                </label>
+              </div>
+              <div class="diff-info rwd-full">
+                <label>
                   <input type="radio" class="form-check-input" name="diff-type" value="none" checked>
                   顯示原文
                 </label>

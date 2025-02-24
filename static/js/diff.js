@@ -276,8 +276,7 @@ $(function(){
         });
     });
 
-    //$('input[name="content-type"][value="section"]').prop('checked', true).change();
-    $('div.law-diff-content-origin').hide();
+    $('input[name="content-type"][value="section"]').prop('checked', true).change();
     $('div.law-diff-content.original').each(gen_diff);
     $('input[name="diff-type"][value="only_add"]').prop('checked', true).change();
 });
