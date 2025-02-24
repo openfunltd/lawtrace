@@ -3,6 +3,7 @@ $source_input = $this->source_input;
 $version_count = count($this->diff->versions);
 ?>
 <?= $this->partial('common/header', ['title' => "比較議案／條文"]) ?>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/7.0.0/diff.min.js" integrity="sha512-immo//J6lKoR+nRIFDPxoxfL2nd/0N3w8l4LwH4HSSVovtUjab5kbh4AhixLH5z9mIv37llY9Q2i8AfEDXyYjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <div class="main">
       <?= $this->partial('law/law_hero', $this) ?>
       <div class="main-content">
@@ -41,15 +42,15 @@ $version_count = count($this->diff->versions);
               </div>
               <div class="diff-info rwd-full">
                 <label>
-                  <input type="radio" class="form-check-input" name="diff_by" checked>
+                  <input type="radio" class="form-check-input" name="diff-type" value="none" checked>
                   顯示原文
                 </label>
                 <label>
-                  <input type="radio" class="form-check-input" name="diff_by">
+                  <input type="radio" class="form-check-input" name="diff-type" value="only_add">
                   顯示<span class="add">新增</span>
                 </label>
                 <label>
-                  <input type="radio" class="form-check-input" name="diff_by">
+                  <input type="radio" class="form-check-input" name="diff-type" value="update">
                   顯示<span class="add">新增</span>及<span class="remove">刪減</span>
                 </label>
               </div>
@@ -135,7 +136,11 @@ $version_count = count($this->diff->versions);
 
                   <!-- content-section 1 -->
                   <?php foreach ($this->diff->versions as $version) { ?>
-                    <div class="<?= $this->if($version->id == '現行版本', 'original', '') ?> law-diff-content">
+                    <div
+                      class="<?= $this->if($version->id == '現行版本', 'original', '') ?> law-diff-content law-diff-content-origin" 
+                      data-version="<?= $this->escape($version->id) ?>"
+                      data-rule-no="<?= $this->escape($idx) ?>"
+                    >
                       <?= nl2br($rule_diff->versions->{$version->id}->內容 ?? '') ?>
                     </div>
                   <?php } ?>
@@ -322,5 +327,8 @@ $version_count = count($this->diff->versions);
           </div>
         </div>
       </div>
-    </div>
+  </div>
+  <script src="/static/js/diff.js"></script>
+<script>
+</script>
 <?= $this->partial('common/footer') ?>
