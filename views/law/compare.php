@@ -17,15 +17,17 @@ $this->body_class = 'law-compare-page';
                     設定比較範圍
                     <i class="bi bi-pencil-fill ms-1"></i>
                   </button>
-                </div>
+              </div>
                 <div class="range-info">
+              <!-- TODO: 待實作
                   <div>
                       比較版本：113/00/00 修正版本 － VS － 其他 6 個版本<?php // TODO ?>
                   </div>
                   <div>
                       條文範圍：第 2, 6, 92 條<?php // TODO ?>
                   </div>
-                </div>
+              -->
+              </div>
                 <div class="options">
                   <div class="form-check form-switch expand-law-help">
                     <input class="form-check-input" type="checkbox" role="switch" id="expandLawHelp">
