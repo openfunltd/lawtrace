@@ -47,7 +47,7 @@ $chapters = array_filter($contents, function($content) {
 $chapter_units = LawChapterHelper::getChapterUnits($chapters);
 
 ?>
-<?php $law_name = $this->escape($law->名稱 ?? ''); ?>
+<?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 瀏覽法律"]) ?>
 <div class="main">
   <?= $this->partial('law/law_hero', $this) ?>
