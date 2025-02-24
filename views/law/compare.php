@@ -151,7 +151,17 @@ $version_count = count($this->diff->versions);
                       data-version="<?= $this->escape($version->id) ?>"
                       data-rule-no="<?= $this->escape($idx) ?>"
                     >
-                      <?= nl2br($rule_diff->versions->{$version->id}->內容 ?? '') ?>
+                      <span class="law-diff-content-text"><?= nl2br($rule_diff->versions->{$version->id}->內容 ?? '') ?></span>
+
+                      <?php if ($rule_diff->versions->{$version->id}->說明 ?? false) { ?>
+                        <div class="card-help">
+                          <div class="help-title">
+                            立法說明
+                            <i class="bi bi-chevron-down icon"></i>
+                          </div>
+                          <div class="help-body"><?= nl2br(htmlspecialchars($rule_diff->versions->{$version->id}->說明)) ?></div>
+                        </div>
+                      <?php } ?>
                     </div>
                   <?php } ?>
                 <?php } ?>

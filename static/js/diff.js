@@ -15,7 +15,7 @@ var gen_diff = function() {
     };
 
     line_index = [];
-    first_td_text = div_dom.text();
+    first_td_text = div_dom.find('.law-diff-content-text').text();
     first_td_text = filter_empty_line(first_td_text);
 
     diff_table = [];
@@ -25,6 +25,8 @@ var gen_diff = function() {
             value: line,
         });
     }
+    // 儲存立法理由的 dom
+    var reason_doms = [];
     // 一一比較所有版本
     version_idx = 0;
     compare_td_dom = div_dom;
@@ -34,7 +36,10 @@ var gen_diff = function() {
         if (div_dom.data('rule-no') != compare_td_dom.data('rule-no')) {
             break;
         }
-        var compare_td_text = compare_td_dom.text();
+        if (compare_td_dom.find('.card-help').length) {
+            reason_doms[version_idx] = compare_td_dom.find('.card-help').eq(0);
+        }
+        var compare_td_text = compare_td_dom.find('.law-diff-content-text').text();
         compare_td_text = filter_empty_line(compare_td_text);
         var diffs = Diff.diffChars(first_td_text, compare_td_text, diff_options);
 
@@ -224,6 +229,12 @@ var gen_diff = function() {
                 .addClass('law-diff-content')
                 .addClass('law-diff-content-section')
                 ;
+            // 如果是最後一行，要把立法理由也放進去
+            if (lineno == diff_table[0].length - 1) {
+                if ('undefined' !== typeof(reason_doms[version_idx])) {
+                    td_dom.append(reason_doms[version_idx].clone());
+                }
+            }
             if (cell_data.type == 'same') {
                 td_dom.addClass('no-modification');
             }
@@ -272,7 +283,16 @@ $(function(){
             if (compare_text == '') {
                 return;
             }
+            // 補上立法理由
+            var card_help_dom = null;
+            if ($(this).find('.card-help').length) {
+                card_help_dom = $(this).find('.card-help').eq(0).clone();
+            }
             $(this).html(gen_diff_html(origin_text, compare_text, val));
+            if (card_help_dom) {
+                $(this).append(card_help_dom);
+            }
+            
         });
     });
 
