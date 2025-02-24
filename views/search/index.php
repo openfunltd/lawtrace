@@ -113,9 +113,9 @@ $elapsed_time = number_format(($t2 - $t1) / 1e+9, 2);
                    <?= $this->escape($law->名稱); ?>
                  </a>
                </div>
-               <?php $aliases = $law->其他名稱 ?? []; ?>
+               <?php $aliases = array_merge($law->其他名稱 ?? [], $law->別名 ?? []); ?>
                <?php if (!empty($aliases)) { ?>
-                 <div class="alias">別名： <?= $this->escape(implode('、', $aliases)) ?> </div>
+                 <div class="alias">其他名稱： <?= $this->escape(implode('、', $aliases)) ?> </div>
                <?php } ?>
                <div class="update-date"><?= $this->escape($law->最新版本->版本編號 ?? '') ?></div>
              </div>
