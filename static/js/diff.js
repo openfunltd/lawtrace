@@ -212,7 +212,10 @@ var gen_diff = function() {
         for (var version_idx = 1; version_idx < diff_table.length; version_idx ++) {
             cell_data = diff_table[version_idx][lineno];
             if ('undefined' === typeof cell_data) {
-                continue;
+                cell_data = {
+                    value: '',
+                    type: 'over',
+                };
             }
             td_dom = $('<div></div>')
                 .text(cell_data.value)
