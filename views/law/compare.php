@@ -212,6 +212,7 @@ $this->body_class = 'law-compare-page';
                   <div class="tags" id="compare-list">
                   </div>
                 </div>
+                <!--
                 <div class="compare-base">
                   <div class="title">
                     調整條文範圍
@@ -252,12 +253,13 @@ $this->body_class = 'law-compare-page';
                     </a>
                   </div>
                 </div>
+                -->
               </div>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-submit">確認</button>
             </div>
-          </div>
+            </div>
         </div>
       </div>
   </div>
