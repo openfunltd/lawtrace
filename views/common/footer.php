@@ -3,7 +3,10 @@
       <?php if ($_GET['debug'] ?? false) { ?>
       <ul>
           <?php foreach (LYAPI::getLogs() as $log) { ?>
-          <li><?= $this->escape(implode(':', $log)) ?></li>
+          <?php list($url, $text) = $log ?>
+          <?php $query_string = parse_url($url, PHP_URL_PATH) . '?' . parse_url($url, PHP_URL_QUERY); ?>
+          <?php $query_string = rtrim($query_string, '?'); ?>
+          <li><a href="<?= $this->escape($url) ?>" target="_blank"><?= $this->escape($query_string) ?>: <?= $this->escape($text) ?></a></li>
           <?php } ?>
       </ul>
       <?php } ?>
