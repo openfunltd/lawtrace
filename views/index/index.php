@@ -29,11 +29,13 @@
         </h3>
         <div class="law-status-info-grid">
           <div class="law-status-info-list">
-            <span class="tag tag-green">
-              近期三讀通過
-            </span>
-            <div class="refer">
-              動態資訊來源：立法院法律系統
+            <div class="list-header">
+              <span class="tag tag-green">
+                近期三讀通過
+              </span>
+              <div class="refer">
+                動態資訊來源：立法院法律系統
+              </div>
             </div>
             <?php foreach ($this->third_read_laws as $law) { ?>
             <a href="/law/compare?source=version:<?= $law['law']->法律編號 ?>:<?= $law['law']->最新版本->日期 ?>" class="law">
@@ -47,11 +49,13 @@
             <?php } ?>
           </div>
           <div class="law-status-info-list">
-            <span class="tag tag-turquoise">
-              近期出爐審查報告
-            </span>
-            <div class="refer">
-              動態資訊來源：立法院議事暨公報資訊網
+            <div class="list-header">
+              <span class="tag tag-turquoise">
+                近期出爐審查報告
+              </span>
+              <div class="refer">
+                動態資訊來源：立法院議事暨公報資訊網
+              </div>
             </div>
             <?php foreach ($this->exammed_laws as $law) { ?>
             <a href="/law/compare?source=bill:<?= $law->議案編號 ?>" class="law">
@@ -65,11 +69,13 @@
             <?php } ?>
           </div>
           <div class="law-status-info-list">
-            <span class="tag tag-brown">
-              七天內將審查
-            </span>
-            <div class="refer">
-              動態資訊來源：立法院議事暨公報資訊網
+            <div class="list-header">
+              <span class="tag tag-brown">
+                近期審查會議
+              </span>
+              <div class="refer">
+                動態資訊來源：立法院議事暨公報資訊網
+              </div>
             </div>
             <?php foreach ($this->examming_laws as $law) { ?>
             <a href="/law/compare?source=meet:<?= $law['meet']->會議代碼 ?>:<?= $law['law_id'] ?>" class="law">
