@@ -34,7 +34,7 @@ if ($this->version_id_input != 'latest') {
         <?php } ?>
       </div>
       <div class="btn-group law-pages">
-        <a href="#" class="btn btn-outline-primary active">
+        <a href="/law/show/<?= $this->law_id ?>" class="btn btn-outline-primary active">
           瀏覽法律
         </a>
         <a href="<?= $this->escape($this->diff_endpoint) ?>" class="btn btn-outline-primary">
