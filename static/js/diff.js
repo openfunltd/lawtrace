@@ -265,6 +265,14 @@ var gen_diff_html = function(one, other, diff_type) {
 };
 
 $(function(){
+    $('#showCategory').change(function(){
+        var checked = $(this).prop('checked');
+        if (checked) {
+            $('.law-sections').show();
+        } else {
+            $('.law-sections').hide();
+        }
+    });
     $('#expandLawHelp').change(function(){
         var checked = $(this).prop('checked');
         $('.card-help').each(function(){

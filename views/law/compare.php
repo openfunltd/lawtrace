@@ -35,7 +35,7 @@ $this->body_class = 'law-compare-page';
                     </label>
                   </div>
                   <div class="form-check form-switch show-category">
-                    <input class="form-check-input" type="checkbox" role="switch" id="showCategory">
+                    <input class="form-check-input" type="checkbox" role="switch" id="showCategory" checked>
                     <label class="form-check-label" for="showCategory">
                       顯示條文目錄
                     </label>
