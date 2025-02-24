@@ -30,6 +30,7 @@ class LawHistoryHelper
                 $bill_ids[] = $bill_id;
             }
         }
+
         //get bills' data within one query
         $output_fields = [
             '提案單位/提案委員',
@@ -46,6 +47,7 @@ class LawHistoryHelper
         $res_total = $res->total ?? 0;
         $bills = ($res_total > 0) ? $res->bills : [];
 
+        //enrich history data with bill data
         foreach ($histories as $history) {
             $related_doc = $history->關係文書 ?? [];
             if (is_array($related_doc)) {
@@ -104,6 +106,121 @@ class LawHistoryHelper
             $ppg_url = $bill->url ?? '';
             if ($ppg_url != '') {
                 $history->ppg_url = $ppg_url;
+            }
+        }
+
+        //get committees' data for later use
+        $res = LYAPI::apiQuery("/committees?page=1&per_page=20", "查詢各委員會基本資料");
+        $committees = $res->committees ?? [];
+        $committees = array_filter($committees, function($committee) {
+            return $committee->委員會類別 != 3;
+        });
+
+        //batch retrieve gazettes with meet and meet_ids within histories
+        $meet_ids = [];
+        $gazette_ids = [];
+        foreach ($histories as $history) {
+            $needles = ['二讀', '三讀', '委員會審查', '黨團協商'];
+            $progress_status = $history->進度 ?? '';
+            $is_meet = false;
+            foreach ($needles as $needle) {
+                if (mb_strpos($progress_status, $needle) !== false) {
+                    $is_meet = true;
+                    break;
+                }
+            }
+            $meet_id = $history->會議代碼 ?? null;
+            $gazette_id = $history->公報編號 ?? null;
+
+            if (isset($meet_id) and $is_meet) {
+                $meet_ids[] = $meet_id;
+                $history->meet_id = $meet_id;
+            } elseif (isset($gazette_id) and $is_meet) {
+                if (mb_substr($gazette_id, -2) === '00') {
+                    $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
+                }
+                $gazette_ids[] = $gazette_id;
+                $history->gazette_id = $gazette_id;
+            }
+
+            $history->is_meet = $is_meet;
+        }
+
+        //get gazette_agendas' data within one query
+        $url = sprintf('/gazette_agendas?公報編號=%s',
+            implode('&公報編號=', $gazette_ids)
+        );
+        $res = LYAPI::apiQuery($url, "整批查詢公報章節");
+        $res_total = $res->total ?? 0;
+        $gazette_agendas = ($res_total > 0) ? $res->gazetteagendas : [];
+
+        //retrieve meet data within gazette_agenda
+        foreach ($histories as $history) {
+            if (!property_exists($history, 'gazette_id')) {
+                continue;
+            }
+            $gazette_id = $history->gazette_id;
+            $gazette_agenda_pages = explode(' ', $history->立法紀錄)[1];
+            $gazette_agenda_start_page = explode('-', $gazette_agenda_pages)[0];
+            foreach ($gazette_agendas as $agenda) {
+                if ($agenda->公報編號 == $gazette_id and
+                    $agenda->起始頁碼 <= $gazette_agenda_start_page and
+                    $agenda->結束頁碼 >= $gazette_agenda_start_page) {
+                    $agenda_committees_str = mb_substr($agenda->案由, 0, mb_strpos($agenda->案由, '委員會'));
+                    $agenda_committees = explode('、', $agenda_committees_str);
+                    $committee_ptrs = [];
+                    foreach ($committees as $committee) {
+                        $committee_name = str_replace('委員會', '', $committee->委員會名稱);
+                        $committee_ptr = array_search($committee_name, $agenda_committees);
+                        if ($committee_ptr !== false) {
+                            $committee_ptrs[] = [$committee->委員會代號, $committee_ptr];
+                        }
+                    }
+                    usort($committee_ptrs, function ($ptrA, $ptrB) {
+                        return $ptrA[1] <=> $ptrB[1];
+                    });
+                    $committee_ids = array_map(function ($committee_ptr) {
+                        return $committee_ptr[0];
+                    }, $committee_ptrs);
+                    $meet_id = sprintf("%s-%d-%d-%s-%d",
+                        (count($committee_ids) > 1) ? '聯席會議' : '委員會',
+                        $agenda->屆,
+                        $agenda->會期,
+                        implode(',', $committee_ids),
+                        $agenda->會次,
+                    );
+                    $meet_ids[] = $meet_id;
+                    $history->meet_id = $meet_id;
+                    $history->meet_committees = $agenda_committees;
+                    break;
+                }
+            }
+        }
+
+        //get meets' data within one query
+        $url = sprintf('/meets?會議代碼=%s', implode('&會議代碼=', $meet_ids));
+        $res = LYAPI::apiQuery($url, "整批查詢會議資料");
+        $res_total = $res->total ?? 0;
+        $meets = ($res_total > 0) ? $res->meets : [];
+
+        //enrich history data with meet data
+        foreach ($histories as $history) {
+            if (!($history->is_meet)) {
+                continue;
+            }
+            foreach ($meets as $meet) {
+                if ($meet->會議代碼 == $history->meet_id) {
+                    //flatten meet related data into history(object)
+                    //get ppg_url
+                    $meet_data = $meet->會議資料 ?? [];
+                    foreach ($meet_data as $single_date_meet_data) {
+                        if ($single_date_meet_data->日期 == $history->會議日期) {
+                            $history->ppg_url = $single_date_meet_data->ppg_url;
+                            break;
+                        }
+                    }
+                    break;
+                }
             }
         }
 

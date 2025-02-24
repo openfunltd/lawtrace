@@ -146,6 +146,12 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                   <div class="item-head">
                     <span class="title"><?= $this->escape($timeline->進度) ?></span>
                     <small><?= $this->escape($timeline->會議民國日期) ?></small>
+                    <?php if ($timeline->items[0]->is_meet) { ?>
+                      <a href="<?= $this->escape($timeline->items[0]->ppg_url) ?>">
+                        原始資料
+                        <i class="bi bi-box-arrow-up-right"></i>
+                      </a>
+                    <?php } ?>
                   </div>
                   <?php if ($timeline->進度 == '一讀') {?>
                     <div class="item-body">
@@ -179,6 +185,21 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                         </div>
                       </div>
                     </div>
+                  <?php } ?>
+                  <?php if ($timeline->items[0]->is_meet) { ?>
+                    <?php $history = $timeline->items[0]; ?>
+                    <?php if ($history->meet_committees) {?>
+                      <div class="item-body">
+                        <div class="history-card">
+                          <div class="card-left">
+                            委員會
+                          </div>
+                          <div class="card-right">
+                            <?= nl2br($this->escape(implode("\n", $history->meet_committees))) ?>
+                          </div>
+                        </div>
+                      </div>
+                    <?php } ?>
                   <?php } ?>
                 </div>
               <?php } ?>
