@@ -105,7 +105,7 @@ $version_count = count($this->diff->versions);
                   <!-- content-section-head -->
                   <?php foreach ($this->diff->versions as $version) { ?>
                   <div class="law-diff-head <?= $version->title == '現行版本' ? 'original' : '' ?>">
-                    <div class="title">
+                    <div class="title" title="<?= $version->id ?>">
                         <?= $this->escape($version->title) ?>
                         <small>
                             <?= $this->escape($version->subtitle) ?>
