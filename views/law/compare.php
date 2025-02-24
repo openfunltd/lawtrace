@@ -180,49 +180,12 @@ $this->body_class = 'law-compare-page';
           <div class="modal-content">
             <div class="modal-header">
               <h6 class="modal-title">
-                設定比較範圍：兒童及少年性剝削防制條例
+              設定比較範圍：<?= $this->escape($this->law->名稱 ?? '') ?>
               </h6>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="compare-row">
-                <div class="compare-base">
-                  <div class="title">
-                    選擇基準
-                  </div>
-                  <div class="dropdown-select">
-                    <div class="selected-item">
-                      113/12/12修正通過（現行條文）
-                      <i class="bi icon bi-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu select-list">
-                      <input type="text" placeholder="搜尋" class="form-control filter-input">
-                      <div class="scroller">
-                        <div class="dropdown-item disabled group-label">
-                          第Ｏ屆
-                        </div>
-                        <span class="dropdown-item">
-                          113/12/12修正通過(現行)
-                        </span>
-                        <span class="dropdown-item">
-                          113/00/00 三讀版本
-                        </span>
-                        <span class="dropdown-item">
-                          113/00/00 行政院版本
-                        </span>
-                        <div class="dropdown-item disabled group-label">
-                          第Ｏ屆
-                        </div>
-                        <span class="dropdown-item">
-                          113/00/00 修正通過
-                        </span>
-                        <span class="dropdown-item">
-                          113/00/00 三讀版本
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+              <div class="compare-row single">
                 <div class="compare-target">
                   <div class="title">
                     比較對象
@@ -238,108 +201,57 @@ $this->body_class = 'law-compare-page';
                         <div class="dropdown-item disabled group-label">
                           關聯議案
                         </div>
+                        <?php foreach ($this->diff->versions as $version) { ?>
                         <div class="dropdown-item">
-                          <input type="checkbox">
-                          劉建國等16人｜113/00/00 提案版本
+                            <input type="checkbox" name="choosed_version_ids[]" value="<?= $version->id ?>">
+                          <?= $this->escape($version->title) ?>｜<?= $this->escape($version->subtitle) ?>
                         </div>
-                        <div class="dropdown-item">
-                          <input type="checkbox">
-                          劉建國等16人｜113/00/00 提案版本
-                        </div>
-                        <div class="dropdown-item">
-                          <input type="checkbox">
-                          劉建國等16人｜113/00/00 提案版本
-                        </div>
-                        <div class="dropdown-item disabled group-label">
-                          其他議案
-                        </div>
-                        <div class="dropdown-item disabled group-label">
-                          － 第Ｏ屆
-                        </div>
-                        <div class="dropdown-item">
-                          <input type="checkbox">
-                          劉建國等16人｜113/00/00 提案版本
-                        </div>
-                        <div class="dropdown-item">
-                          <input type="checkbox">
-                          劉建國等16人｜113/00/00 提案版本
-                        </div>
+                        <?php } ?>
                       </div>
                     </div>
                   </div>
+                  <div class="tags" id="compare-list">
+                  </div>
+                </div>
+                <div class="compare-base">
+                  <div class="title">
+                    調整條文範圍
+                  </div>
+                  <div class="dropdown-select">
+                    <div class="selected-item">
+                      請選擇條文
+                      <i class="bi icon bi-chevron-down"></i>
+                    </div>
+                    <div class="dropdown-menu select-list">
+                      <input type="text" placeholder="搜尋" class="form-control filter-input">
+                      <div class="scroller">
+                        <?php foreach ($this->diff->rule_diffs as $idx => $rule_diff) { ?>
+                        <div class="dropdown-item">
+                          <input type="checkbox">
+                          <?= $this->escape($rule_diff->條文) ?>
+                        </div>
+                        <?php } ?>
+                      </div>
+                    </div>
+                  </div>
+  
                   <div class="tags">
                     <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
+                      第二條
                       <i class="bi bi-x-lg"></i>
                     </span>
                     <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
+                      第六條
                       <i class="bi bi-x-lg"></i>
                     </span>
                     <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
+                      第九十二條
                       <i class="bi bi-x-lg"></i>
                     </span>
-                    <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
-                      <i class="bi bi-x-lg"></i>
-                    </span>
-                    <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
-                      <i class="bi bi-x-lg"></i>
-                    </span>
-                    <span class="tag">
-                      第Ｏ屆｜劉建國等16人｜113/00/00 提案版本
-                      <i class="bi bi-x-lg"></i>
-                    </span>
+                    <a href="#" class="show-all">
+                      顯示全部
+                    </a>
                   </div>
-                </div>
-              </div>
-
-              <div class="compare-section">
-                <div class="title">
-                  調整條文範圍
-                </div>
-                <div class="dropdown-select">
-                  <div class="selected-item">
-                    113/12/12修正通過(現行)
-                    <i class="bi icon bi-chevron-down"></i>
-                  </div>
-                  <div class="dropdown-menu select-list">
-                    <input type="text" placeholder="搜尋" class="form-control filter-input">
-                    <div class="scroller">
-                      <div class="dropdown-item">
-                        <input type="checkbox">
-                        第一條
-                      </div>
-                      <div class="dropdown-item">
-                        <input type="checkbox">
-                        第二條
-                      </div>
-                      <div class="dropdown-item">
-                        <input type="checkbox">
-                        第三條
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="tags">
-                  <span class="tag">
-                    第二條
-                    <i class="bi bi-x-lg"></i>
-                  </span>
-                  <span class="tag">
-                    第六條
-                    <i class="bi bi-x-lg"></i>
-                  </span>
-                  <span class="tag">
-                    第九十二條
-                    <i class="bi bi-x-lg"></i>
-                  </span>
-                  <a href="#" class="show-all">
-                    顯示全部
-                  </a>
                 </div>
               </div>
             </div>
@@ -350,6 +262,12 @@ $this->body_class = 'law-compare-page';
         </div>
       </div>
   </div>
+<script>
+diff_data = <?= json_encode([
+    'diff' => $this->diff,
+    'choosed_version_ids' => $this->choosed_version_ids,
+]) ?>;
+</script>
   <script src="/static/js/diff.js"></script>
 <script>
 </script>

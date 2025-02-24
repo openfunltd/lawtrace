@@ -264,7 +264,52 @@ var gen_diff_html = function(one, other, diff_type) {
     return dom;
 };
 
+$('#compare-list').on('click', '.delete', function(e){
+    e.preventDefault();
+    var version_id = $(this).closest('.tag').data('version_id');
+    diff_data.choosed_version_ids = diff_data.choosed_version_ids.filter(function(value, index, arr){
+        return value != version_id;
+    });
+    update_compare_list();
+});
+
+$('[name="choosed_version_ids[]"]').change(function(){
+    diff_data.choosed_version_ids = [];
+    $('[name="choosed_version_ids[]"]:checked').each(function(){
+        diff_data.choosed_version_ids.push($(this).val());
+    });
+    update_compare_list();
+});
+
+var update_compare_list = function() {
+    $('#compare-list').html('');
+    for (var id of diff_data.choosed_version_ids) {
+        const version_data = diff_data.version_object[id];
+        var tag_dom = $('<span class="tag"></span>');
+        tag_dom.data('version_id', id);
+        tag_dom.text(version_data.title + '｜' + version_data.subtitle);
+        tag_dom.append('<a href="#" class="delete"><i class="bi bi-x-lg"></i></a>');
+        $('#compare-list').append(tag_dom);
+
+        $('[name="choosed_version_ids[]"][value="' + id + '"]').prop('checked', true);
+    }
+
+    // uncheck other choosed_version_ids
+    $('[name="choosed_version_ids[]"]').each(function(){
+        if (diff_data.choosed_version_ids.indexOf($(this).val()) == -1) {
+            $(this).prop('checked', false);
+        }
+    });
+};
+
 $(function(){
+    // 把 diff_data 變成更好用的 object
+    diff_data.version_object = {};
+    for (var version of diff_data.diff.versions) {
+        diff_data.version_object[version.id] = version;
+    }
+    update_compare_list();
+
     $('#showCategory').change(function(){
         var checked = $(this).prop('checked');
         if (checked) {
@@ -285,7 +330,6 @@ $(function(){
             }
         });
     });
-    
 
     $('input[name="content-type"]').change(function(){
         var val = $(this).val();
