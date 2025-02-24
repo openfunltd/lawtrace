@@ -179,6 +179,10 @@ var gen_diff = function() {
             }
 
             // added
+            right_lineno ++;
+            if (right_lineno >= left_lineno) {
+                right_lineno = left_lineno - 1;
+            }
             if ('undefined' !== typeof diff_table[version_idx][right_lineno]) {
                 if (diff_table[version_idx][right_lineno].type == 'removed') {
                     diff_table[version_idx][right_lineno] = {
@@ -196,10 +200,6 @@ var gen_diff = function() {
                         value: diff.value,
                         type: 'changed',
                     };
-            }
-            right_lineno ++;
-            if (right_lineno > left_lineno) {
-                right_lineno = left_lineno;
             }
         }
     }
