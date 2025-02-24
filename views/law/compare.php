@@ -1,5 +1,4 @@
 <?php
-$source_input = $this->source_input;
 $version_count = count($this->diff->versions);
 $this->title = "比較議案／條文";
 $this->body_class = 'law-compare-page';
@@ -256,7 +255,7 @@ $this->body_class = 'law-compare-page';
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-submit">確認</button>
             </div>
           </div>
         </div>
@@ -266,6 +265,7 @@ $this->body_class = 'law-compare-page';
 diff_data = <?= json_encode([
     'diff' => $this->diff,
     'choosed_version_ids' => $this->choosed_version_ids,
+    'source' => $this->source_input,
 ]) ?>;
 </script>
   <script src="/static/js/diff.js"></script>

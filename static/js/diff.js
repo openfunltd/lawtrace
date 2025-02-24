@@ -281,6 +281,16 @@ $('[name="choosed_version_ids[]"]').change(function(){
     update_compare_list();
 });
 
+$('#btn-submit').click(function(){
+    var get_params = [];
+    get_params.push('source=' + diff_data.source);
+    for (var version_id of diff_data.choosed_version_ids) {
+        get_params.push('version[]=' + version_id);
+    }
+    window.location.href = '/law/compare?' + get_params.join('&');
+    
+});
+
 var update_compare_list = function() {
     $('#compare-list').html('');
     for (var id of diff_data.choosed_version_ids) {
