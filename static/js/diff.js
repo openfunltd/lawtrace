@@ -265,6 +265,20 @@ var gen_diff_html = function(one, other, diff_type) {
 };
 
 $(function(){
+    $('#expandLawHelp').change(function(){
+        var checked = $(this).prop('checked');
+        $('.card-help').each(function(){
+            if (checked) {
+                $('.help-body', this).show();
+                $('i', this).removeClass('bi-chevron-down').addClass('bi-chevron-up');
+            } else {
+                $('.help-body', this).hide();
+                $('i', this).removeClass('bi-chevron-up').addClass('bi-chevron-down');
+            }
+        });
+    });
+    
+
     $('input[name="content-type"]').change(function(){
         var val = $(this).val();
         $('div.law-diff-content-origin').hide();
