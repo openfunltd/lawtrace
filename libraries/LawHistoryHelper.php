@@ -131,16 +131,23 @@ class LawHistoryHelper
             }
             $meet_id = $history->會議代碼 ?? null;
             $gazette_id = $history->公報編號 ?? null;
+            if (mb_substr($gazette_id, -2) === '00') {
+                $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
+            }
 
-            if (isset($meet_id) and $is_meet) {
-                $meet_ids[] = $meet_id;
-                $history->meet_id = $meet_id;
-            } elseif (isset($gazette_id) and $is_meet) {
-                if (mb_substr($gazette_id, -2) === '00') {
-                    $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
+            if ($is_meet) {
+                if (isset($meet_id)) {
+                    $meet_ids[] = $meet_id;
+                    $history->meet_id = $meet_id;
+                } elseif (isset($gazette_id)) {
+                    $gazette_ids[] = $gazette_id;
+                    $history->gazette_id = $gazette_id;
                 }
-                $gazette_ids[] = $gazette_id;
-                $history->gazette_id = $gazette_id;
+                $history->gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%d/%s/%s/details',
+                    substr($gazette_id, 0, 3),
+                    substr($gazette_id, 3, 2,),
+                    substr($gazette_id, 5, 2,)
+                );
             }
 
             $history->is_meet = $is_meet;
@@ -211,11 +218,27 @@ class LawHistoryHelper
             foreach ($meets as $meet) {
                 if ($meet->會議代碼 == $history->meet_id) {
                     //flatten meet related data into history(object)
-                    //get ppg_url
                     $meet_data = $meet->會議資料 ?? [];
                     foreach ($meet_data as $single_date_meet_data) {
                         if ($single_date_meet_data->日期 == $history->會議日期) {
+                            //get ppg_url
                             $history->ppg_url = $single_date_meet_data->ppg_url;
+
+                            //get convener(召委) and it's party
+                            $convener = $single_date_meet_data->委員會召集委員 ?? null;
+                            if (isset($convener)) {
+                                $convener = str_replace('委員', '', $convener);
+                                $legislators_filtered = array_filter($legislators, function ($legislator) use ($convener) {
+                                    return $legislator->委員姓名 == $convener;
+                                });
+                                $legislator = reset($legislators_filtered);
+                                if ($legislator !== false) {
+                                    $party = $legislator->黨籍;
+                                    $party_img_path = PartyHelper::getImage($party);
+                                }
+                                $history->convener = $convener;
+                                $history->convener_party_img_path = $party_img_path;
+                            }
                             break;
                         }
                     }

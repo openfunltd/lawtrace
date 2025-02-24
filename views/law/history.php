@@ -147,7 +147,7 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                     <span class="title"><?= $this->escape($timeline->進度) ?></span>
                     <small><?= $this->escape($timeline->會議民國日期) ?></small>
                     <?php if ($timeline->items[0]->is_meet) { ?>
-                      <a href="<?= $this->escape($timeline->items[0]->ppg_url) ?>">
+                      <a href="<?= $this->escape($timeline->items[0]->ppg_url) ?>" target="_blank">
                         原始資料
                         <i class="bi bi-box-arrow-up-right"></i>
                       </a>
@@ -187,9 +187,20 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                     </div>
                   <?php } ?>
                   <?php if ($timeline->items[0]->is_meet) { ?>
-                    <?php $history = $timeline->items[0]; ?>
-                    <?php if ($history->meet_committees) {?>
-                      <div class="item-body">
+                    <div class="item-body">
+                      <?php $history = $timeline->items[0]; ?>
+                      <?php if ($history->convener) { ?>
+                        <div class="history-card">
+                          <div class="card-left">
+                            召集人
+                          </div>
+                          <div class="card-right">
+                            <img src="<?= $this->escape($history->convener_party_img_path) ?>">
+                            <?= $this->escape($history->convener) ?>
+                          </div>
+                        </div>
+                      <?php } ?>
+                      <?php if ($history->meet_committees) { ?>
                         <div class="history-card">
                           <div class="card-left">
                             委員會
@@ -198,8 +209,23 @@ if ($version_id_input != 'latest' and strpos($version_id_input, 'progress') === 
                             <?= nl2br($this->escape(implode("\n", $history->meet_committees))) ?>
                           </div>
                         </div>
+                      <?php } ?>
+                      <div class="history-card">
+                        <div class="card-left">
+                          公報
+                        </div>
+                        <div class="card-right">
+                         <a class="btn btn-sm btn-outline-primary"
+                            href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
+                            原始資料
+                            <i class="bi bi-box-arrow-up-right"></i>
+                          </a>
+                          <div class="hostory-rec">
+                            相關紀錄位置：<?= $this->escape($history->立法紀錄) ?>
+                          </div>
+                        </div>
                       </div>
-                    <?php } ?>
+                    </div>
                   <?php } ?>
                 </div>
               <?php } ?>
