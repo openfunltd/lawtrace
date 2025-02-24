@@ -74,7 +74,7 @@ $version_count = count($this->diff->versions);
                     <div class="menu-item">
                       <?php foreach ($this->diff->rule_diffs as $idx => $rule_diff) { ?>
                       <div class="menu-head">
-                        <a href="#section-<?= $idx ?>1">
+                        <a href="#section-<?= $idx ?>">
                           <?= $this->escape($rule_diff->條文) ?>
                         </a>
                       </div>
@@ -137,7 +137,7 @@ $version_count = count($this->diff->versions);
               <div class="law-diff-row" style="--col-count: <?= $version_count ?>;">
                 <?php foreach ($this->diff->rule_diffs as $idx => $rule_diff) { ?>  
                   <!-- content-section-title -->
-                  <div class="original law-diff-title">
+                  <div class="original law-diff-title" id="section-<?= $idx ?>">
                       <?= $this->escape($rule_diff->條文) ?>
                   </div>
                   <?php for ($i = 0; $i < $version_count - 1; $i ++) { ?>
