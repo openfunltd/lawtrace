@@ -22,6 +22,13 @@ if ($this->version_id_input != 'latest') {
         </ol>
       </nav>
       <h2 class="light">
+          <?php if ($this->source_type == 'meet') { ?>
+          審查會議相關條文比較｜
+          <?php } elseif ($this->source_type == 'bill') { ?>
+          審查報告相關條文比較｜
+          <?php } elseif ($this->source_type == 'version') { ?>
+          三讀相關條文比較｜
+          <?php } ?>
           <?= $this->escape($this->law->名稱 ?? '') ?>
       </h2>
       <div class="info">
