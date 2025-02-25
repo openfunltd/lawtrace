@@ -1,6 +1,7 @@
 <?php
 $law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
+$this->tab = 'show';
 
 if (! ctype_digit($law_id)) {
     header('HTTP/1.1 400 Bad Request');

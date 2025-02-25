@@ -41,10 +41,10 @@ if ($this->version_id_input != 'latest') {
         <?php } ?>
       </div>
       <div class="btn-group law-pages">
-        <a href="/law/show/<?= $this->law_id ?>" class="btn btn-outline-primary active">
+          <a href="/law/show/<?= $this->law_id ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
           瀏覽法律
         </a>
-        <a href="<?= $this->escape($this->diff_endpoint) ?>" class="btn btn-outline-primary">
+        <a href="<?= $this->escape($this->diff_endpoint) ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'log', 'active') ?>">
           查看修訂歷程
         </a>
       </div>
