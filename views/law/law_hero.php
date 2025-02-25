@@ -41,6 +41,17 @@ if ($this->version_id_input != 'latest') {
         <?php } ?>
       </div>
       <div class="btn-group law-pages">
+          <?php if ('meet' == $this->source_type) { ?>
+          <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
+            會議原始資料
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+          <?php } elseif ('bill' == $this->source_type) { ?>
+          <a href="<?= $this->escape($this->bill->url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
+            報告原始資料
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+          <?php } ?>
           <a href="/law/show/<?= $this->law_id ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
           瀏覽法律
         </a>
