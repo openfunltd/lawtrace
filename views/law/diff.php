@@ -18,6 +18,8 @@ if ($res_error) {
     exit;
 }
 $law = $res->data;
+$this->law = $law;
+$this->tab = 'log';
 
 $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
 $versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
@@ -128,57 +130,15 @@ foreach ($modified_contents as $content) {
     $commit[] = $modification; 
 }
 
-$aliases = $law->其他名稱 ?? [];
-$vernaculars = $law->別名 ?? [];
-$show_endpoint = "/law/show/{$law_id}";
 $history_endpoint = "/law/history/{$law_id}";
 if ($version_id_input != 'latest') {
-    $show_endpoint = $show_endpoint . "?version={$version_id_input}";
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
 }
 ?>
 <?php $law_name = $this->escape($law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 異動條文"]) ?>
 <div class="main">
-  <section class="page-hero law-details-info">
-    <div class="container">
-      <nav class="breadcrumb-wrapper">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="/">
-              <i class="bi bi-house-door"></i>
-            </a>
-          </li>
-          <li class="breadcrumb-item active">
-            法律資訊
-          </li>
-        </ol>
-      </nav>
-      <h2 class="light">
-        <?= $this->escape($law->名稱 ?? '') ?>
-      </h2>
-      <div class="info">
-        <?php if (!empty($aliases)) { ?>
-          <div class="alias">
-            別名：<?= $this->escape(implode('、', $aliases)) ?>
-          </div>
-        <?php } ?>
-        <?php if (!empty($vernaculars)) { ?>
-          <div class="vernacular">
-            俗名：<?= $this->escape(implode('、', $vernaculars)) ?>
-          </div>
-        <?php } ?>
-      </div>
-      <div class="btn-group law-pages">
-        <a href="<?= $this->escape($show_endpoint) ?>" class="btn btn-outline-primary">
-          瀏覽法律
-        </a>
-        <a href="#" class="btn btn-outline-primary active">
-          查看修訂歷程
-        </a>
-      </div>
-    </div>
-  </section>
+  <?= $this->partial('/law/law_hero', $this) ?>  
   <div class="main-content">
     <section class="law-details">
       <div class="container">
