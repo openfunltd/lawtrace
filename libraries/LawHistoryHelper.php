@@ -18,97 +18,14 @@ class LawHistoryHelper
         );
         $legislators = $res->legislators ?? [];
 
-        //batch retrieve bills within histories
-        $bill_ids = [];
-        foreach ($histories as $history) {
-            $related_doc = $history->關係文書 ?? [];
-            if (is_array($related_doc)) {
-                $related_doc = $related_doc[0] ?? new stdClass();
-            }
-            $bill_id = $related_doc->billNo ?? null;
-            if (isset($bill_id)) {
-                $bill_ids[] = $bill_id;
-            }
-        }
+        $histories = self::updateBillDetail($histories, $legislators);
+        $histories = self::updateMeetDetail($histories, $legislators);
 
-        //get bills' data within one query
-        $output_fields = [
-            '提案單位/提案委員',
-            '提案人',
-            '屆',
-            '提案來源',
-            '對照表',
-        ];
-        $url = sprintf('/bills?output_fields=%s&議案編號=%s',
-            implode('&output_fields=', $output_fields),
-            implode('&議案編號=', $bill_ids)
-        );
-        $res = LYAPI::apiQuery($url, "整批查詢提案詳細資訊");
-        $res_total = $res->total ?? 0;
-        $bills = ($res_total > 0) ? $res->bills : [];
+        return $histories;
+    }
 
-        //enrich history data with bill data
-        foreach ($histories as $history) {
-            $related_doc = $history->關係文書 ?? [];
-            if (is_array($related_doc)) {
-                $related_doc = $related_doc[0] ?? new stdClass();
-            }
-            $bill_id = $related_doc->billNo ?? null;
-            $date = $history->會議日期;
-            $history->會議民國日期 = self::getMinguoDateFormat2($date);
-
-            //filter to get desired bill data
-            $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {
-                return $bill->議案編號 === $bill_id;
-            });
-            if (!empty($bill_filtered)) {
-                $bill = reset($bill_filtered);
-                $history->bill_id = $bill_id;
-            }
-
-            if (!isset($bill_id) or !isset($bill)) {
-                continue;
-            }
-
-            //get proposer or progress title
-            $proposer = $bill->{'提案單位/提案委員'} ?? '';
-            $proposer = self::trimProposer($proposer);
-            $history->proposers_str = $proposer;
-
-            //determine party image
-            $party_img_path = PartyHelper::getImage($proposer);
-            $proposers = $bill->提案人 ?? [];
-            $leading_proposer = $proposers[0] ?? NULL;
-            if (is_null($party_img_path) and isset($leading_proposer)) {
-                $legislators_filtered = array_filter($legislators, function ($legislator) use ($leading_proposer) {
-                    return $legislator->委員姓名 == $leading_proposer;
-                });
-                $legislator = reset($legislators_filtered);
-                if ($legislator !== false) {
-                    $party = $legislator->黨籍;
-                    $party_img_path = PartyHelper::getImage($party);
-                }
-            }
-            if (isset($party_img_path)) {
-                $history->party_img_path = $party_img_path;
-            }
-
-            //取得條號 Array: 第一條, 第二十條 => [1, 20]
-            $bill_source = $bill->提案來源 ?? '';
-            $amendment = $bill->對照表 ?? [];
-            $amendment = $amendment[0] ?? new stdClass();
-            if (!empty((array)$amendment)) {
-                $article_numbers = self::getArticleNumbers($amendment);
-                $history->article_numbers = $article_numbers;
-            }
-
-            //議案詳細資訊連結到議事公報網
-            $ppg_url = $bill->url ?? '';
-            if ($ppg_url != '') {
-                $history->ppg_url = $ppg_url;
-            }
-        }
-
+    private static function updateMeetDetail($histories, $legislators)
+    {
         //get committees' data for later use
         $res = LYAPI::apiQuery("/committees?page=1&per_page=20", "查詢各委員會基本資料");
         $committees = $res->committees ?? [];
@@ -244,6 +161,102 @@ class LawHistoryHelper
                     }
                     break;
                 }
+            }
+        }
+
+        return $histories;
+    }
+
+    private static function updateBillDetail($histories, $legislators)
+    {
+        //batch retrieve bills within histories
+        $bill_ids = [];
+        foreach ($histories as $history) {
+            $related_doc = $history->關係文書 ?? [];
+            if (is_array($related_doc)) {
+                $related_doc = $related_doc[0] ?? new stdClass();
+            }
+            $bill_id = $related_doc->billNo ?? null;
+            if (isset($bill_id)) {
+                $bill_ids[] = $bill_id;
+            }
+        }
+
+        //get bills' data within one query
+        $output_fields = [
+            '提案單位/提案委員',
+            '提案人',
+            '屆',
+            '提案來源',
+            '對照表',
+        ];
+        $url = sprintf('/bills?output_fields=%s&議案編號=%s',
+            implode('&output_fields=', $output_fields),
+            implode('&議案編號=', $bill_ids)
+        );
+        $res = LYAPI::apiQuery($url, "整批查詢提案詳細資訊");
+        $res_total = $res->total ?? 0;
+        $bills = ($res_total > 0) ? $res->bills : [];
+
+        //enrich history data with bill data
+        foreach ($histories as $history) {
+            $related_doc = $history->關係文書 ?? [];
+            if (is_array($related_doc)) {
+                $related_doc = $related_doc[0] ?? new stdClass();
+            }
+            $bill_id = $related_doc->billNo ?? null;
+            $date = $history->會議日期;
+            $history->會議民國日期 = self::getMinguoDateFormat2($date);
+
+            //filter to get desired bill data
+            $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {
+                return $bill->議案編號 === $bill_id;
+            });
+            if (!empty($bill_filtered)) {
+                $bill = reset($bill_filtered);
+                $history->bill_id = $bill_id;
+            }
+
+            if (!isset($bill_id) or !isset($bill)) {
+                continue;
+            }
+
+            //get proposer or progress title
+            $proposer = $bill->{'提案單位/提案委員'} ?? '';
+            $proposer = self::trimProposer($proposer);
+            $history->proposers_str = $proposer;
+
+            //determine party image
+            $party_img_path = PartyHelper::getImage($proposer);
+            $proposers = $bill->提案人 ?? [];
+            $leading_proposer = $proposers[0] ?? NULL;
+            if (is_null($party_img_path) and isset($leading_proposer)) {
+                $legislators_filtered = array_filter($legislators, function ($legislator) use ($leading_proposer) {
+                    return $legislator->委員姓名 == $leading_proposer;
+                });
+                $legislator = reset($legislators_filtered);
+                if ($legislator !== false) {
+                    $party = $legislator->黨籍;
+                    $party_img_path = PartyHelper::getImage($party);
+                }
+            }
+            if (isset($party_img_path)) {
+                $history->party_img_path = $party_img_path;
+            }
+
+            //取得條號 Array: 第一條, 第二十條 => [1, 20]
+            $bill_source = $bill->提案來源 ?? '';
+            $amendment = $bill->對照表 ?? [];
+            $amendment = $amendment[0] ?? new stdClass();
+            if (!empty((array)$amendment)) {
+                $article_numbers = self::getArticleNumbers($amendment);
+                $history->article_numbers = $article_numbers;
+            }
+
+            //議案詳細資訊連結到議事公報網
+            $ppg_url = $bill->url ?? '';
+            if ($ppg_url != '') {
+                $history->ppg_url = $ppg_url;
             }
         }
 
