@@ -115,18 +115,23 @@ class LawVersionHelper
             return NULL;
         }
         $law_content_name_encoded = mb_ereg_replace(' ', '%20', $law_content_name);
-        $versions = array_map(function ($version) use ($law_content_name, $law_content_name_encoded){
+        $version_ids = array_reduce($versions, function ($carry, $version) {
+            $carry[] = $version->版本編號;
+            return $carry;
+        }, []);
+        $res = LYAPI::apiQuery('/law_contents?版本編號=' . implode('&版本編號=', $version_ids) . '&limit=3000',
+            '查詢所有版本編號的所有條文（之後再依條號 filter）'
+        );
+        $law_contents = $res->lawcontents ?? [];
+        foreach ($versions as $version) {
             $version_id = $version->版本編號;
-            $res = LYAPI::apiQuery("/law_contents?版本編號={$version_id}&條號={$law_content_name_encoded}",
-                "查詢 law_content: 版本編號:{$version_id}, 條號:{$law_content_name}"
-            );
-            $res_total = $res->total ?? 0;
-            if ($res_total > 0) {
-                $law_contents = $res->lawcontents ?? [];
-                $version->law_content_id = $law_contents[0]->法條編號;
+            foreach ($law_contents as $law_content) {
+                if ($law_content->版本編號 == $version_id and $law_content->條號 == $law_content_name) {
+                    $version->law_content_id = $law_content->法條編號;
+                    break;
+                }
             }
-            return $version;
-        }, $versions);
+        }
         $versions = array_filter($versions, function ($version) {
             return property_exists($version, 'law_content_id');
         });
