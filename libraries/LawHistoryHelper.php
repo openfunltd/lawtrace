@@ -35,7 +35,7 @@ class LawHistoryHelper
                 }
             }
             if (count($proposers) >= 3) {
-                $history_group->group_title = $proposers[0] . '、' . $proposers[1] . '等' . count($proposers) . '版本';
+                $history_group->group_title = $proposers[0] . '、' . $proposers[1] . '等 ' . count($proposers) . ' 版本';
             } elseif (count($proposers) < 3) {
                 $history_group->group_title = implode('、', $proposers) . '提案版本';
             }
@@ -99,6 +99,7 @@ class LawHistoryHelper
                 $bill_id = $related_doc->billNo ?? null;
                 $date = $history->會議日期;
                 $history->會議民國日期 = self::getMinguoDateFormat2($date);
+                $history->會議民國日期v2 = self::getMinguoDateFormat3($date);
 
                 //filter to get desired bill data
                 $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {
@@ -395,5 +396,12 @@ class LawHistoryHelper
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "{$minguo}/{$month}/{$day}";
+    }
+
+    public static function getMinguoDateFormat3($version_date)
+    {
+        [$year, $month, $day] = explode('-', $version_date);
+        $minguo = intval($year) - 1911;
+        return "{$minguo}年{$month}月{$day}日";
     }
 }

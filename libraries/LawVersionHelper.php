@@ -181,9 +181,16 @@ class LawVersionHelper
             if (is_null($version_id_selected) and $version_id_input == $version_id) {
                 $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
                 $history_groups = $res->歷程;
+                //去掉三讀的 bill_log (跟 version 重複)
                 $history_groups = array_filter($history_groups, function ($history_group) {
                     $id = $history_group->id;
                     return mb_strpos($id, '三讀') === false;
+                });
+                //把 id = '未分類'放到最後面
+                usort($history_groups, function ($groupA, $groupB) {
+                    $idA = $groupA->id;
+                    $idB = $groupB->id;
+                    return ($idA === '未分類') - ($idB === '未分類');
                 });
                 $version->歷程 = $history_groups;
                 $version_selected = $version;
