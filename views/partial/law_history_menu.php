@@ -14,6 +14,14 @@ foreach ($history_groups as $history_group) {
     }
 }
 ?>
+<?php if (count($history_groups) == 1 and count($history_groups[0]->bill_log) == 0) { ?>
+  <div class="history-menu">
+    <div class="title">
+      無資料
+    </div>
+  </div>
+<?php exit; ?>
+<?php } ?>
 <div class="history-menu">
   <?php foreach ($menu_groups as $idx => $menu_group) { ?>
     <div class="title">
