@@ -144,6 +144,45 @@ if ($version_id_input != 'latest' and !$is_progress_history) {
             </ul>
             <?php if ($is_progress_history) { ?>
               <?= $this->partial('partial/law_history_menu', ['history_groups' => $history_groups]) ?>
+              <?php foreach ($history_groups as $history_group) { ?>
+                <?php if ($history_group->id != '未分類') { ?>
+                  <div id="<?= $this->escape($history_group->id) ?>" class="version-section-bar">
+                    <div class="title">
+                      <?= $this->escape($history_group->group_title) ?>
+                      <small><?= $this->escape($history_group->review_date) ?></small>
+                    </div>
+                    <div class="actions">
+                      <a href="<?= $this->escape($history_group->compare_url) ?>" class="btn btn-sm btn-outline-primary">
+                        <i class="bi-arrow-right"></i>
+                        比較議案
+                      </a>
+                      <a href="<?= $this->escape($history_group->review_ppg_url) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                        <i class="bi-box-arrow-up-right"></i>
+                        原始資料
+                      </a>
+                    </div>
+                  </div>
+                <?php } else { ?>
+                  <?php foreach ($history_group->bill_log as $bill) { ?>
+                    <div id="<?= $this->escape($bill->bill_id) ?>" class="version-section-bar">
+                      <div class="title">
+                        <?= $this->escape($bill->主提案) ?>版本
+                        <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
+                      </div>
+                      <div class="actions">
+                        <a href="<?= $this->escape($bill->compare_url) ?>" class="btn btn-sm btn-outline-primary">
+                          <i class="bi-arrow-right"></i>
+                          比較議案
+                        </a>
+                        <a href="<?= $this->escape($bill->review_ppg_url) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                          <i class="bi-box-arrow-up-right"></i>
+                          原始資料
+                        </a>
+                      </div>
+                    </div>
+                  <?php } ?>
+                <?php } ?>
+              <?php } ?>
             <?php } ?>
           </div>
         </div>

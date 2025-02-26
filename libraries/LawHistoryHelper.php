@@ -100,6 +100,8 @@ class LawHistoryHelper
                 $date = $history->會議日期;
                 $history->會議民國日期 = self::getMinguoDateFormat2($date);
                 $history->會議民國日期v2 = self::getMinguoDateFormat3($date);
+                $history->compare_url = "/law/compare?source=bill:{$bill_id}";
+                $history->review_ppg_url = "https://ppg.ly.gov.tw/ppg/bills/{$bill_id}/details";
 
                 //filter to get desired bill data
                 $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {
