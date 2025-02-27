@@ -14,79 +14,81 @@ $history_groups = $this->_data['history_groups'];
           </a>
         <?php } ?>
       </div>
-    </div>
-    <?php if ($timeline_node->進度 == '一讀') {?>
-      <div class="item-body">
-        <div class="history-grid">
-          <div class="grid-head">
-            相關議案及其提案之條文 (共 <?= count($timeline_node->items) ?> 案)
-            <i class="bi bi-chevron-up icon"></i>
-          </div>
-          <div class="grid-body">
-            <?php foreach ($timeline_node->items as $history) { ?>
-              <div class="grid-row">
-                <div class="party-img">
-                  <?php if (property_exists($history, 'party_img_path')) { ?>
-                    <img src="<?= $history->party_img_path ?>">
+      <?php if ($timeline_node->進度 == '一讀') {?>
+        <div class="item-body">
+          <div class="history-grid">
+            <div class="grid-head">
+              相關議案及其提案之條文 (共 <?= count($timeline_node->items) ?> 案)
+              <i class="bi bi-chevron-up icon"></i>
+            </div>
+            <div class="grid-body">
+              <?php foreach ($timeline_node->items as $history) { ?>
+                <div class="grid-row">
+                  <div class="party-img">
+                    <?php if (property_exists($history, 'party_img_path')) { ?>
+                      <img src="<?= $history->party_img_path ?>">
+                    <?php } ?>
+                  </div>
+                  <div class="party"><?= $this->escape($history->proposers_str) ?></div>
+                  <?php if (property_exists($history, 'article_numbers')) { ?>
+                    <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
+                  <?php } ?>
+                  <?php if (property_exists($history, 'ppg_url')) { ?>
+                    <div class="details">
+                      <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
+                        議案詳細資訊
+                        <i class="bi bi-arrow-right"></i>
+                      </a>
+                    </div>
                   <?php } ?>
                 </div>
-                <div class="party"><?= $this->escape($history->proposers_str) ?></div>
-                <?php if (property_exists($history, 'article_numbers')) { ?>
-                  <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
-                <?php } ?>
-                <?php if (property_exists($history, 'ppg_url')) { ?>
-                  <div class="details">
-                    <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
-                      議案詳細資訊
-                      <i class="bi bi-arrow-right"></i>
-                    </a>
-                  </div>
-                <?php } ?>
+              <?php } ?>
+            </div>
+          </div>
+        </div>
+      <?php } elseif ($timeline_node->items[0]->is_meet) { ?>
+        <div class="item-body">
+          <?php $history = $timeline_node->items[0]; ?>
+          <?php if ($history->convener) { ?>
+            <div class="history-card">
+              <div class="card-left">
+                召集人
               </div>
-            <?php } ?>
-          </div>
+              <div class="card-right">
+                <img src="<?= $this->escape($history->convener_party_img_path) ?>">
+                <?= $this->escape($history->convener) ?>
+              </div>
+            </div>
+          <?php } ?>
+          <?php if ($history->meet_committees) { ?>
+            <div class="history-card">
+              <div class="card-left">
+                委員會
+              </div>
+              <div class="card-right">
+                <?= nl2br($this->escape(implode("\n", $history->meet_committees))) ?>
+              </div>
+            </div>
+          <?php } ?>
+          <?php if (isset($history->gazette_ppr_url)) { ?>
+            <div class="history-card">
+              <div class="card-left">
+                公報
+              </div>
+              <div class="card-right">
+               <a class="btn btn-sm btn-outline-primary"
+                  href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
+                  原始資料
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <div class="hostory-rec">
+                  相關紀錄位置：<?= $this->escape($history->立法紀錄) ?>
+                </div>
+              </div>
+            </div>
+          <?php } ?>
         </div>
-      </div>
-    <?php } elseif ($timeline_node->items[0]->is_meet) { ?>
-      <div class="item-body">
-        <?php $history = $timeline_node->items[0]; ?>
-        <?php if ($history->convener) { ?>
-          <div class="history-card">
-            <div class="card-left">
-              召集人
-            </div>
-            <div class="card-right">
-              <img src="<?= $this->escape($history->convener_party_img_path) ?>">
-              <?= $this->escape($history->convener) ?>
-            </div>
-          </div>
-        <?php } ?>
-        <?php if ($history->meet_committees) { ?>
-          <div class="history-card">
-            <div class="card-left">
-              委員會
-            </div>
-            <div class="card-right">
-              <?= nl2br($this->escape(implode("\n", $history->meet_committees))) ?>
-            </div>
-          </div>
-        <?php } ?>
-        <div class="history-card">
-          <div class="card-left">
-            公報
-          </div>
-          <div class="card-right">
-           <a class="btn btn-sm btn-outline-primary"
-              href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
-              原始資料
-              <i class="bi bi-box-arrow-up-right"></i>
-            </a>
-            <div class="hostory-rec">
-              相關紀錄位置：<?= $this->escape($history->立法紀錄) ?>
-            </div>
-          </div>
-        </div>
-      </div>
-    <?php } ?>
+      <?php } ?>
+    </div>
   <?php } ?>
 </div>
