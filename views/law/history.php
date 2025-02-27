@@ -34,6 +34,7 @@ if (is_null($version_selected)) {
 
 $history_groups = $version_selected->歷程 ?? [];
 $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
+$is_third_read_history = (strpos($version_id_selected, 'progress') === false);
 $is_progress_history = (strpos($version_id_selected, 'progress') !== false);
 
 $aliases = $law->其他名稱 ?? [];
@@ -142,6 +143,9 @@ if ($version_id_input != 'latest' and !$is_progress_history) {
                 <a class="nav-link active" href="#">經歷過程</a>
               </li>
             </ul>
+            <?php if ($is_third_read_history) { ?>
+              <?= $this->partial('partial/law_history_timeline', ['history_groups' => $history_groups]) ?>
+            <?php } ?>
             <?php if ($is_progress_history) { ?>
               <?= $this->partial('partial/law_history_menu', ['history_groups' => $history_groups]) ?>
               <?php foreach ($history_groups as $history_group) { ?>
@@ -162,6 +166,7 @@ if ($version_id_input != 'latest' and !$is_progress_history) {
                       </a>
                     </div>
                   </div>
+                  <?= $this->partial('partial/law_history_timeline', ['history_groups' => $history_groups]) ?>
                 <?php } else { ?>
                   <?php foreach ($history_group->bill_log as $bill) { ?>
                     <div id="<?= $this->escape($bill->bill_id) ?>" class="version-section-bar">
