@@ -160,8 +160,18 @@ class LawVersionHelper
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
         $term_selected = $versions_data->term_selected;
-
         $term_dates = LyDateHelper::$term_dates;
+
+        //repack 歷程 as 歷程 in progress
+        $histories = $version_selected->歷程;
+        if (isset($histories)) {
+            $version_selected->歷程 = [
+                (object) [
+                    'id' => $version_id_selected,
+                    'bill_log' => $histories,
+                ],
+            ];
+        }
 
         foreach ($versions_in_terms as $term => $versions) {
             $version_id = "{$law_id}:{$term}-progress";
@@ -170,8 +180,13 @@ class LawVersionHelper
             ];
             if (is_null($version_id_selected) and $version_id_input == $version_id) {
                 $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
-                $bill_log = $res->歷程[0]->bill_log;
-                $version->歷程 = $bill_log;
+                $history_groups = $res->歷程;
+                //去掉三讀的 bill_log (跟 version 重複)
+                $history_groups = array_filter($history_groups, function ($history_group) {
+                    $id = $history_group->id;
+                    return mb_strpos($id, '三讀') === false;
+                });
+                $version->歷程 = $history_groups;
                 $version_selected = $version;
                 $version_id_selected = $version_id;
                 $term_selected = $term;
