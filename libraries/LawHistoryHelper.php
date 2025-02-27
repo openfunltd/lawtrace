@@ -15,6 +15,36 @@ class LawHistoryHelper
         $history_groups = self::updateMeetDetails($history_groups, $legislators);
         $history_groups = self::updateGroupMetadata($history_groups);
         $history_groups = self::groupByTimeline($history_groups);
+        $history_groups = self::orderGroups($history_groups);
+
+        return $history_groups;
+    }
+
+    private static function orderGroups($history_groups)
+    {
+        //order by date
+        usort($history_groups, function ($groupA, $groupB) {
+            $id_arrayA = explode('-', $groupA->id);
+            $id_arrayB = explode('-', $groupB->id);
+            $dateA = sprintf('%d-%d-%d', $id_arrayA[1], $id_arrayA[2], $id_arrayA[3]);
+            $dateB = sprintf('%d-%d-%d', $id_arrayB[1], $id_arrayB[2], $id_arrayB[3]);
+            return $dateA <=> $dateB;
+        });
+
+        //把 id = '未分類'放到最後面
+        usort($history_groups, function ($groupA, $groupB) {
+            return ($groupA->id === '未分類') - ($groupB->id === '未分類');
+        });
+
+        //order bills in history_group by date for id = '未分類'
+        foreach ($history_groups as $history_group) {
+            if ($history_group->id != '未分類') {
+                continue;
+            }
+            usort($history_group->bill_log, function ($billA, $billB) {
+                return $billA->會議日期 <=> $billB->會議日期;
+            });
+        }
 
         return $history_groups;
     }

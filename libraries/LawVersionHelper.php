@@ -186,12 +186,6 @@ class LawVersionHelper
                     $id = $history_group->id;
                     return mb_strpos($id, '三讀') === false;
                 });
-                //把 id = '未分類'放到最後面
-                usort($history_groups, function ($groupA, $groupB) {
-                    $idA = $groupA->id;
-                    $idB = $groupB->id;
-                    return ($idA === '未分類') - ($idB === '未分類');
-                });
                 $version->歷程 = $history_groups;
                 $version_selected = $version;
                 $version_id_selected = $version_id;
