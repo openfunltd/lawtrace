@@ -44,7 +44,11 @@ $diff_endpoint = "/law/diff/{$law_id}";
 if ($version_id_input != 'latest' and !$is_progress_history) {
     $show_endpoint = $show_endpoint . "?version={$version_id_input}";
     $diff_endpoint = $diff_endpoint . "?version={$version_id_input}";
+} else {
+    $diff_endpoint = false;
 }
+$this->nav_link_diff = $diff_endpoint;
+$this->law_nav = 'history';
 ?>
 <?php $law_name = $this->escape($law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 經歷過程"]) ?>
@@ -133,16 +137,7 @@ if ($version_id_input != 'latest' and !$is_progress_history) {
             </div>
           </div>
           <div>
-            <ul class="nav nav-tabs">
-              <?php if (!$is_progress_history) { ?>
-                <li class="nav-item">
-                  <a class="nav-link" href="<?= $this->escape($diff_endpoint) ?>">異動條文</a>
-                </li>
-              <?php } ?>
-              <li class="nav-item">
-                <a class="nav-link active" href="#">經歷過程</a>
-              </li>
-            </ul>
+            <?= $this->partial('law/law_navs', $this) ?>  
             <?php if ($is_third_read_history) { ?>
               <?= $this->partial('partial/law_history_timeline', ['history_groups' => $history_groups]) ?>
             <?php } ?>

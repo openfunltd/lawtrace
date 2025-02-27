@@ -130,10 +130,12 @@ foreach ($modified_contents as $content) {
     $commit[] = $modification; 
 }
 
+$this->law_nav = 'diff';
 $history_endpoint = "/law/history/{$law_id}";
 if ($version_id_input != 'latest') {
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
 }
+$this->nav_link_history = $history_endpoint;
 ?>
 <?php $law_name = $this->escape($law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 異動條文"]) ?>
@@ -178,14 +180,7 @@ if ($version_id_input != 'latest') {
             </div>
           </div>
           <div>
-            <ul class="nav nav-tabs">
-              <li class="nav-item">
-                <a class="nav-link active" href="#">異動條文</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="<?= $this->escape($history_endpoint) ?>">經歷過程</a>
-              </li>
-            </ul>
+            <?= $this->partial('law/law_navs', $this) ?>
 
             <div class="law-diff-wrapper">
               <div class="diff-info">
