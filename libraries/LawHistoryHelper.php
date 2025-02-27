@@ -204,7 +204,7 @@ class LawHistoryHelper
         foreach ($history_groups as $history_group) {
             $histories = $history_group->bill_log;
             foreach ($histories as $history) {
-                $needles = ['二讀', '三讀', '委員會審查', '黨團協商'];
+                $needles = ['二讀', '三讀', '委員會', '黨團協商'];
                 $progress_status = $history->進度 ?? '';
                 $is_meet = false;
                 foreach ($needles as $needle) {
@@ -215,6 +215,10 @@ class LawHistoryHelper
                 }
                 $meet_id = $history->會議代碼 ?? null;
                 $gazette_id = $history->公報編號 ?? null;
+                $related_docs = $history->關係文書 ?? null;
+                if (is_object($related_docs)) {
+                    $related_docs = [$related_docs];
+                }
                 if (mb_substr($gazette_id, -2) === '00') {
                     $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
                 }
@@ -235,6 +239,13 @@ class LawHistoryHelper
                         );
                         $history->gazette_ppg_url = $gazette_ppg_url;
                     }
+
+                    foreach ($related_docs as $related_doc) {
+                        if ($related_doc->類型 == '審查報告') {
+                            $history->review_report_doc = $related_doc->連結;
+                            break;
+                        }
+                    }
                 }
 
                 $history->is_meet = $is_meet;
@@ -249,11 +260,11 @@ class LawHistoryHelper
         $res_total = $res->total ?? 0;
         $gazette_agendas = ($res_total > 0) ? $res->gazetteagendas : [];
 
-        //retrieve meet data within gazette_agenda
+        //retrieve meet data within gazette_agenda (only for 委員會)
         foreach ($history_groups as $history_group) {
             $histories = $history_group->bill_log;
             foreach ($histories as $history) {
-                if (!property_exists($history, 'gazette_id')) {
+                if (mb_strpos($history->進度, '委員會') === false or !property_exists($history, 'gazette_id')) {
                     continue;
                 }
                 $gazette_id = $history->gazette_id;
