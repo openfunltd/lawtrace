@@ -70,7 +70,7 @@ $history_groups = $this->_data['history_groups'];
               </div>
             </div>
           <?php } ?>
-          <?php if (isset($history->gazette_ppr_url)) { ?>
+          <?php if (isset($history->gazette_ppg_url)) { ?>
             <div class="history-card">
               <div class="card-left">
                 公報

@@ -223,17 +223,18 @@ class LawHistoryHelper
                     if (isset($meet_id)) {
                         $meet_ids[] = $meet_id;
                         $history->meet_id = $meet_id;
-                    } elseif (isset($gazette_id)) {
+                    }
+
+                    if (isset($gazette_id)) {
                         $gazette_ids[] = $gazette_id;
                         $history->gazette_id = $gazette_id;
+                        $gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%d/%s/%s/details',
+                            substr($gazette_id, 0, 3),
+                            substr($gazette_id, 3, 2,),
+                            substr($gazette_id, 5, 2,)
+                        );
+                        $history->gazette_ppg_url = $gazette_ppg_url;
                     }
-                    $gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%d/%s/%s/details',
-                        substr($gazette_id, 0, 3),
-                        substr($gazette_id, 3, 2,),
-                        substr($gazette_id, 5, 2,)
-                    );
-
-                    $history->gazette_ppg_url = $gazette_ppg_url;
                 }
 
                 $history->is_meet = $is_meet;
