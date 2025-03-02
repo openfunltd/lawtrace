@@ -21193,7 +21193,7 @@ html:has(.law-compare-page) {
 }
 
 .version-section-bar {
-  margin-bottom: -20px;
+  margin: 4px 0;
   padding: 16px;
   background: var(--Gray-100);
   border: 1px solid var(--Gray-400);
