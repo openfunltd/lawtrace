@@ -3,8 +3,18 @@ $this->aliases = $this->law->其他名稱 ?? [];
 $this->vernaculars = $this->law->別名 ?? [];
 $this->aliases = array_merge($this->aliases, $this->vernaculars);
 $this->diff_endpoint = "/law/diff/{$this->law_id}";
+
 if ($this->version_id_input != 'latest') {
-    $this->diff_endpoint = $this->diff_endpoint . "?version={$this->version_id_input}";
+    $version_postfix = "?version={$this->version_id_input}";
+} else {
+    $res = LYAPI::apiQuery("/laws/{$this->law_id}/versions?limit=1&sort=日期>", "查詢法律 {$this->law_id} 最新版本");
+    $this->version_id_input = $res->lawversions[0]->版本編號;
+    $version_postfix = "";
+}
+
+
+if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作
+    $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
 }
 ?>
     <section class="page-hero law-details-info">
@@ -17,18 +27,29 @@ if ($this->version_id_input != 'latest') {
             </a>
           </li>
           <li class="breadcrumb-item active">
-            法律資訊
+            <a href="/law/show/<?= $this->law_id ?>">
+              <?= $this->escape($this->law->名稱 ?? '') ?>
+            </a>
           </li>
+          <?php if ($this->source_type == 'meet') { ?>
+            <li class="breadcrumb-item active">
+            委員會審查
+            </li>
+          <?php } elseif ($this->source_type == 'bill') { ?>
+            <li class="breadcrumb-item active">
+            審查報告
+            </li>
+          <?php } elseif ($this->source_type == 'version') { ?>
+            <li class="breadcrumb-item active">
+            三讀版本
+            </li>
+            <li class="breadcrumb-item active">
+            <?= $version_date ?>
+            </li>
+          <?php } ?>
         </ol>
       </nav>
       <h2 class="light">
-          <?php if ($this->source_type == 'meet') { ?>
-          審查會議相關條文比較｜
-          <?php } elseif ($this->source_type == 'bill') { ?>
-          審查報告相關條文比較｜
-          <?php } elseif ($this->source_type == 'version') { ?>
-          三讀相關條文比較｜
-          <?php } ?>
           <?= $this->escape($this->law->名稱 ?? '') ?>
       </h2>
       <div class="info">
@@ -61,7 +82,16 @@ if ($this->version_id_input != 'latest') {
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
-          <?php if ('meet' == $this->source_type) { ?>
+          <a href="/law/show/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
+          瀏覽法律
+        </a>
+        <a href="/law/diff/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'log', 'active') ?>">
+          查看修訂歷程
+        </a>
+        <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
+          條文比較工具
+        </a>
+        <?php if ('meet' == $this->source_type) { ?>
           <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
             會議原始資料
             <i class="bi bi-box-arrow-up-right"></i>
@@ -71,13 +101,7 @@ if ($this->version_id_input != 'latest') {
             報告原始資料
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
-          <?php } ?>
-          <a href="/law/show/<?= $this->law_id ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
-          瀏覽法律
-        </a>
-        <a href="<?= $this->escape($this->diff_endpoint) ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'log', 'active') ?>">
-          查看修訂歷程
-        </a>
+        <?php } ?>
       </div>
     </div>
   </section>

@@ -2,6 +2,7 @@
 $version_count = count($this->diff->versions);
 $this->title = "比較議案／條文";
 $this->body_class = 'law-compare-page';
+$this->tab = 'compare';
 ?>
 <?= $this->partial('common/header', $this) ?>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/7.0.0/diff.min.js" integrity="sha512-immo//J6lKoR+nRIFDPxoxfL2nd/0N3w8l4LwH4HSSVovtUjab5kbh4AhixLH5z9mIv37llY9Q2i8AfEDXyYjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
