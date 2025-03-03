@@ -4,25 +4,7 @@ $version_id_input = $this->version_id_input;
 $this->tab = 'show';
 $this->source_type = 'version';
 
-$versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
-$versions = $versions_data->versions;
-$version_selected = $versions_data->version_selected;
-$version_id_selected = $versions_data->version_id_selected;
-if (is_null($version_selected)) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No version data with version_id {$version_id_input}</p>";
-    exit;
-}
-
-$res = LYAPI::apiQuery(
-    "/law_contents?版本編號={$version_id_selected}&limit=1000",
-    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
-);
-$contents = $res->lawcontents ?? [];
-//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
-
-$chapters = array_filter($contents, function($content) {
+$chapters = array_filter($this->contents, function($content) {
     $chapter_name = $content->章名 ?? '';
     $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
 
@@ -42,11 +24,11 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
         <div class="law-version">
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              版本：<?= $this->escape("{$version_selected->民國日期} {$version_selected->動作}") ?>
-              <?= ($version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
+                版本：<?= $this->escape("{$this->versions_data->version_selected->民國日期} {$this->versions_data->version_selected->動作}") ?>
+                <?= ($this->versions_data->version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
             </button>
             <ul class="dropdown-menu">
-              <?php foreach ($versions as $version) { ?>
+              <?php foreach ($this->versions_data->versions as $version) { ?>
                 <li>
                   <a
                     class="dropdown-item"
@@ -67,7 +49,7 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
           ])
           ?>
           <div class="law-list">
-            <?php foreach ($contents as $content) { ?>
+            <?php foreach ($this->contents as $content) { ?>
               <?php
               $content_order = $content->順序;
               $chapter_name = $content->章名 ?? '';

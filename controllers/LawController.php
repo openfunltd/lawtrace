@@ -9,6 +9,27 @@ class LawController extends MiniEngine_Controller
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
         $this->view->law = $this->getLawData($law_id);
+
+        $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
+        $versions = $versions_data->versions;
+        $version_selected = $versions_data->version_selected;
+        $version_id_selected = $versions_data->version_id_selected;
+
+        $this->view->versions_data = $versions_data;
+        if (is_null($version_selected)) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No version data with version_id {$version_id_input}</p>";
+            exit;
+        }
+        $res = LYAPI::apiQuery(
+                "/law_contents?版本編號={$version_id_selected}&limit=1000",
+                    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
+        );
+        $contents = $res->lawcontents ?? [];
+        //TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
+        $this->view->contents = $contents;
+
     }
 
     public function historyAction($law_id)
@@ -65,9 +86,6 @@ class LawController extends MiniEngine_Controller
         );
         $this->view->contents = $res->lawcontents ?? [];
         //TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
-
-
-
     }
 
     public function diffAction($law_id)
