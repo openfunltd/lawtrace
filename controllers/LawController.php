@@ -56,6 +56,7 @@ class LawController extends MiniEngine_Controller
         $history_groups = $version_selected->歷程 ?? [];
         $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
         $this->view->history_groups = $history_groups;
+        $this->view->source = "version:{$law_id}:{$version_selected->日期}";
     }
 
     public function singleAction($law_content_id)
@@ -153,6 +154,7 @@ class LawController extends MiniEngine_Controller
             }
             $this->view->law_contents_previous = $res->lawcontents;
         }
+        $this->view->source = "version:{$law_id}:{$version_selected->日期}";
     }
 
     public function compareAction()
