@@ -22,6 +22,7 @@ class LawController extends MiniEngine_Controller
             echo "<p>No version data with version_id {$version_id_input}</p>";
             exit;
         }
+        $this->view->version = $version_selected;
         $res = LYAPI::apiQuery(
                 "/law_contents?版本編號={$version_id_selected}&limit=1000",
                     "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
@@ -46,6 +47,7 @@ class LawController extends MiniEngine_Controller
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
         $term_selected = $versions_data->term_selected;
+        $this->view->version = $version_selected;
         if (is_null($version_selected)) {
             header('HTTP/1.1 404 No Found');
             echo "<h1>404 No Found</h1>";
@@ -56,7 +58,9 @@ class LawController extends MiniEngine_Controller
         $history_groups = $version_selected->歷程 ?? [];
         $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
         $this->view->history_groups = $history_groups;
-        $this->view->source = "version:{$law_id}:{$version_selected->日期}";
+        if (strpos($version_selected->版本編號, '-progress') === false) {
+            $this->view->source = "version:{$law_id}:{$version_selected->日期}";
+        }
     }
 
     public function singleAction($law_content_id)
@@ -121,6 +125,7 @@ class LawController extends MiniEngine_Controller
         $version_previous = $versions_data->version_previous;
         $version_id_selected = $versions_data->version_id_selected;
         $version_id_previous = $versions_data->version_id_previous;
+        $this->view->version = $version_selected;
         $this->view->versions_data = $versions_data;
         if (is_null($version_selected)) {
             header('HTTP/1.1 404 No Found');

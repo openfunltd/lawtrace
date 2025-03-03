@@ -6,7 +6,12 @@ $version_id_selected = $this->versions_data->version_id_selected;
 $is_third_read_history = (strpos($version_id_selected, 'progress') === false);
 $is_progress_history = (strpos($version_id_selected, 'progress') !== false);
 $this->tab = 'history';
-$this->source_type = 'version';
+if (strpos($version_id_input, "-progress")) {
+    $this->source_type = 'progress';
+    $this->progress_term = substr($version_id_input, 6, strpos($version_id_input, "-progress"));
+} else {
+    $this->source_type = 'version';
+}
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 經歷過程"]) ?>

@@ -4,7 +4,7 @@ $this->vernaculars = $this->law->別名 ?? [];
 $this->aliases = array_merge($this->aliases, $this->vernaculars);
 $this->diff_endpoint = "/law/diff/{$this->law_id}";
 
-if ($this->version_id_input != 'latest') {
+if ($this->version_id_input and $this->version_id_input != 'latest') {
     $version_postfix = "?version={$this->version_id_input}";
 } else {
     $res = LYAPI::apiQuery("/laws/{$this->law_id}/versions?limit=1&sort=日期>", "查詢法律 {$this->law_id} 最新版本");
@@ -15,6 +15,12 @@ if ($this->version_id_input != 'latest') {
 
 if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
+}
+if ($this->version ?? false) {
+    $version_date = sprintf("%s %s",
+        LawVersionHelper::getMinguoDate($this->version->日期),
+        $this->version->動作
+    );
 }
 ?>
     <section class="page-hero law-details-info">
@@ -52,6 +58,13 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
             </li>
             <li class="breadcrumb-item active">
             <?= $this->escape($this->law_content_name) ?>
+            </li>
+          <?php } elseif ($this->source_type == 'progress') { ?>
+            <li class="breadcrumb-item active">
+            未議決議案
+            </li>
+            <li class="breadcrumb-item active">
+            <?= sprintf("第 %d 屆", $this->progress_term) ?>
             </li>
           <?php } ?>
         </ol>
@@ -99,10 +112,12 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
         <a href="/law/history/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'history', 'active') ?>">
           經歷過程
         </a>
-        <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
-          條文比較工具
-        </a>
+        <?php if ($this->source ?? false) { ?>
+          <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
+            條文比較工具
+          </a>
         <?php } ?>
+        <?php } // not single ?>
         <?php if ('meet' == $this->source_type) { ?>
           <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
             會議原始資料
