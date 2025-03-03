@@ -77,7 +77,7 @@ $this->law_content_name = $law_content_name;
           <nav class="breadcrumb-wrapper">
             <ol class="breadcrumb">
               <li class="breadcrumb-item">
-                <a href="/law/show/<?= $this->escape($law_id) ?>">
+                <a href="/law/show/<?= $this->escape($this->law_id) ?>">
                   <?= $this->escape($law_name) ?>
                 </a>
               </li>
