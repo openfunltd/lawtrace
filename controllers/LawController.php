@@ -29,7 +29,7 @@ class LawController extends MiniEngine_Controller
         $contents = $res->lawcontents ?? [];
         //TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
         $this->view->contents = $contents;
-
+        $this->view->source = "version:{$law_id}:{$version_selected->日期}";
     }
 
     public function historyAction($law_id)
