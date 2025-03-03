@@ -1,24 +1,12 @@
 <?php
 $version_id_input = $this->version_id_input;
+$versions_in_terms = $this->versions_data->versions_in_terms;
+$version_id_selected = $this->versions_data->version_id_selected;
 
-$versions_data = LawVersionHelper::getVersionsWithProgresses($this->law_id, $version_id_input);
-$versions = $versions_data->versions;
-$versions_in_terms = $versions_data->versions_in_terms;
-$version_selected = $versions_data->version_selected;
-$version_id_selected = $versions_data->version_id_selected;
-$term_selected = $versions_data->term_selected;
-if (is_null($version_selected)) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No version data with version_id {$version_id_input}</p>";
-    exit;
-}
-
-$history_groups = $version_selected->歷程 ?? [];
-$history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
 $is_third_read_history = (strpos($version_id_selected, 'progress') === false);
 $is_progress_history = (strpos($version_id_selected, 'progress') !== false);
 $this->tab = 'history';
+$this->source_type = 'version';
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 經歷過程"]) ?>
@@ -70,11 +58,11 @@ $this->tab = 'history';
           </div>
           <div>
             <?php if ($is_third_read_history) { ?>
-              <?= $this->partial('partial/law_history_timeline', ['history_groups' => $history_groups]) ?>
+              <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
             <?php } ?>
             <?php if ($is_progress_history) { ?>
-              <?= $this->partial('partial/law_history_menu', ['history_groups' => $history_groups]) ?>
-              <?php foreach ($history_groups as $history_group) { ?>
+              <?= $this->partial('partial/law_history_menu', ['history_groups' => $this->history_groups]) ?>
+              <?php foreach ($this->history_groups as $history_group) { ?>
                 <?php if ($history_group->id != '未分類') { ?>
                   <div id="<?= $this->escape($history_group->id) ?>" class="version-section-bar">
                     <div class="title">
@@ -92,7 +80,7 @@ $this->tab = 'history';
                       </a>
                     </div>
                   </div>
-                  <?= $this->partial('partial/law_history_timeline', ['history_groups' => $history_groups]) ?>
+                  <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
                 <?php } else { ?>
                   <?php foreach ($history_group->bill_log as $bill) { ?>
                     <div id="<?= $this->escape($bill->bill_id) ?>" class="version-section-bar">

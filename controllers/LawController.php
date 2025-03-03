@@ -39,6 +39,23 @@ class LawController extends MiniEngine_Controller
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
         $this->view->law = self::getLawData($law_id);
+
+        $versions_data = LawVersionHelper::getVersionsWithProgresses($law_id, $version_id_input);
+        $versions = $versions_data->versions;
+        $versions_in_terms = $versions_data->versions_in_terms;
+        $version_selected = $versions_data->version_selected;
+        $version_id_selected = $versions_data->version_id_selected;
+        $term_selected = $versions_data->term_selected;
+        if (is_null($version_selected)) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No version data with version_id {$version_id_input}</p>";
+            exit;
+        }
+        $this->view->versions_data = $versions_data;
+        $history_groups = $version_selected->歷程 ?? [];
+        $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
+        $this->view->history_groups = $history_groups;
     }
 
     public function singleAction($law_content_id)
