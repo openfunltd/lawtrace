@@ -8,6 +8,7 @@ class LawController extends MiniEngine_Controller
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
+        $this->view->law = $this->getLawData($law_id);
     }
 
     public function historyAction($law_id)
@@ -32,6 +33,7 @@ class LawController extends MiniEngine_Controller
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
+        $this->view->law = $this->getLawData($law_id);
     }
 
     public function compareAction()
@@ -76,5 +78,25 @@ class LawController extends MiniEngine_Controller
         // 整合出對照表需要的資料
         $this->view->diff = DiffHelper::mergeVersionsToTable($versions);
         $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+    }
+
+    public function getLawData($law_id)
+    {
+        if (!ctype_digit($law_id)) {
+            header('HTTP/1.1 400 Bad Request');
+            echo "<h1>400 Bad Request</h1>";
+            echo "<p>Invalid law_id</p>";
+            exit;
+        }
+
+        $res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
+        $res_error = $res->error ?? true;
+        if ($res_error) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No law data with law_id {$law_id}</p>";
+            exit;
+        }
+        return $res->data;
     }
 }

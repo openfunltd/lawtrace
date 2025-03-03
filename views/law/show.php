@@ -2,24 +2,8 @@
 $law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
 $this->tab = 'show';
+$this->source_type = 'version';
 
-if (! ctype_digit($law_id)) {
-    header('HTTP/1.1 400 Bad Request');
-    echo "<h1>400 Bad Request</h1>";
-    echo "<p>Invalid law_id</p>";
-    exit;
-}
-
-$res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
-$res_error = $res->error ?? true;
-if ($res_error) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No law data with law_id {$law_id}</p>";
-    exit;
-}
-
-$this->law = $res->data;
 $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
 $versions = $versions_data->versions;
 $version_selected = $versions_data->version_selected;

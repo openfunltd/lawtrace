@@ -1,25 +1,9 @@
 <?php
 $law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
-
-if (! ctype_digit($law_id)) {
-    header('HTTP/1.1 400 Bad Request');
-    echo "<h1>400 Bad Request</h1>";
-    echo "<p>Invalid law_id</p>";
-    exit;
-}
-
-$res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
-$res_error = $res->error ?? true;
-if ($res_error) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No law data with law_id {$law_id}</p>";
-    exit;
-}
-$law = $res->data;
-$this->law = $law;
 $this->tab = 'log';
+$this->source_type = 'version';
+$this->version = $version_id_input;
 
 $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
 $versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
@@ -137,7 +121,7 @@ if ($version_id_input != 'latest') {
 }
 $this->nav_link_history = $history_endpoint;
 ?>
-<?php $law_name = $this->escape($law->名稱 ?? ''); ?>
+<?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 異動條文"]) ?>
 <div class="main">
   <?= $this->partial('/law/law_hero', $this) ?>  
