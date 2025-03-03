@@ -22,7 +22,7 @@ class LawVersionHelper
             $invalid_version = true;
             foreach ($versions as $idx => $version) {
                 $version_id = $version->版本編號 ?? NULL;
-                if ($version_id_input == $version_id) {
+                if ($version_id_input == $version_id or explode(':', $version_id_input)[1] == $version->日期) {
                     $invalid_version = false;
                     $version_id_selected = $version_id;
                     $version_selected = $version;
