@@ -1,8 +1,7 @@
 <?php
 $law_content_id = $this->escape($this->law_content_id);
 $version_id_input = $this->escape($this->version_id_input);
-$id_array = explode(':', $law_content_id);
-$law_id = $id_array[0];
+$this->source_type = 'single';
 
 $res = LYAPI::apiQuery("/law_content/{$law_content_id}" ,"查詢法律條文：{$law_content_id} ");
 $law_content = $res->data ?? new stdClass();
@@ -15,22 +14,12 @@ if (empty($law_content) or $is_chapter) {
     exit;
 }
 
-$res = LYAPI::apiQuery("/law/{$law_id}" ,"查詢法律編號：{$law_id} ");
-$res_error = $res->error ?? true;
-if ($res_error) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No law data with law_id {$law_id}</p>";
-    exit;
-}
-$law = $res->data;
-
 $law_content_name = $law_content->條號 ?? '';
-$versions_data = LawVersionHelper::getVersionsForSingle($law_id, $version_id_input, $law_content_name);
+$versions_data = LawVersionHelper::getVersionsForSingle($this->law_id, $version_id_input, $law_content_name);
 if (is_null($versions_data)) {
     header('HTTP/1.1 404 No Found');
     echo "<h1>404 No Found</h1>";
-    echo "<p>No versions data with law_id {$law_id}</p>";
+    echo "<p>No versions data with law_id {$this->law_id}</p>";
     exit;
 }
 $versions = $versions_data->versions;
@@ -88,36 +77,13 @@ while(!empty($chapters)) {
 }
 $chapter_breadcrumbs = array_reverse($chapter_breadcrumbs);
 
-$law_name = $law->名稱 ?? '';
+$law_name = $this->law->名稱 ?? '';
 $law_content_text = $law_content->內容 ?? '';
+$this->law_content_name = $law_content_name;
 ?>
 <?= $this->partial('common/header', ['title' => '法律內容']) ?>
 <div class="main">
-  <section class="page-hero law-details-info">
-    <div class="container">
-      <nav class="breadcrumb-wrapper">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item">
-            <a href="/">
-              <i class="bi bi-house-door"></i>
-            </a>
-          </li>
-          <li class="breadcrumb-item">
-            <a href="/law/show/<?= $this->escape($law_id) ?>">
-              法律資訊
-            </a>
-          </li>
-          <li class="breadcrumb-item active">
-            單一條文
-          </li>
-        </ol>
-      </nav>
-      <h2 class="light">
-        <?= $this->escape($law_name) . ' | ' . $this->escape($law_content_name)?>
-      </h2>
-    </div>
-  </section>
-
+  <?= $this->partial('law/law_hero', $this) ?>  
   <div class="main-content">
     <section class="law-details">
       <div class="container">

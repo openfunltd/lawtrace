@@ -46,6 +46,13 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
             <li class="breadcrumb-item active">
             <?= $version_date ?>
             </li>
+          <?php } elseif ($this->source_type == 'single') { ?>
+            <li class="breadcrumb-item active">
+            單一條文
+            </li>
+            <li class="breadcrumb-item active">
+            <?= $this->escape($this->law_content_name) ?>
+            </li>
           <?php } ?>
         </ol>
       </nav>
@@ -82,7 +89,8 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
-          <a href="/law/show/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
+        <?php if ('single' != $this->source_type) { ?>
+        <a href="/law/show/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
           瀏覽法律
         </a>
         <a href="/law/diff/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'log', 'active') ?>">
@@ -91,6 +99,7 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
         <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
           條文比較工具
         </a>
+        <?php } ?>
         <?php if ('meet' == $this->source_type) { ?>
           <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
             會議原始資料

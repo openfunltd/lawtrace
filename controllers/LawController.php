@@ -25,6 +25,11 @@ class LawController extends MiniEngine_Controller
 
         $this->view->law_content_id = $law_content_id;
         $this->view->version_id_input = $version_id_input;
+        $id_array = explode(':', $law_content_id);
+        $law_id = $id_array[0];
+        $this->view->law = $this->getLawData($law_id);
+        $this->view->law_id = $law_id;
+
     }
 
     public function diffAction($law_id)
