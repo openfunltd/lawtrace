@@ -30,6 +30,44 @@ class LawController extends MiniEngine_Controller
         $this->view->law = $this->getLawData($law_id);
         $this->view->law_id = $law_id;
 
+        $res = LYAPI::apiQuery("/law_content/{$law_content_id}" ,"查詢法律條文：{$law_content_id} ");
+        $law_content = $res->data ?? new stdClass();
+        $chapter_name = $law_content->章名 ?? '';
+        $is_chapter = ($chapter_name != '');
+        if (empty($law_content) or $is_chapter) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No law_content data with law_content_id {$law_content_id}</p>";
+            exit;
+        }
+        $this->view->law_content = $law_content;
+        $this->view->chapter_name = $chapter_name;
+
+        $versions_data = LawVersionHelper::getVersionsForSingle($law_id, $version_id_input, $law_content_name);
+        if (is_null($versions_data)) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No versions data with law_id {$law_id}</p>";
+            exit;
+        }
+        $this->view->version_data = $versions_data;
+
+        $version_selected = $versions_data->version_selected;
+        if (is_null($version_selected)) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No version data with version_id {$version_id_input}</p>";
+            exit;
+        }
+        $res = LYAPI::apiQuery(
+            "/law_contents?版本編號={$versions_data->version_id_selected}&limit=1000",
+            "{查詢法律版本為 {$versions_data->version_id_selected} 的法律條文 }"
+        );
+        $this->view->contents = $res->lawcontents ?? [];
+        //TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
+
+
+
     }
 
     public function diffAction($law_id)

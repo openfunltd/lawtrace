@@ -2,44 +2,9 @@
 $law_content_id = $this->escape($this->law_content_id);
 $version_id_input = $this->escape($this->version_id_input);
 $this->source_type = 'single';
+$law_content_name = $this->law_content->條號 ?? '';
 
-$res = LYAPI::apiQuery("/law_content/{$law_content_id}" ,"查詢法律條文：{$law_content_id} ");
-$law_content = $res->data ?? new stdClass();
-$chapter_name = $law_content->章名 ?? '';
-$is_chapter = ($chapter_name != '');
-if (empty($law_content) or $is_chapter) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No law_content data with law_content_id {$law_content_id}</p>";
-    exit;
-}
-
-$law_content_name = $law_content->條號 ?? '';
-$versions_data = LawVersionHelper::getVersionsForSingle($this->law_id, $version_id_input, $law_content_name);
-if (is_null($versions_data)) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No versions data with law_id {$this->law_id}</p>";
-    exit;
-}
-$versions = $versions_data->versions;
-$version_selected = $versions_data->version_selected;
-$version_id_selected = $versions_data->version_id_selected;
-if (is_null($version_selected)) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No version data with version_id {$version_id_input}</p>";
-    exit;
-}
-
-$res = LYAPI::apiQuery(
-    "/law_contents?版本編號={$version_id_selected}&limit=1000",
-    "{查詢法律版本為 {$version_id_selected} 的法律條文 }"
-);
-$contents = $res->lawcontents ?? [];
-//TODO 當 API 回傳空的 lawcontents 時要在頁面上呈現/說明
-
-$chapters = array_filter($contents, function($content) {
+$chapters = array_filter($this->contents, function($content) {
     $chapter_name = $content->章名 ?? '';
     $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
 
@@ -47,7 +12,7 @@ $chapters = array_filter($contents, function($content) {
     return !in_array($chapter_unit, ['','法']);
 });
 $chapter_units = LawChapterHelper::getChapterUnits($chapters);
-$law_content_order = $law_content->順序;
+$law_content_order = $this->law_content->順序;
 $target_unit = '';
 $chapter_breadcrumbs = [];
 while(!empty($chapters)) {
@@ -78,7 +43,7 @@ while(!empty($chapters)) {
 $chapter_breadcrumbs = array_reverse($chapter_breadcrumbs);
 
 $law_name = $this->law->名稱 ?? '';
-$law_content_text = $law_content->內容 ?? '';
+$law_content_text = $this->law_content->內容 ?? '';
 $this->law_content_name = $law_content_name;
 ?>
 <?= $this->partial('common/header', ['title' => '法律內容']) ?>
@@ -90,11 +55,11 @@ $this->law_content_name = $law_content_name;
         <div class="law-version">
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-              版本：<?= $this->escape("{$version_selected->民國日期} {$version_selected->動作}") ?>
-              <?= ($version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
+              版本：<?= $this->escape("{$this->version_data->version_selected->民國日期} {$this->version_data->version_selected->動作}") ?>
+              <?= ($this->version_data->version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
             </button>
             <ul class="dropdown-menu">
-              <?php foreach ($versions as $version) { ?>
+              <?php foreach ($this->version_data->versions as $version) { ?>
                 <?php $law_content_id = $version->law_content_id; ?>
                 <li>
                   <a
