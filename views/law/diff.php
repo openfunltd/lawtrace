@@ -1,6 +1,6 @@
 <?php
 $version_id_input = $this->version_id_input;
-$this->tab = 'log';
+$this->tab = 'diff';
 $this->source_type = 'version';
 $this->version = $version_id_input;
 
@@ -73,7 +73,6 @@ foreach ($modified_contents as $content) {
     $commit[] = $modification; 
 }
 
-$this->law_nav = 'diff';
 $history_endpoint = "/law/history/{$this->law_id}";
 if ($version_id_input != 'latest') {
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
@@ -123,8 +122,6 @@ $this->nav_link_history = $history_endpoint;
             </div>
           </div>
           <div>
-            <?= $this->partial('law/law_navs', $this) ?>
-
             <div class="law-diff-wrapper">
               <div class="diff-info">
                 <span class="add">綠色</span>為新增 <span class="remove">紅色</span>為刪除

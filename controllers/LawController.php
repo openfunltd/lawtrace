@@ -38,6 +38,7 @@ class LawController extends MiniEngine_Controller
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
+        $this->view->law = self::getLawData($law_id);
     }
 
     public function singleAction($law_content_id)

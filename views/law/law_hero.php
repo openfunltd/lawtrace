@@ -93,8 +93,11 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以
         <a href="/law/show/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
           瀏覽法律
         </a>
-        <a href="/law/diff/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'log', 'active') ?>">
-          查看修訂歷程
+        <a href="/law/diff/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'diff', 'active') ?>">
+          異動條文
+        </a>
+        <a href="/law/history/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'history', 'active') ?>">
+          經歷過程
         </a>
         <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
           條文比較工具
