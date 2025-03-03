@@ -270,7 +270,7 @@ $this->tab = 'compare';
 diff_data = <?= json_encode([
     'diff' => $this->diff,
     'choosed_version_ids' => $this->choosed_version_ids,
-    'source' => $this->source_input,
+    'source' => $this->source,
 ]) ?>;
 </script>
   <script src="/static/js/diff.js"></script>
