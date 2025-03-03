@@ -1,58 +1,17 @@
 <?php
-$law_id = $this->law_id;
 $version_id_input = $this->version_id_input;
 $this->tab = 'log';
 $this->source_type = 'version';
 $this->version = $version_id_input;
 
-$versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
-$versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
-$version_selected = $versions_data->version_selected;
-$version_previous = $versions_data->version_previous;
-$version_id_selected = $versions_data->version_id_selected;
-$version_id_previous = $versions_data->version_id_previous;
-if (is_null($version_selected)) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No version data with version_id {$version_id_input}</p>";
-    exit;
-}
-
-$res = LYAPI::apiQuery(
-    "/law_version/{$version_id_selected}/contents",
-    "查詢版本條文 版本：{$version_id_selected}"
-);
-$res_total = $res->total ?? 0;
-if ($res_total == 0) {
-    header('HTTP/1.1 404 No Found');
-    echo "<h1>404 No Found</h1>";
-    echo "<p>No law_conetnts with law_version_id {$version_id_selected}</p>";
-    exit;
-}
-$law_contents = $res->lawcontents;
-
-if (!is_null($version_id_previous)) {
-    $res = LYAPI::apiQuery(
-        "/law_version/{$version_id_previous}/contents",
-        "查詢上一個版本條文 版本：{$version_id_previous}"
-    );
-    if ($res_total == 0) {
-        header('HTTP/1.1 404 No Found');
-        echo "<h1>404 No Found</h1>";
-        echo "<p>No law_conetnts with previous law_version_id {$version_id_previous}</p>";
-        exit;
-    }
-    $law_contents_previous = $res->lawcontents;
-}
-
-$selected_version_law_name = $law_contents[0]->內容;
-if (!is_null($law_contents_previous)) {
-    $previous_law_name = $law_contents_previous[0]->內容;
+$selected_version_law_name = $this->law_contents[0]->內容;
+if (!is_null($this->law_contents_previous)) {
+    $previous_law_name = $this->law_contents_previous[0]->內容;
 }
 $law_name_changed_flag = (isset($previous_law_name) and ($selected_version_law_name != $previous_law_name));
 
 //filter contents, retrieve new modified contents in this version
-$modified_contents = array_filter($law_contents, function($content) {
+$modified_contents = array_filter($this->law_contents, function($content) {
     return ($content->版本追蹤 == 'new');
 });
 
@@ -74,8 +33,8 @@ foreach ($modified_contents as $content) {
     $reason = $content->立法理由;
 
     $base_content = new stdClass();
-    if (!is_null($law_contents_previous)) {
-        foreach ($law_contents_previous as $previous_content) {
+    if (!is_null($this->law_contents_previous)) {
+        foreach ($this->law_contents_previous as $previous_content) {
             $previous_article_number = $previous_content->條號;
             if ($previous_article_number == $article_number) {
                 $base_content = $previous_content;
@@ -115,7 +74,7 @@ foreach ($modified_contents as $content) {
 }
 
 $this->law_nav = 'diff';
-$history_endpoint = "/law/history/{$law_id}";
+$history_endpoint = "/law/history/{$this->law_id}";
 if ($version_id_input != 'latest') {
     $history_endpoint = $history_endpoint . "?version={$version_id_input}";
 }
@@ -136,7 +95,7 @@ $this->nav_link_history = $history_endpoint;
               </div>
               <div class="side-menu version-menu">
                 <?php $is_current_term = true; ?>
-                <?php foreach ($versions_in_terms_filtered as $term => $versions) { ?>
+                <?php foreach ($this->versions_data->versions_in_terms_filtered as $term => $versions) { ?>
                   <div class="menu-item level-1">
                     <div class="menu-head">
                       <?php if ($is_current_term) { ?>
@@ -150,8 +109,8 @@ $this->nav_link_history = $history_endpoint;
                     <div class="menu-body">
                       <?php foreach ($versions as $version) { ?>
                         <div class="menu-item level-3">
-                          <div class="menu-head <?= ($version->版本編號 == $version_id_selected) ? 'active' : '' ?>">
-                            <a href="/law/diff/<?= $this->escape($law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                          <div class="menu-head <?= ($version->版本編號 == $this->versions_data->version_id_selected) ? 'active' : '' ?>">
+                            <a href="/law/diff/<?= $this->escape($this->law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
                               <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
                             </a>
                           </div>
@@ -180,7 +139,7 @@ $this->nav_link_history = $history_endpoint;
                     <div class="title">
                       原名稱
                       <small>
-                        <?= $this->escape($version_previous->民國日期_format2 . ' ' . $version_previous->動作 . '版本') ?>
+                        <?= $this->escape($this->versions_data->version_previous->民國日期_format2 . ' ' . $this->versions_data->version_previous->動作 . '版本') ?>
                       </small>
                     </div>
                   </div>
@@ -189,7 +148,7 @@ $this->nav_link_history = $history_endpoint;
                 <div class="info-card">
                   <div class="card-head">
                     <div class="title">
-                      <?= $this->escape($version_selected->民國日期_format2 . ' ' . $version_selected->動作 . '版本') ?>
+                      <?= $this->escape($this->versions_data->version_selected->民國日期_format2 . ' ' . $this->versions_data->version_selected->動作 . '版本') ?>
                     </div>
                   </div>
                   <div class="card-body big law-name-diff"></div>
@@ -207,7 +166,7 @@ $this->nav_link_history = $history_endpoint;
                  <div class="title">
                    原條文
                    <small>
-                     <?= $this->escape($version_previous->民國日期_format2 . ' ' . $version_previous->動作 . '版本') ?>
+                     <?= $this->escape($this->versions_data->version_previous->民國日期_format2 . ' ' . $this->versions_data->version_previous->動作 . '版本') ?>
                    </small>
                  </div>
                </div>
@@ -226,7 +185,7 @@ $this->nav_link_history = $history_endpoint;
              <div class="info-card">
                <div class="card-head">
                  <div class="title">
-                   <?= $this->escape($version_selected->民國日期_format2 . ' ' . $version_selected->動作 . '版本') ?>
+                     <?= $this->escape($this->versions_data->version_selected->民國日期_format2 . ' ' . $this->versions_data->version_selected->動作 . '版本') ?>
                  </div>
                </div>
                <?php if (!property_exists($modification, 'amendment_idx')) { ?>

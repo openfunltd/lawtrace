@@ -95,6 +95,46 @@ class LawController extends MiniEngine_Controller
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
         $this->view->law = $this->getLawData($law_id);
+
+        $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
+        $versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
+        $version_selected = $versions_data->version_selected;
+        $version_previous = $versions_data->version_previous;
+        $version_id_selected = $versions_data->version_id_selected;
+        $version_id_previous = $versions_data->version_id_previous;
+        $this->view->versions_data = $versions_data;
+        if (is_null($version_selected)) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No version data with version_id {$version_id_input}</p>";
+            exit;
+        }
+        $res = LYAPI::apiQuery(
+            "/law_version/{$version_id_selected}/contents",
+            "查詢版本條文 版本：{$version_id_selected}"
+        );
+        $res_total = $res->total ?? 0;
+        if ($res_total == 0) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>No law_conetnts with law_version_id {$version_id_selected}</p>";
+            exit;
+        }
+        $this->view->law_contents = $res->lawcontents;
+
+        if (!is_null($version_id_previous)) {
+            $res = LYAPI::apiQuery(
+                "/law_version/{$version_id_previous}/contents",
+                "查詢上一個版本條文 版本：{$version_id_previous}"
+            );
+            if ($res_total == 0) {
+                header('HTTP/1.1 404 No Found');
+                echo "<h1>404 No Found</h1>";
+                echo "<p>No law_conetnts with previous law_version_id {$version_id_previous}</p>";
+                exit;
+            }
+            $this->view->law_contents_previous = $res->lawcontents;
+        }
     }
 
     public function compareAction()
