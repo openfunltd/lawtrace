@@ -4,12 +4,34 @@ $this->vernaculars = $this->law->別名 ?? [];
 $this->aliases = array_merge($this->aliases, $this->vernaculars);
 $this->diff_endpoint = "/law/diff/{$this->law_id}";
 
+$postfixes = [];
+$postfix = function($type) use (&$postfixes) {
+    if ($postfixes[$type] ?? false) {
+        return $postfixes[$type];
+    }
+    return $postfixes['default'] ?? '';
+};
+
 if ($this->version_id_input and $this->version_id_input != 'latest') {
-    $version_postfix = "?version={$this->version_id_input}";
+    $postfixes['default'] = "?version={$this->version_id_input}";
 } else {
     $res = LYAPI::apiQuery("/laws/{$this->law_id}/versions?limit=1&sort=日期>", "查詢法律 {$this->law_id} 最新版本");
     $this->version_id_input = $res->lawversions[0]->版本編號;
-    $version_postfix = "";
+}
+
+$tabs = [];
+if ('single' != $this->source_type) {
+    $tabs[] = ['瀏覽法律', "/law/show/{$this->law_id}" . $postfix('show'), 'show'];
+    $tabs[] = ['異動條文', "/law/diff/{$this->law_id}" . $postfix('diff'), 'diff'];
+    $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
+    if ($this->source ?? false) {
+        $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}" . $postfix('compare'), 'compare'];
+    }
+}
+if ('meet' == $this->source_type) {
+    $tabs[] = ['會議原始資料', $this->meet->會議資料[0]->ppg_url ?? '#', 'meet', ['icon' => 'bi bi-box-arrow-up-right']];
+} elseif ('bill' == $this->source_type) {
+    $tabs[] = ['報告原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
 }
 
 
@@ -102,33 +124,14 @@ if ($this->version ?? false) {
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
-        <?php if ('single' != $this->source_type) { ?>
-        <a href="/law/show/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'show','active') ?>">
-          瀏覽法律
-        </a>
-        <a href="/law/diff/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'diff', 'active') ?>">
-          異動條文
-        </a>
-        <a href="/law/history/<?= $this->law_id ?><?= $version_postfix ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'history', 'active') ?>">
-          經歷過程
-        </a>
-        <?php if ($this->source ?? false) { ?>
-          <a href="/law/compare/<?= $this->law_id ?>?source=<?= $this->source ?>" class="btn btn-outline-primary <?= $this->if($this->tab == 'compare', 'active') ?>">
-            條文比較工具
+          <?php foreach ($tabs as $tab) { ?>
+          <a href="<?= $tab[1] ?>" class="btn btn-outline-primary <?= $this->if($this->tab == $tab[2], 'active') ?>">
+              <?= $this->escape($tab[0]) ?>
+              <?php if ($tab[3] ?? false) { ?>
+              <i class="<?= $this->escape($tab[3]['icon']) ?>"></i>
+              <?php } ?>
           </a>
-        <?php } ?>
-        <?php } // not single ?>
-        <?php if ('meet' == $this->source_type) { ?>
-          <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
-            會議原始資料
-            <i class="bi bi-box-arrow-up-right"></i>
-          </a>
-          <?php } elseif ('bill' == $this->source_type) { ?>
-          <a href="<?= $this->escape($this->bill->url ?? '#') ?>" class="btn btn-outline-primary" target="_blank">
-            報告原始資料
-            <i class="bi bi-box-arrow-up-right"></i>
-          </a>
-        <?php } ?>
+          <?php } ?>
       </div>
     </div>
   </section>
