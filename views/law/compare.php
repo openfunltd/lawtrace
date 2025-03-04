@@ -15,7 +15,7 @@ $this->tab = 'compare';
               <div class="compare-range">
                 <div class="range-setting">
                   <button class="btn btn-primary set-compare-target">
-                    設定比較範圍
+                    設定比較對象
                     <i class="bi bi-pencil-fill ms-1"></i>
                   </button>
               </div>
@@ -180,7 +180,7 @@ $this->tab = 'compare';
           <div class="modal-content">
             <div class="modal-header">
               <h6 class="modal-title">
-              設定比較範圍：<?= $this->escape($this->law->名稱 ?? '') ?>
+              設定比較對象：<?= $this->escape($this->law->名稱 ?? '') ?>
               </h6>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
