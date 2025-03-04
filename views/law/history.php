@@ -14,7 +14,7 @@ if (strpos($version_id_input, "-progress")) {
 }
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
-<?= $this->partial('common/header', ['title' => "{$law_name} - 經歷過程"]) ?>
+<?= $this->partial('common/header', ['title' => "{$law_name} - 經歷過程", 'body_class' => 'law-history-page']) ?>
 <div class="main">
   <?= $this->partial('/law/law_hero', $this) ?>
   <div class="main-content">
