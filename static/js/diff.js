@@ -293,6 +293,9 @@ $('#btn-submit').click(function(){
 
 var update_compare_list = function() {
     $('#compare-list').html('');
+    var total_count = Object.keys(diff_data.diff.versions).length;
+    $('#selected-item').text("請選擇比較對象 (" + diff_data.choosed_version_ids.length + " / " + total_count + ")");
+    $('#selected-item').append($('<i class="bi icon bi-chevron-down"></i>'));
     for (var id of diff_data.choosed_version_ids) {
         const version_data = diff_data.diff.versions[id];
         var tag_dom = $('<span class="tag"></span>');

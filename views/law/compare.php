@@ -195,7 +195,7 @@ $this->tab = 'compare';
                     比較對象
                   </div>
                   <div class="dropdown-select">
-                    <div class="selected-item">
+                    <div class="selected-item" id="selected-item">
                       請選擇比較對象 (6)
                       <i class="bi icon bi-chevron-down"></i>
                     </div>
