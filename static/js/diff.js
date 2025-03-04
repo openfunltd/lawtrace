@@ -343,8 +343,8 @@ $(function(){
         });
     });
 
-    $('input[name="content-type"]').change(function(){
-        var val = $(this).val();
+    $('input#splitContent').change(function(){
+        var val = $(this).prop('checked') ? 'section' : 'origin';
         $('div.law-diff-content-origin').hide();
         $('div.law-diff-content-section').hide();
         $('div.law-diff-content-' + val).show();
@@ -374,7 +374,7 @@ $(function(){
         });
     });
 
-    $('input[name="content-type"][value="section"]').prop('checked', true).change();
+    $('input#splitContent').prop('checked', true).change();
     $('div.law-diff-content.original').each(gen_diff);
     $('input[name="diff-type"][value="only_add"]').prop('checked', true).change();
 });

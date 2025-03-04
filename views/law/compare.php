@@ -42,17 +42,13 @@ $this->tab = 'compare';
                       顯示條文目錄
                     </label>
                   </div>
+                  <div class="form-check form-switch show-category">
+                    <input class="form-check-input" type="checkbox" role="switch" id="splitContent" checked>
+                    <label class="form-check-label" for="splitContent" title="將條文分成一句一句顯示，有可能會分句失敗">
+                      分句顯示(BETA)
+                    </label>
+                  </div>
                 </div>
-              </div>
-              <div class="diff-info rwd-full">
-                <label>
-                  <input type="radio" class="form-check-input" name="content-type" value="origin" checked>
-                  不分段
-                </label>
-                <label>
-                  <input type="radio" class="form-check-input" name="content-type" value="section">
-                  分段
-                </label>
               </div>
               <div class="diff-info rwd-full">
                 <label>
