@@ -29,7 +29,7 @@ $history_groups = $this->_data['history_groups'];
                       <img src="<?= $history->party_img_path ?>">
                     <?php } ?>
                   </div>
-                  <div class="party"><?= $this->escape($history->proposers_str) ?></div>
+                  <div class="party"><?= $this->escape($history->proposers_str ?? $history->主提案) ?></div>
                   <?php if (property_exists($history, 'article_numbers')) { ?>
                     <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
                   <?php } ?>
@@ -37,6 +37,13 @@ $history_groups = $this->_data['history_groups'];
                     <div class="details">
                       <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
                         議案詳細資訊
+                        <i class="bi bi-arrow-right"></i>
+                      </a>
+                    </div>
+                  <?php } elseif (property_exists($history, 'related_doc_url')) { ?>
+                    <div class="details">
+                      <a href="<?= $this->escape($history->related_doc_url)?>" target="_blank">
+                        議案關係文書
                         <i class="bi bi-arrow-right"></i>
                       </a>
                     </div>

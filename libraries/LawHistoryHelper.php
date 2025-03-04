@@ -142,7 +142,25 @@ class LawHistoryHelper
                     $history->bill_id = $bill_id;
                 }
 
+                //如果沒有對應的 bill 資料，會依現有的資料盡量去呈現資料: 黨籍、提案下載連結
                 if (!isset($bill_id) or !isset($bill)) {
+                    //party
+                    if (property_exists($history, '主提案')) {
+                        $leading_proposer = $history->主提案;
+                        $legislators_filtered = array_filter($legislators, function ($legislator) use ($leading_proposer) {
+                            return $legislator->委員姓名 == $leading_proposer;
+                        });
+                        $legislator = reset($legislators_filtered);
+                        $party = $legislator->黨籍 ?? null;
+                        $party_img_path = PartyHelper::getImage($party);
+                        if (isset($party_img_path)) {
+                            $history->party_img_path = $party_img_path;
+                        }
+                    }
+                    //提案關係文書
+                    if ($related_doc->類型 == '提案') {
+                        $history->related_doc_url = $related_doc->連結;
+                    }
                     continue;
                 }
 
@@ -160,10 +178,8 @@ class LawHistoryHelper
                         return $legislator->委員姓名 == $leading_proposer;
                     });
                     $legislator = reset($legislators_filtered);
-                    if ($legislator !== false) {
-                        $party = $legislator->黨籍;
-                        $party_img_path = PartyHelper::getImage($party);
-                    }
+                    $party = $legislator->黨籍 ?? null;
+                    $party_img_path = PartyHelper::getImage($party);
                 }
                 if (isset($party_img_path)) {
                     $history->party_img_path = $party_img_path;
