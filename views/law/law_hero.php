@@ -21,8 +21,12 @@ if ($this->version_id_input and $this->version_id_input != 'latest') {
 
 $tabs = [];
 if ('single' != $this->source_type) {
-    $tabs[] = ['瀏覽法律', "/law/show/{$this->law_id}" . $postfix('show'), 'show'];
-    $tabs[] = ['異動條文', "/law/diff/{$this->law_id}" . $postfix('diff'), 'diff'];
+    if ('version' == $this->source_type) {
+        $tabs[] = ['瀏覽法律', "/law/show/{$this->law_id}" . $postfix('show'), 'show'];
+        $tabs[] = ['異動條文', "/law/diff/{$this->law_id}" . $postfix('diff'), 'diff'];
+    } else {
+        $tabs[] = ['瀏覽現行法律', "/law/show/{$this->law_id}", 'show'];
+    }
     $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
     if ($this->source ?? false) {
         $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}" . $postfix('compare'), 'compare'];
