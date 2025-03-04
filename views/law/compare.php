@@ -109,7 +109,7 @@ $this->tab = 'compare';
                   <!-- content-section-head -->
                   <?php foreach ($this->diff->choosed_version_ids as $version_id) { ?>
                   <?php $version = $this->diff->versions->{$version_id} ?>
-                  <div class="law-diff-head <?= $version->title == '現行版本' ? 'original' : '' ?>">
+                  <div class="law-diff-head <?= $version->first_version ? 'original' : '' ?>">
                     <div class="title" title="<?= $version->id ?>">
                         <?= $this->escape($version->title) ?>
                         <small>
@@ -153,7 +153,7 @@ $this->tab = 'compare';
                   <?php foreach ($this->diff->choosed_version_ids as $version_id) { ?>
                     <?php $version = $this->diff->versions->{$version_id} ?>
                     <div
-                      class="<?= $this->if($version->id == '現行版本', 'original', '') ?> law-diff-content law-diff-content-origin" 
+                      class="<?= $this->if($version->first_version, 'original', '') ?> law-diff-content law-diff-content-origin" 
                       data-version="<?= $this->escape($version->id) ?>"
                       data-rule-no="<?= $this->escape($idx) ?>"
                     >

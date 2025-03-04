@@ -371,6 +371,7 @@ class DiffHelper
         $ret->choosed_version_ids = [];
         $rule_diffs = [];
         $rule_orders = [];
+        $first_version = null;
         foreach ($versions as $version) {
             $rule_order = [];
             $ret->versions->{$version->id} = (object)[
@@ -380,12 +381,17 @@ class DiffHelper
                 '議案編號' => $version->議案編號,
                 '原始資料' => $version->原始資料,
                 'showed' => true,
+                'first_version' => false,
             ];
             if ('現行版本' == $version->id) {
                 // 現行版本一定要顯示，並在第一個
             } else if (count($choosed_versions) and !in_array($version->id, $choosed_versions)) {
                 $ret->versions->{$version->id}->showed = false;
                 continue;
+            }
+            if (is_null($first_version)) {
+                $ret->versions->{$version->id}->first_version = true;
+                $first_version = $version->id;
             }
             $ret->choosed_version_ids[] = $version->id;
 
