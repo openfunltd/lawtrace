@@ -232,10 +232,11 @@ class LawHistoryHelper
                     if (isset($gazette_id)) {
                         $gazette_ids[] = $gazette_id;
                         $history->gazette_id = $gazette_id;
-                        $gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%d/%s/%s/details',
-                            substr($gazette_id, 0, 3),
-                            substr($gazette_id, 3, 2,),
-                            substr($gazette_id, 5, 2,)
+                        $terms = self::getTermsFromGazetteId($gazette_id);
+                        $gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%02d/%02d/%02d/details',
+                            $terms[0],
+                            $terms[1],
+                            $terms[2]
                         );
                         $history->gazette_ppg_url = $gazette_ppg_url;
                     }
@@ -447,5 +448,26 @@ class LawHistoryHelper
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "{$minguo}年{$month}月{$day}日";
+    }
+
+    public static function getTermsFromGazetteId($gazette_id)
+    {
+        $terms = [];
+        // 年
+        if (strpos(strval($gazette_id), '1') === 0) {
+            $terms[] = substr($gazette_id, 0, 3);
+            $gazette_id = substr($gazette_id, 3);
+        } else {
+            $terms[] = substr($gazette_id, 0, 2);
+            $gazette_id = substr($gazette_id, 2);
+        }
+
+        // 期
+        $terms[] = substr($gazette_id, 0, strlen($gazette_id) - 2);
+
+        // 冊
+        $terms[] = substr($gazette_id, -2);
+        return $terms;
+
     }
 }
