@@ -45,8 +45,6 @@ if (strpos($version_id_input, "-progress")) {
                             <a href="/law/history/<?= $this->escape($this->law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
                               <?php if (property_exists($version, '動作')) { ?>
                                 <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
-                              <?php } elseif ($is_current_term) { ?>
-                                尚未議決議案
                               <?php } else { ?>
                                 未議決議案
                               <?php } ?>
