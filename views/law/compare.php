@@ -204,9 +204,16 @@ $this->tab = 'compare';
                         <div class="dropdown-item disabled group-label">
                           關聯議案
                         </div>
+
                         <?php foreach ($this->diff->versions as $version) { ?>
                         <div class="dropdown-item">
-                          <input type="checkbox" name="choosed_version_ids[]" value="<?= $version->id ?>" <?= $this->if(in_array($version->id, $this->choosed_version_ids), 'checked') ?>>
+                          <?php if ($version->id == '現行版本') continue; ?>
+                          <input 
+                            type="checkbox"
+                            name="choosed_version_ids[]"
+                            value="<?= $version->id ?>"
+                            <?= $this->if(in_array($version->id, $this->choosed_version_ids), 'checked') ?>
+                          >
                           <?= $this->escape($version->title) ?>｜<?= $this->escape($version->subtitle) ?>
                         </div>
                         <?php } ?>

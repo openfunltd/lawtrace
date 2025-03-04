@@ -381,7 +381,9 @@ class DiffHelper
                 '原始資料' => $version->原始資料,
                 'showed' => true,
             ];
-            if (count($choosed_versions) and !in_array($version->id, $choosed_versions)) {
+            if ('現行版本' == $version->id) {
+                // 現行版本一定要顯示，並在第一個
+            } else if (count($choosed_versions) and !in_array($version->id, $choosed_versions)) {
                 $ret->versions->{$version->id}->showed = false;
                 continue;
             }
