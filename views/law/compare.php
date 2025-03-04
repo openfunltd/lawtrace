@@ -200,7 +200,6 @@ $this->tab = 'compare';
                       <i class="bi icon bi-chevron-down"></i>
                     </div>
                     <div class="dropdown-menu select-list">
-                      <input type="text" placeholder="搜尋" class="form-control filter-input">
                       <div class="scroller">
                         <div class="dropdown-item disabled group-label">
                           關聯議案
