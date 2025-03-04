@@ -1,5 +1,5 @@
 <?php
-$version_count = count($this->diff->versions);
+$version_count = count($this->diff->choosed_version_ids);
 $this->title = "比較議案／條文";
 $this->body_class = 'law-compare-page';
 $this->tab = 'compare';
@@ -107,7 +107,8 @@ $this->tab = 'compare';
                   <?php } ?>
 
                   <!-- content-section-head -->
-                  <?php foreach ($this->diff->versions as $version) { ?>
+                  <?php foreach ($this->diff->choosed_version_ids as $version_id) { ?>
+                  <?php $version = $this->diff->versions->{$version_id} ?>
                   <div class="law-diff-head <?= $version->title == '現行版本' ? 'original' : '' ?>">
                     <div class="title" title="<?= $version->id ?>">
                         <?= $this->escape($version->title) ?>
@@ -149,7 +150,8 @@ $this->tab = 'compare';
                   <?php } ?>
 
                   <!-- content-section 1 -->
-                  <?php foreach ($this->diff->versions as $version) { ?>
+                  <?php foreach ($this->diff->choosed_version_ids as $version_id) { ?>
+                    <?php $version = $this->diff->versions->{$version_id} ?>
                     <div
                       class="<?= $this->if($version->id == '現行版本', 'original', '') ?> law-diff-content law-diff-content-origin" 
                       data-version="<?= $this->escape($version->id) ?>"
@@ -205,7 +207,7 @@ $this->tab = 'compare';
                         </div>
                         <?php foreach ($this->diff->versions as $version) { ?>
                         <div class="dropdown-item">
-                            <input type="checkbox" name="choosed_version_ids[]" value="<?= $version->id ?>">
+                          <input type="checkbox" name="choosed_version_ids[]" value="<?= $version->id ?>" <?= $this->if(in_array($version->id, $this->choosed_version_ids), 'checked') ?>>
                           <?= $this->escape($version->title) ?>｜<?= $this->escape($version->subtitle) ?>
                         </div>
                         <?php } ?>

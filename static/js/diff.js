@@ -294,7 +294,7 @@ $('#btn-submit').click(function(){
 var update_compare_list = function() {
     $('#compare-list').html('');
     for (var id of diff_data.choosed_version_ids) {
-        const version_data = diff_data.version_object[id];
+        const version_data = diff_data.diff.versions[id];
         var tag_dom = $('<span class="tag"></span>');
         tag_dom.data('version_id', id);
         tag_dom.text(version_data.title + '｜' + version_data.subtitle);
@@ -313,11 +313,6 @@ var update_compare_list = function() {
 };
 
 $(function(){
-    // 把 diff_data 變成更好用的 object
-    diff_data.version_object = {};
-    for (var version of diff_data.diff.versions) {
-        diff_data.version_object[version.id] = version;
-    }
     update_compare_list();
 
     $('#showCategory').change(function(){

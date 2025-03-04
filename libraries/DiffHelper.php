@@ -364,21 +364,29 @@ class DiffHelper
         return array_values($ret);
     }
 
-    public static function mergeVersionsToTable($versions)
+    public static function mergeVersionsToTable($versions, $choosed_versions)
     {
         $ret = new StdClass;
-        $ret->versions = [];
+        $ret->versions = new StdClass;
+        $ret->choosed_version_ids = [];
         $rule_diffs = [];
         $rule_orders = [];
         foreach ($versions as $version) {
             $rule_order = [];
-            $ret->versions[$version->id] = (object)[
+            $ret->versions->{$version->id} = (object)[
                 'id' => $version->id,
                 'title' => $version->title,
                 'subtitle' => $version->subtitle,
                 '議案編號' => $version->議案編號,
                 '原始資料' => $version->原始資料,
+                'showed' => true,
             ];
+            if (count($choosed_versions) and !in_array($version->id, $choosed_versions)) {
+                $ret->versions->{$version->id}->showed = false;
+                continue;
+            }
+            $ret->choosed_version_ids[] = $version->id;
+
             foreach ($version->對照表 as $row) {
                 $rule_no = $row['條文'];
                 $rule_order[] = $rule_no;
@@ -409,7 +417,6 @@ class DiffHelper
             exit;
         }
         $ret->rule_diffs = $rule_diffs;
-        $ret->versions = array_values($ret->versions);
         $ret->rule_diffs = array_values($ret->rule_diffs);
 
         return $ret;
