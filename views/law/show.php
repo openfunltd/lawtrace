@@ -11,6 +11,22 @@ $chapters = array_filter($this->contents, function($content) {
     //要剔除把法律名稱又放進去章名的狀況 example: 民法第二編 債 law_id:04509
     return !in_array($chapter_unit, ['','法']);
 });
+
+//deal with edge case 總統副總統選舉罷免法(law_id:04318)
+//chapter_name '第四章 （刪除） 第九節 罷免' => '第九節 罷免';
+foreach ($chapters as $chapter) {
+    $chapter_name = $chapter->章名;
+    $has_deletion = (mb_strpos($chapter_name, '刪除') !== false);
+    if ($has_deletion) {
+        $chapter_name_after_deletion = mb_substr($chapter_name, mb_strpos($chapter_name, '刪除') + 2);
+        $has_other_chapter = (mb_strpos($chapter_name_after_deletion, '第') !== false);
+        if ($has_other_chapter) {
+            $chapter_name = mb_substr($chapter_name_after_deletion, mb_strpos($chapter_name_after_deletion, '第'));
+            $chapter->章名 = $chapter_name;
+        }
+    }
+}
+
 $chapter_units = LawChapterHelper::getChapterUnits($chapters);
 
 ?>
