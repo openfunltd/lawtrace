@@ -125,6 +125,9 @@ if ($this->version ?? false) {
       <div class="review-date">
           審查會發文日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?>
       </div>
+      <div class="review-date">
+          議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
+      </div>
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
