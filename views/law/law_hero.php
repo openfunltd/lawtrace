@@ -35,7 +35,11 @@ if ('single' != $this->source_type) {
 if ('meet' == $this->source_type) {
     $tabs[] = ['會議原始資料', $this->meet->會議資料[0]->ppg_url ?? '#', 'meet', ['icon' => 'bi bi-box-arrow-up-right']];
 } elseif ('bill' == $this->source_type) {
-    $tabs[] = ['報告原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
+    if ($this->bill->提案來源 == '審查報告') { 
+        $tabs[] = ['報告原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
+    } else {
+        $tabs[] = ['議案原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
+    }
 }
 
 
@@ -67,9 +71,16 @@ if ($this->version ?? false) {
             <li class="breadcrumb-item active">
             委員會審查
             </li>
-          <?php } elseif ($this->source_type == 'bill') { ?>
+          <?php } elseif ($this->source_type == 'bill' and $this->bill->提案來源 == '審查報告') { ?>
             <li class="breadcrumb-item active">
             審查報告
+            </li>
+          <?php } elseif ($this->source_type == 'bill') { ?>
+            <li class="breadcrumb-item active">
+            法律議案
+            </li>
+            <li class="breadcrumb-item active">
+              <?= $this->escape($this->bill->{'提案單位/提案委員'}) ?>
             </li>
           <?php } elseif ($this->source_type == 'version') { ?>
             <li class="breadcrumb-item active">
@@ -118,7 +129,7 @@ if ($this->version ?? false) {
         <!--<img src="images/party/tpp.svg">-->
         <?= $this->escape($this->meet->會議資料[0]->委員會召集委員 ?? '') ?>
       </div>
-      <?php } elseif ($this->source_type == 'bill') { ?>
+      <?php } elseif ($this->source_type == 'bill' and '審查報告' == $this->bill->提案來源) { ?>
       <div class="review-committee">
           審查委員會：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?>
       </div>
@@ -127,6 +138,19 @@ if ($this->version ?? false) {
       </div>
       <div class="review-date">
           議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
+      </div>
+      <?php } elseif ($this->source_type == 'bill') { ?>
+      <div class="review-committee">
+          提案人：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?>
+      </div>
+      <div class="review-date">
+          提案日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?>
+      </div>
+      <div class="review-date">
+          議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
+      </div>
+      <div class="review-committee">
+          案由：<?= $this->escape($this->bill->案由) ?>
       </div>
       <?php } ?>
       </div>
