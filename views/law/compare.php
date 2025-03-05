@@ -119,7 +119,7 @@ $this->tab = 'compare';
                         </span>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
                           <li>
-                            <a class="dropdown-item" href="https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=<?= $this->law_id ?>" target="_blank">
+                            <a class="dropdown-item" href="<?= $this->escape($version->原始資料) ?>" target="_blank">
                               <i class="bi bi-box-arrow-up-right"></i>
                               查看原始資料
                             </a>
