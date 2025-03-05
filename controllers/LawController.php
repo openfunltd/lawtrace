@@ -179,15 +179,18 @@ class LawController extends MiniEngine_Controller
             $law_id = explode(':', $source_input)[1];
             $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
         }
+        if ($ret->version_id_input ?? false) {
+            $this->view->version_id_input = $ret->version_id_input;
+        }
         $this->view->source_type = $type;
         $this->view->source = $source_input;
 
         // 透過議案編號取得版本資訊
         $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos);
-        $this->view->law_id = $law_id = $all_versions->versions[0]->law_id;
-        if ($obj->version_id_input ?? false) {
-            $this->view->version_id_input = $obj->version_id_input;
+        if ('bill' == $type) {
+            $this->view->version_id_input = $all_versions->version_id_input;
         }
+        $this->view->law_id = $law_id = $all_versions->versions[0]->law_id;
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表
         if ($_GET['version'] ?? false) {
             $versions = array_values(array_filter($all_versions->versions, function ($version) {

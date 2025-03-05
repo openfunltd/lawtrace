@@ -20,18 +20,22 @@ class LawVersionHelper
 
         if ($version_id_input != 'latest') {
             $invalid_version = true;
-            foreach ($versions as $idx => $version) {
+
+            $filtered_versions = array_filter($versions, function ($version) use ($version_id_input) {
+                $version_date = $version->日期 ?? NULL;
+                $check_date = explode(':', $version_id_input)[1] ?? NULL;
+                return 7 * 86400 > abs(strtotime($version_date) - strtotime($check_date));
+            });
+            foreach ($filtered_versions as $idx => $version) {
                 $version_id = $version->版本編號 ?? NULL;
-                if ($version_id_input == $version_id or explode(':', $version_id_input)[1] == $version->日期) {
-                    $invalid_version = false;
-                    $version_id_selected = $version_id;
-                    $version_selected = $version;
-                    if ($idx < $version_cnt - 1) {
-                        $version_id_previous = $versions[$idx + 1]->版本編號 ?? NULL;
-                        $version_previous = $versions[$idx + 1];
-                    }
-                    break;
+                $invalid_version = false;
+                $version_id_selected = $version_id;
+                $version_selected = $version;
+                if ($idx < $version_cnt - 1) {
+                    $version_id_previous = $versions[$idx + 1]->版本編號 ?? NULL;
+                    $version_previous = $versions[$idx + 1];
                 }
+                break;
             }
         }
 

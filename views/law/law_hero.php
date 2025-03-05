@@ -29,7 +29,7 @@ if ('single' != $this->source_type) {
     }
     $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
     if ($this->source ?? false) {
-        $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}" . $postfix('compare'), 'compare'];
+        $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
     }
 }
 if ('meet' == $this->source_type) {

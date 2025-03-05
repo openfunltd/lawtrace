@@ -25,7 +25,7 @@ class DiffHelper
             $law_id = $terms[2];
             $ret = LYAPI::apiQuery("/meets/" . $meet_id, "抓取會議 {$meet_id} 資料");
             $obj->meet = $ret->data;
-            $obj->version_id_input = sprintf("%s:%02d-progress", $law_id, explode('-', $meet_id)[1]);
+            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, explode('-', $meet_id)[1]);
             foreach ($ret->data->議事網資料 ?? [] as $data) {
                 foreach ($data->關係文書->議案 ?? [] as $bill) {
                     if (!in_array($law_id, $bill->法律編號)) {
@@ -86,10 +86,14 @@ class DiffHelper
         return $obj;
     }
 
-    public static function getVersionsFromBillNos($billnos, $law_id = null)
+    public static function getVersionsFromBillNos($billnos)
     {
         $obj = new StdClass;
         $obj->versions = [];
+        $obj->bills = new StdClass;
+        $obj->law_id = null;
+        $obj->version_id_input = null;
+
         if (!count($billnos)) {
             throw new Exception("No bill found");
         }
@@ -100,6 +104,8 @@ class DiffHelper
         $params[] = 'output_fields=提案人';
         $params[] = 'output_fields=對照表';
         $params[] = 'output_fields=議案流程';
+        $params[] = 'output_fields=議案狀態';
+        $params[] = 'output_fields=屆';
         foreach ($billnos as $billno) {
             $params[] = '議案編號=' . $billno;
         }
@@ -109,13 +115,13 @@ class DiffHelper
             'id' => '現行版本',
             'title' => '現行版本',
             'subtitle' => '',
-            'law_id' => $law_id,
-            '原始資料' => 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $law_id,
+            'law_id' => $obj->law_id,
+            '原始資料' => 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $obj->law_id,
             '議案編號' => '',
             '對照表' => [], 
         ];
         // 如果沒指定 law_id ，則檢查最有可能的 law_id
-        if (is_null($law_id)) {
+        if (is_null($obj->law_id)) {
             $law_id_count = [];
             foreach ($bill_data->bills as $bill) {
                 foreach ($bill->法律編號 ?? [] as $law_id) {
@@ -126,9 +132,10 @@ class DiffHelper
                 }
             }
             arsort($law_id_count);
-            $law_id = key($law_id_count);
-            $obj->versions['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $law_id;
-            $obj->versions['現行版本']->law_id = $law_id;
+            $obj->law_id = key($law_id_count);
+            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, $bill->屆);
+            $obj->versions['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $obj->law_id;
+            $obj->versions['現行版本']->law_id = $obj->law_id;
         }
 
         $is_3read = false;
@@ -169,12 +176,12 @@ class DiffHelper
 
             if (count($bill->對照表) == 1) {
                 $table = $bill->對照表[0];
-                if (($table->law_id ?? false) and $table->law_id != $law_id) {
+                if (($table->law_id ?? false) and $table->law_id != $obj->law_id) {
                     continue;
                 }
             } else {
                 foreach ($bill->對照表 as $table) {
-                    if ($table->law_id == $law_id) {
+                    if ($table->law_id == $obj->law_id) {
                         break;
                     }
                 }
@@ -268,6 +275,7 @@ class DiffHelper
             }
             $version_data->對照表 = array_values($version_data->對照表);
             $obj->versions[$version_id] = $version_data;
+            $obj->bills->{$version_data->title} = $bill;
 
             foreach ($bill->議案流程 as $flow) {
                 if (strpos($flow->狀態, '三讀') !== false) {
@@ -283,7 +291,7 @@ class DiffHelper
 
         // 如果歷程中有三讀的，把三讀內容也抓出來
         if ($is_3read) {
-            $versions = LYAPI::apiQuery("/laws/{$law_id}/versions", "抓取法律 {$law_id} 版本");
+            $versions = LYAPI::apiQuery("/laws/{$obj->law_id}/versions", "抓取法律 {$obj->law_id} 版本");
             $hit_version = null;
             foreach ($versions->lawversions as $version) {
                 if (in_array($version->日期, $is_3read)) {
@@ -303,9 +311,10 @@ class DiffHelper
                         date('j', strtotime($is_3read[0]))
                     ),
                     '議案編號' => '',
-                    '原始資料' => "https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE={$law_id}",
+                    '原始資料' => "https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE={$obj->law_id}",
                     '對照表' => [],
                 ];
+                $obj->version_id_input = sprintf("%s:%s", $obj->law_id, $is_3read[0]);
                 foreach ($contents->lawcontents as $lawcontent) {
                     if ($lawcontent->內容 ?? false) {
                         $lawcontent->內容 = str_replace('　　', "\n", $lawcontent->內容);
