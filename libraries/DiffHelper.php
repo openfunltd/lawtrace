@@ -25,6 +25,7 @@ class DiffHelper
             $law_id = $terms[2];
             $ret = LYAPI::apiQuery("/meets/" . $meet_id, "抓取會議 {$meet_id} 資料");
             $obj->meet = $ret->data;
+            $obj->version_id_input = sprintf("%s:%02d-progress", $law_id, explode('-', $meet_id)[1]);
             foreach ($ret->data->議事網資料 ?? [] as $data) {
                 foreach ($data->關係文書->議案 ?? [] as $bill) {
                     if (!in_array($law_id, $bill->法律編號)) {
@@ -44,6 +45,7 @@ class DiffHelper
         } elseif ('version' == $type) {
             $law_id = $terms[1];
             $date = $terms[2];
+            $obj->version_id_input = "{$law_id}:{$date}";
             $ret = LYAPI::apiQuery("/laws/{$law_id}/versions", "抓取法律 {$law_id} 版本");
             $hit_version = null;
             foreach ($ret->lawversions as $lawversion) {
