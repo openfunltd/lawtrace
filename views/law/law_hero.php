@@ -149,9 +149,11 @@ if ($this->version ?? false) {
       <div class="review-date">
           議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
       </div>
-      <div class="review-committee">
-          案由：<?= $this->escape($this->bill->案由) ?>
-      </div>
+        <?php if ($this->bill->案由 ?? false) { ?>
+        <div class="review-committee">
+            案由：<?= $this->escape($this->bill->案由) ?>
+        </div>
+        <?php } ?>
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
