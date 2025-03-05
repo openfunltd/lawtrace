@@ -45,12 +45,24 @@ if ('meet' == $this->source_type) {
 
 if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
+    $version_date = sprintf("%s %s",
+        LawVersionHelper::getMinguoDate($version_date),
+        '修正'
+    );
 }
 if ($this->version ?? false) {
-    $version_date = sprintf("%s %s",
-        LawVersionHelper::getMinguoDate($this->version->日期),
-        $this->version->動作
-    );
+    if (is_object($this->version)) {
+        $version_date = sprintf("%s %s",
+            LawVersionHelper::getMinguoDate($this->version->日期),
+            $this->version->動作
+        );
+    } else {
+        $version_date = explode(':', $this->version_id_input)[1];
+        $version_date = sprintf("%s %s",
+            LawVersionHelper::getMinguoDate($version_date),
+            '修正'
+        );
+    }
 }
 ?>
     <section class="page-hero law-details-info">
