@@ -167,14 +167,14 @@ class LawController extends MiniEngine_Controller
         $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS) ?? Null;
 
         // 從來源代碼中取得相關的議案編號
-        $billNos = DiffHelper::getBillNosFromSource($source_input);
+        $ret = DiffHelper::getBillNosFromSource($source_input);
         $type = explode(':', $source_input)[0];
         if ('meet' == $type) {
             $meet_id = explode(':', $source_input)[1];
-            $this->view->meet = LYAPI::apiQuery("/meets/{$meet_id}", "抓取會議 {$meet_id} 資料")->data;
+            $this->view->meet = $ret->meet;
         } elseif ('bill' == $type) {
             $bill_id = explode(':', $source_input)[1];
-            $this->view->bill = LYAPI::apiQuery("/bills/{$bill_id}", "抓取議案 {$bill_id} 資料")->data;
+            $this->view->bill = $ret->bill;
         } elseif ('version' == $type) {
             $law_id = explode(':', $source_input)[1];
             $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
@@ -183,7 +183,7 @@ class LawController extends MiniEngine_Controller
         $this->view->source = $source_input;
 
         // 透過議案編號取得版本資訊
-        $all_versions = DiffHelper::getVersionsFromBillNos($billNos);
+        $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos);
         $this->view->law_id = $law_id = $all_versions[0]->law_id;
         if ('version' == $type) {
             $this->view->version_id_input = "{$law_id}:" . explode(':', $source_input)[2];

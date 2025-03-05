@@ -15,7 +15,8 @@ class DiffHelper
         //     三讀版本也會有完整關係議案
         $terms = explode(':', $id);
         $type = $terms[0];
-        $billNos = [];
+        $obj = new StdClass;
+        $obj->billNos = [];
         if ($type == 'meet') {
             $meet_id = $terms[1];
             if (!($terms[2] ?? false)) {
@@ -23,20 +24,22 @@ class DiffHelper
             }
             $law_id = $terms[2];
             $ret = LYAPI::apiQuery("/meets/" . $meet_id, "抓取會議 {$meet_id} 資料");
+            $obj->meet = $ret->data;
             foreach ($ret->data->議事網資料 ?? [] as $data) {
                 foreach ($data->關係文書->議案 ?? [] as $bill) {
                     if (!in_array($law_id, $bill->法律編號)) {
                         continue;
                     } 
-                    $billNos[] = $bill->議案編號;
+                    $obj->billNos[] = $bill->議案編號;
                 }
             }
         } elseif ('bill' == $type) {
             $billNo = $terms[1];
             $ret = LYAPI::apiQuery("/bills/" . $billNo, "抓取議案 {$billNo} 資料");
-            $billNos[] = $billNo;
+            $obj->bill = $ret->data;
+            $obj->billNos[] = $billNo;
             foreach ($ret->data->關連議案 ?? [] as $bill) {
-                $billNos[] = $bill->議案編號;
+                $obj->billNos[] = $bill->議案編號;
             }
         } elseif ('version' == $type) {
             $law_id = $terms[1];
@@ -68,16 +71,17 @@ class DiffHelper
                 if (is_array($record->關係文書)) {
                     foreach ($record->關係文書 as $bill) {
                         if ($bill->billNo ?? false) {
-                            $billNos[] = $bill->billNo;
+                            $obj->billNos[] = $bill->billNo;
                         }
                     }
                 } else if ($record->關係文書->billNo ?? false) {
-                    $billNos[] = $record->關係文書->billNo;
+                    $obj->billNos[] = $record->關係文書->billNo;
                 }
             }
         }
 
-        return array_values(array_unique($billNos));
+        $obj->billNos = array_values(array_unique($obj->billNos));
+        return $obj;
     }
 
     public static function getVersionsFromBillNos($billnos, $law_id = null)
