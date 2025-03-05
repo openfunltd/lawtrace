@@ -190,7 +190,7 @@ class LawController extends MiniEngine_Controller
         if ('bill' == $type) {
             $this->view->version_id_input = $all_versions->version_id_input;
         }
-        $this->view->law_id = $law_id = $all_versions->versions[0]->law_id;
+        $this->view->law_id = $law_id = $all_versions->law_id;
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表
         if ($_GET['version'] ?? false) {
             $versions = array_values(array_filter($all_versions->versions, function ($version) {
