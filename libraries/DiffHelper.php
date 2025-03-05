@@ -22,7 +22,7 @@ class DiffHelper
                 throw new Exception("meet_id 必須指定 law_id");
             }
             $law_id = $terms[2];
-            $ret = self::query("/meets/" . $meet_id);
+            $ret = LYAPI::apiQuery("/meets/" . $meet_id, "抓取會議 {$meet_id} 資料");
             foreach ($ret->data->議事網資料 ?? [] as $data) {
                 foreach ($data->關係文書->議案 ?? [] as $bill) {
                     if (!in_array($law_id, $bill->法律編號)) {
@@ -33,7 +33,7 @@ class DiffHelper
             }
         } elseif ('bill' == $type) {
             $billNo = $terms[1];
-            $ret = self::query("/bills/" . $billNo);
+            $ret = LYAPI::apiQuery("/bills/" . $billNo, "抓取議案 {$billNo} 資料");
             $billNos[] = $billNo;
             foreach ($ret->data->關連議案 ?? [] as $bill) {
                 $billNos[] = $bill->議案編號;
@@ -41,7 +41,7 @@ class DiffHelper
         } elseif ('version' == $type) {
             $law_id = $terms[1];
             $date = $terms[2];
-            $ret = self::query("/laws/{$law_id}/versions");
+            $ret = LYAPI::apiQuery("/laws/{$law_id}/versions", "抓取法律 {$law_id} 版本");
             $hit_version = null;
             foreach ($ret->lawversions as $lawversion) {
                 if ($lawversion->日期 == $date) {
@@ -53,7 +53,7 @@ class DiffHelper
                 if (is_null($hit_version)) {
                     $hit_version = new StdClass;
                 }
-                $ret = self::query("/laws/{$law_id}/progress");
+                $ret = LYAPI::apiQuery("/laws/{$law_id}/progress", "抓取法律 {$law_id} 未議決進度");
                 foreach ($ret->歷程 as $log) {
                     if (strpos($log->id, "三讀-") !== 0) {
                         continue;
@@ -96,7 +96,7 @@ class DiffHelper
             $params[] = '議案編號=' . $billno;
         }
         $url = '/bills?' . implode('&', $params);
-        $bill_data = self::query($url);
+        $bill_data = LYAPI::apiQuery($url, "抓取議案資料");
         $ret = [];
         $ret['現行版本'] = (object)[
             'id' => '現行版本',
@@ -276,7 +276,7 @@ class DiffHelper
 
         // 如果歷程中有三讀的，把三讀內容也抓出來
         if ($is_3read) {
-            $versions = self::query("/laws/{$law_id}/versions");
+            $versions = LYAPI::apiQuery("/laws/{$law_id}/versions", "抓取法律 {$law_id} 版本");
             $hit_version = null;
             foreach ($versions->lawversions as $version) {
                 if (in_array($version->日期, $is_3read)) {
@@ -286,7 +286,7 @@ class DiffHelper
             }
 
             if (!is_null($hit_version)) {
-                $contents = self::query("/law_versions/{$hit_version}/contents?版本追蹤=new");
+                $contents = LYAPI::apiQuery("/law_versions/{$hit_version}/contents?版本追蹤=new", "抓取三讀版本條文 版本：{$hit_version}");
                 $version_data = (object)[
                     'id' => '三讀版本',
                     'title' => '三讀版本',
@@ -469,12 +469,5 @@ class DiffHelper
             $m = self::ruleNoToNumber($a) - self::ruleNoToNumber($b);
         }
         return $m;
-    }
-
-    public static function query($url)
-    {
-        $url = 'https://v2.ly.govapi.tw' . $url;
-        $obj = json_decode(file_get_contents($url));
-        return $obj;
     }
 }
