@@ -100,6 +100,11 @@
           <p>這是由一群關心國會透明與開放的公民們自行發起的專案。我們每月舉辦一次活動，聚焦國會監督、資料治理、介面設計與測試等議題。透過跨界合作，拉近民間與政局距離，深化民主影響力。</p>
           <p>歡迎<a href="https://g0v-tw.slack.com/archives/CDRE0Q0CE" target="_blank">加入 g0v slack 與我們一起交流</a>（若你尚未註冊 g0v slack 帳號，請先<a href="https://join.g0v.tw/" target="_blank">由此註冊</a>），一起推動改變！</p>
         </div>
+        <div class="desc">
+          <h3>清理過的立法院開放資料在這！歡迎協作與應用</h3>
+          <p>歐噴有限公司爬梳來自不同立法院網站的資料，逐一清理成符合開放資料定義的資料。歡迎探索<a href="https://huggingface.co/collections/openfun/tw-legislative-yuan-data-67c7e14902935d02b0b97a3f" target="_blank">資料集</a>與 <a href="https://v2.ly.govapi.tw/" target="_blank">API</a>，發揮創意打造各種創新應用。</p>
+          <p>對立法院資料有各種好點子嗎？無論是倡議、研究或社會觀察，歡迎<a href="https://g0v-tw.slack.com/archives/CDRE0Q0CE" target="_blank">加入 g0v slack</a>，這裡有開發者、倡議者、記者、熱血公民，一起分享交流國會資料的各種運用方式吧。</p>
+        </div>
       </section>
     </div>
   </div>

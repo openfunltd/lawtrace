@@ -20,7 +20,7 @@
         本網站由<a href="https://openfun.tw/" target="_blank">歐噴有限公司</a>開發，<a href="https://www.wfd.org/" target="_blank">西敏寺民主基金會</a>支持，並採用 BSD License (BSD-3-Clause)，歡迎所有人使用與改作。
         <ul>
           <li>
-             造訪<a href="https://huggingface.co/openfun" target="_blank">資料集</a>與 <a href="https://v2.ly.govapi.tw/" target="_blank">API</a>，瞭解使用技術與取得資料
+             造訪<a href="https://huggingface.co/collections/openfun/tw-legislative-yuan-data-67c7e14902935d02b0b97a3f" target="_blank">資料集</a>與 <a href="https://v2.ly.govapi.tw/" target="_blank">API</a>，瞭解使用技術與取得資料
           </li>
           <li>
             加入 <a href="https://g0v-tw.slack.com/archives/CDRE0Q0CE" target="_blank">g0v 國會松頻道</a>交流與協作。若您尚未註冊 g0v slack 帳號，請<a href="https://g0v.hackmd.io/@jothon/joing0vslack#g0v-Slack-%E8%A8%BB%E5%86%8A%E6%AD%A5%E9%A9%9F%E5%9C%96%E8%A7%A3-g0v-Slack-Registration-Tutorial" target="_blank">先到這裡</a>註冊
