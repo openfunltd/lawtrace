@@ -47,7 +47,11 @@ foreach ($modified_contents as $content) {
     if (empty((array) $base_content)) {
         $type = 'addition';
     } else {
-        if (mb_strpos($reason, '本條刪除') !== false or (mb_strpos($reason, '刪除') !== false and mb_strlen($modified_text) <= 6)) {
+        $is_deletion = mb_strpos($reason, '本條刪除') !== false ||
+            (mb_strpos($reason, '刪除') !== false && mb_strlen($modified_text) <= 6) ||
+            (mb_strpos($modified_text, '刪除') !== false && mb_strlen($modified_text) <= 6);
+
+        if ($is_deletion) {
             $type = 'deletion';
         } else {
             $type = 'amendment';
