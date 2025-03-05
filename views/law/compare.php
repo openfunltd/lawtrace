@@ -124,6 +124,13 @@ $this->tab = 'compare';
                               查看原始資料
                             </a>
                           </li>
+                          <?php if ($version->議案編號 ?? false) { ?>
+                          <li>
+                            <a class="dropdown-item" href="/law/compare?source=bill:<?= $version->議案編號 ?>" target="_blank">
+                              查看此版本資訊
+                            </a>
+                          </li>
+                          <?php } ?>
                         </ul>
                       </div>
                     </div>
