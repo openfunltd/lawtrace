@@ -404,7 +404,7 @@ class LawHistoryHelper
             }
             $article_number = implode('-', $article_number_arr);
             return $article_number;
-        }, $rows);
+        }, $rows ?? []);
 
         //filter out chapters
         //TODO 確認是否要呈現修改章節名稱

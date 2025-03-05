@@ -56,6 +56,7 @@ class LawController extends MiniEngine_Controller
             exit;
         }
         $this->view->versions_data = $versions_data;
+        $this->view->single_version = false;
         $history_groups = $version_selected->歷程 ?? [];
 
         if ($source_input) {
@@ -82,6 +83,13 @@ class LawController extends MiniEngine_Controller
                     }
                     return false;
                 }));
+                if ($history_groups[0]->id == '未分類') { // 未分類就只要留一個就好
+                    $history_groups[0]->bill_log = array_values(array_filter($history_groups[0]->bill_log, function ($log) use ($bill_id) {
+                        return ($log->關係文書->billNo ?? false) == $bill_id;
+                    }));
+                    $history_groups[0]->id = '單一版本';
+                }
+                $this->view->single_version = true;
                 $this->view->bill = $ret->bill;
             } elseif ('version' == $type) {
                 $law_id = explode(':', $source_input)[1];
