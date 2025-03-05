@@ -200,7 +200,7 @@ class DiffHelper
                 } elseif ($row->增訂 ?? false) {
                     $rule_no = explode('　', $row->增訂)[0];
                     $origin = '';
-                    $new = explode('　', $row->增訂, 2)[1];
+                    $new = explode('　', $row->增訂, 2)[1] ?? '';
                 } elseif (property_exists($row, '現行') and $row->現行 == '' and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->修正)[0];
                     $origin = '';
@@ -217,7 +217,7 @@ class DiffHelper
                     continue;
                 }
 
-                if ('' == $row->{'修正'} and $row->{'審查會通過條文:備註'} ?? false) {
+                if ('' == ($row->{'修正'} ?? '') and $row->{'審查會通過條文:備註'} ?? false) {
                     $new = "(" . $row->{'審查會通過條文:備註'} . ")\n" . $new;
                 } elseif ('' == $row->{'增訂'} and $row->{'審查會通過條文:備註'} ?? false) {
                     $new = "(" . $row->{'審查會通過條文:備註'} . ")\n" . $new;
