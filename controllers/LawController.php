@@ -186,7 +186,7 @@ class LawController extends MiniEngine_Controller
         $this->view->source = $source_input;
 
         // 透過議案編號取得版本資訊
-        $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos);
+        $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos, $source_input);
         if ('bill' == $type) {
             $this->view->version_id_input = $all_versions->version_id_input;
         }

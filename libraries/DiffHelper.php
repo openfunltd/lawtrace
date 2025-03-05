@@ -86,7 +86,7 @@ class DiffHelper
         return $obj;
     }
 
-    public static function getVersionsFromBillNos($billnos)
+    public static function getVersionsFromBillNos($billnos, $source)
     {
         $obj = new StdClass;
         $obj->versions = [];
@@ -341,7 +341,7 @@ class DiffHelper
         }
 
         // 排序 現行 > 三讀 > 審查 > 行政 > 提案日期
-        usort($obj->versions, function($a, $b){
+        usort($obj->versions, function($a, $b) use ($source) {
             // 現行版本排最前
             if ($a->id == '現行版本') {
                 return -1;
@@ -356,6 +356,17 @@ class DiffHelper
             }
             if (strpos($b->title, '三讀') === 0) {
                 return 1;
+            }
+
+            // 如果是從議案編號來的，該議案編號的版本排第二
+            if (strpos($source, 'bill:') === 0) {
+                $billNo = explode(':', $source)[1];
+                if ($a->議案編號 == $billNo) {
+                    return -1;
+                }
+                if ($b->議案編號 == $billNo) {
+                    return 1;
+                }
             }
 
             // 審查報告排第三
