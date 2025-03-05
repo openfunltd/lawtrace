@@ -88,6 +88,8 @@ class DiffHelper
 
     public static function getVersionsFromBillNos($billnos, $law_id = null)
     {
+        $obj = new StdClass;
+        $obj->versions = [];
         if (!count($billnos)) {
             throw new Exception("No bill found");
         }
@@ -103,8 +105,7 @@ class DiffHelper
         }
         $url = '/bills?' . implode('&', $params);
         $bill_data = LYAPI::apiQuery($url, "抓取議案資料");
-        $ret = [];
-        $ret['現行版本'] = (object)[
+        $obj->versions['現行版本'] = (object)[
             'id' => '現行版本',
             'title' => '現行版本',
             'subtitle' => '',
@@ -126,8 +127,8 @@ class DiffHelper
             }
             arsort($law_id_count);
             $law_id = key($law_id_count);
-            $ret['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $law_id;
-            $ret['現行版本']->law_id = $law_id;
+            $obj->versions['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $law_id;
+            $obj->versions['現行版本']->law_id = $law_id;
         }
 
         $is_3read = false;
@@ -218,7 +219,7 @@ class DiffHelper
                     $new = explode('：', $rule_no, 2)[1];
                     $rule_no = '法律名稱';
                 }
-                $ret['現行版本']->{'對照表'}[$rule_no] = [
+                $obj->versions['現行版本']->{'對照表'}[$rule_no] = [
                     '條文' => $rule_no,
                     '內容' => $origin,
                     'law_content_id' => $law_content_id,
@@ -266,7 +267,7 @@ class DiffHelper
                 );
             }
             $version_data->對照表 = array_values($version_data->對照表);
-            $ret[$version_id] = $version_data;
+            $obj->versions[$version_id] = $version_data;
 
             foreach ($bill->議案流程 as $flow) {
                 if (strpos($flow->狀態, '三讀') !== false) {
@@ -275,9 +276,9 @@ class DiffHelper
                 }
             }
         }
-        $ret['現行版本']->對照表 = array_values($ret['現行版本']->對照表);
+        $obj->versions['現行版本']->對照表 = array_values($obj->versions['現行版本']->對照表);
         if (!$has_origin) {
-            unset($ret['現行版本']);
+            unset($obj->versions['現行版本']);
         }
 
         // 如果歷程中有三讀的，把三讀內容也抓出來
@@ -326,12 +327,12 @@ class DiffHelper
                     }
                 }
                 $version_data->對照表 = array_values($version_data->對照表);
-                $ret['三讀版本'] = $version_data;
+                $obj->versions['三讀版本'] = $version_data;
             }
         }
 
         // 排序 現行 > 三讀 > 審查 > 行政 > 提案日期
-        usort($ret, function($a, $b){
+        usort($obj->versions, function($a, $b){
             // 現行版本排最前
             if ($a->id == '現行版本') {
                 return -1;
@@ -367,7 +368,8 @@ class DiffHelper
             // 最後依照提案日期排序
             return strtotime($a->date) - strtotime($b->date);
         });
-        return array_values($ret);
+        $obj->versions = array_values($obj->versions);
+        return $obj;
     }
 
     public static function mergeVersionsToTable($versions, $choosed_versions)

@@ -184,17 +184,17 @@ class LawController extends MiniEngine_Controller
 
         // 透過議案編號取得版本資訊
         $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos);
-        $this->view->law_id = $law_id = $all_versions[0]->law_id;
+        $this->view->law_id = $law_id = $all_versions->versions[0]->law_id;
         if ($obj->version_id_input ?? false) {
             $this->view->version_id_input = $obj->version_id_input;
         }
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表
         if ($_GET['version'] ?? false) {
-            $versions = array_values(array_filter($all_versions, function ($version) {
+            $versions = array_values(array_filter($all_versions->versions, function ($version) {
                 return in_array($version->id, $_GET['version']);
             }));
         } else {
-            $versions = $all_versions;
+            $versions = $all_versions->versions;
         }
 
         // 列出哪些版本有被選取（用在 checkbox 勾選上）
@@ -204,7 +204,7 @@ class LawController extends MiniEngine_Controller
         $this->view->choosed_version_ids = $choosed_version_ids;
 
         // 整合出對照表需要的資料
-        $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions, $_GET['version'] ?? []);
+        $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? []);
         $this->view->choosed_version_ids = $this->view->diff->choosed_version_ids;
         $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
     }
