@@ -2,6 +2,7 @@
 $version_id_input = $this->version_id_input;
 $versions_in_terms = $this->versions_data->versions_in_terms;
 $version_id_selected = $this->versions_data->version_id_selected;
+$version_warning = $this->versions_data->warning ?? false;
 
 $is_third_read_history = (strpos($version_id_selected, 'progress') === false);
 $is_progress_history = (strpos($version_id_selected, 'progress') !== false);
@@ -60,6 +61,12 @@ if (strpos($version_id_input, "-progress")) {
             </div>
           </div>
           <div>
+              <?php if ('history-from-progress' == $version_warning) { ?>  
+              <div class="alert alert-primary" role="alert">
+                  <i class="bi bi-exclamation-triangle-fill"></i>
+                  因 <a href="https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=<?= $this->law_id ?>" target="_blank">立法院法律系統</a> 尚未提供本次三讀的立法歷程資料，本頁過程為程式推算歷程，可能與實際情況有所出入。<a href="https://docs.google.com/document/d/1OtTTnLCXa8FbsQBPFXmtPmXWvhaSW_n8LxcBnE1AYbA/edit?tab=t.0" target="_blank">了解更多</a>
+              </div>
+              <?php } ?>
             <?php if ($is_third_read_history) { ?>
               <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
             <?php } ?>

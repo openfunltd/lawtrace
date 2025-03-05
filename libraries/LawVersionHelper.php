@@ -23,7 +23,7 @@ class LawVersionHelper
 
             $filtered_versions = array_filter($versions, function ($version) use ($version_id_input) {
                 $version_date = $version->日期 ?? NULL;
-                $check_date = explode(':', $version_id_input)[1] ?? NULL;
+                $check_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
                 return 7 * 86400 > abs(strtotime($version_date) - strtotime($check_date));
             });
             foreach ($filtered_versions as $idx => $version) {
@@ -167,7 +167,26 @@ class LawVersionHelper
         $term_dates = LyDateHelper::$term_dates;
 
         //repack 歷程 as 歷程 in progress
-        $histories = $version_selected->歷程;
+        if ($version_selected->歷程 ?? false) {
+            $histories = $version_selected->歷程;
+        } else {
+            // 沒有歷程，可能是最新的版本，要去 progress API 找
+            $res = LYAPI::apiQuery("/law/{$law_id}/progress", "查詢法律 {$law_id} 的進度");
+
+            $logs = $res->歷程;
+            $logs = array_filter($logs, function ($log) use ($version_id_input) {
+                if (strpos($log->id, '三讀-') !== 0) {
+                    return false;
+                }
+                $version_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
+                $log_date = explode('-', $log->id, 2)[1] ?? NULL;
+                return 7 * 86400 > abs(strtotime($log_date) - strtotime($version_date));
+            });
+            $logs = array_values($logs);
+            $histories = $logs[0]->bill_log ?? [];
+            $version_selected = new StdClass;
+            $versions_data->warning = 'history-from-progress';
+        }
         if (isset($histories)) {
             $version_selected->歷程 = [
                 (object) [
