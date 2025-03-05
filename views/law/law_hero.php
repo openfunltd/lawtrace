@@ -27,9 +27,11 @@ if ('single' != $this->source_type) {
     } else {
         $tabs[] = ['瀏覽現行法律', "/law/show/{$this->law_id}", 'show'];
     }
-    $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
     if ($this->source ?? false) {
+        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
         $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+    } else {
+        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
     }
 }
 if ('meet' == $this->source_type) {

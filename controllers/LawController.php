@@ -36,12 +36,13 @@ class LawController extends MiniEngine_Controller
     public function historyAction($law_id)
     {
         $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
+        $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS);
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
         $this->view->law = self::getLawData($law_id);
 
-        $versions_data = LawVersionHelper::getVersionsWithProgresses($law_id, $version_id_input);
+        $versions_data = LawVersionHelper::getVersionsWithProgresses($law_id, $version_id_input, $source_input);
         $versions = $versions_data->versions;
         $versions_in_terms = $versions_data->versions_in_terms;
         $version_selected = $versions_data->version_selected;
@@ -56,11 +57,41 @@ class LawController extends MiniEngine_Controller
         }
         $this->view->versions_data = $versions_data;
         $history_groups = $version_selected->歷程 ?? [];
+
+        if ($source_input) {
+            $ret = DiffHelper::getBillNosFromSource($source_input);
+            $type = explode(':', $source_input)[0];
+            if ('meet' == $type) {
+                $meet_id = explode(':', $source_input)[1];
+                $history_groups = array_values(array_filter($history_groups, function ($group) use ($meet_id) {
+                    foreach ($group->bill_log as $log) {
+                        if (($log->會議代碼 ?? false) == $meet_id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }));
+                $this->view->meet = $ret->meet;
+            } elseif ('bill' == $type) {
+                $bill_id = explode(':', $source_input)[1];
+                $history_groups = array_values(array_filter($history_groups, function ($group) use ($bill_id) {
+                    foreach ($group->bill_log as $log) {
+                        if (($log->關係文書->billNo ?? false) == $bill_id) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }));
+                $this->view->bill = $ret->bill;
+            } elseif ('version' == $type) {
+                $law_id = explode(':', $source_input)[1];
+                $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+            }
+            $this->view->source_type = $type;
+            $this->view->source = $source_input;
+        }
         $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
         $this->view->history_groups = $history_groups;
-        if (strpos($version_selected->版本編號, '-progress') === false) {
-            $this->view->source = "version:{$law_id}:{$version_selected->日期}";
-        }
     }
 
     public function singleAction($law_content_id)
