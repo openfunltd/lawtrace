@@ -165,6 +165,7 @@ class LawVersionHelper
         $version_id_selected = $versions_data->version_id_selected;
         $term_selected = $versions_data->term_selected;
         $term_dates = LyDateHelper::$term_dates;
+        $version_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
 
         //repack 歷程 as 歷程 in progress
         if ($version_selected->歷程 ?? false) {
@@ -174,17 +175,18 @@ class LawVersionHelper
             $res = LYAPI::apiQuery("/law/{$law_id}/progress", "查詢法律 {$law_id} 的進度");
 
             $logs = $res->歷程;
-            $logs = array_filter($logs, function ($log) use ($version_id_input) {
+            $logs = array_filter($logs, function ($log) use ($version_date) {
                 if (strpos($log->id, '三讀-') !== 0) {
                     return false;
                 }
-                $version_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
                 $log_date = explode('-', $log->id, 2)[1] ?? NULL;
                 return 7 * 86400 > abs(strtotime($log_date) - strtotime($version_date));
             });
             $logs = array_values($logs);
             $histories = $logs[0]->bill_log ?? [];
             $version_selected = new StdClass;
+            $version_selected->日期 = $version_date;
+            $version_selected->動作 = "修正";
             $versions_data->warning = 'history-from-progress';
         }
         if (isset($histories)) {
