@@ -28,11 +28,11 @@
         </ul>
       </div>
       <div class="links">
-        <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub#h.nxjukyoy2obh" target="_blank">著作權宣告</a>
-        <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub#h.a30tw89pnevn" target="_blank">網站使用條款</a>
+        <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub" target="_blank">權利宣告與網站條款</a>
         <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub#h.jicwkxkehpp3" target="_blank">隱私權政策</a>
         <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub#h.gay160qbmfy3" target="_blank">資料來源</a>
         <a href="https://docs.google.com/document/d/e/2PACX-1vRGme9ddy07-155LOpRkLNlM0b2YU1JPOYPqVW1SXJvMT9x617hkQsJTnmizhjxZN9EW-6UaajqxGTL/pub#h.e087bb60wai3" target="_blank">取用資料的注意事項</a>
+        2025 © OpenFun, supported by WFD
       </div>
   </div>
 </div>
