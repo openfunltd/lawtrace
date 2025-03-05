@@ -9,8 +9,6 @@ $is_progress_history = (strpos($version_id_selected, 'progress') !== false);
 $this->tab = 'history';
 if (strpos($version_id_input, "-progress")) {
     $this->progress_term = substr($version_id_input, 6, strpos($version_id_input, "-progress"));
-} else {
-    $this->source_type = 'version';
 }
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
