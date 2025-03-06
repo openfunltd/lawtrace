@@ -15,10 +15,9 @@ foreach ($history_groups as $history_group) {
 }
 ?>
 <?php if (count($history_groups) == 1 and count($history_groups[0]->bill_log) == 0) { ?>
-  <div class="history-menu">
-    <div class="title">
-      無資料
-    </div>
+  <div class="alert alert-primary" role="alert">
+    <i class="bi bi-exclamation-triangle-fill"></i>
+    無該屆未議決議案資料
   </div>
 <?php exit; ?>
 <?php } ?>
