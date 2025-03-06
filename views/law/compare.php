@@ -96,6 +96,14 @@ $this->tab = 'compare';
                   </div>
                   <div class="compare-head">
                     比較對象
+                    <span class="compare-scroll-btns">
+                      <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('left');">
+                        <i class="bi bi-arrow-left-circle"></i>
+                      </a>
+                      <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('right');">
+                        <i class="bi bi-arrow-right-circle"></i>
+                      </a>
+                    </span>
                   </div>
                   <!-- 如果大於2時，要以空白div補足數量 -->
                   <?php for ($i = 0; $i < $version_count - 2; $i ++) { ?>
@@ -285,6 +293,7 @@ diff_data = <?= json_encode([
 ]) ?>;
 </script>
   <script src="/static/js/diff.js"></script>
+  <script src="/static/js/scroll.js"></script>
 <script>
 </script>
 <?= $this->partial('common/footer') ?>
