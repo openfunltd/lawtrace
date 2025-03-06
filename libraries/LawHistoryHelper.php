@@ -291,22 +291,24 @@ class LawHistoryHelper
                     if ($agenda->公報編號 == $gazette_id and
                         $agenda->起始頁碼 <= $gazette_agenda_start_page and
                         $agenda->結束頁碼 >= $gazette_agenda_start_page) {
+
                         $agenda_committees_str = mb_substr($agenda->案由, 0, mb_strpos($agenda->案由, '委員會'));
                         $agenda_committees = explode('、', $agenda_committees_str);
-                        $committee_ptrs = [];
-                        foreach ($committees as $committee) {
-                            $committee_name = str_replace('委員會', '', $committee->委員會名稱);
-                            $committee_ptr = array_search($committee_name, $agenda_committees);
-                            if ($committee_ptr !== false) {
-                                $committee_ptrs[] = [$committee->委員會代號, $committee_ptr];
+
+                        $meet_committees = [];
+                        $committee_ids = [];
+                        foreach ($agenda_committees as $order_idx => $agenda_committee) {
+                            foreach ($committees as $committee) {
+                                $committee_name = str_replace('委員會', '', $committee->委員會名稱);
+                                $matched_position = mb_strpos($agenda_committee, $committee_name);
+                                if ($matched_position !== false) {
+                                    $committee_ids[] = $committee->委員會代號;
+                                    $meet_committees[] = $committee_name;
+                                    break;
+                                }
                             }
                         }
-                        usort($committee_ptrs, function ($ptrA, $ptrB) {
-                            return $ptrA[1] <=> $ptrB[1];
-                        });
-                        $committee_ids = array_map(function ($committee_ptr) {
-                            return $committee_ptr[0];
-                        }, $committee_ptrs);
+
                         $meet_id = sprintf("%s-%d-%d-%s-%d",
                             (count($committee_ids) > 1) ? '聯席會議' : '委員會',
                             $agenda->屆,
