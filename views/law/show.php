@@ -31,7 +31,7 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
 
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
-<?= $this->partial('common/header', ['title' => "{$law_name} - 瀏覽法律"]) ?>
+<?= $this->partial('common/header', ['title' => "{$law_name} - 瀏覽法律", 'body_class' => 'law-details-page']) ?>
 <div class="main">
   <?= $this->partial('law/law_hero', $this) ?>
   <div class="main-content">
