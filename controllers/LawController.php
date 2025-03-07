@@ -59,7 +59,7 @@ class LawController extends MiniEngine_Controller
             $type = explode(':', $source_input)[0];
             if ('meet' == $type) {
                 $meet_id = explode(':', $source_input)[1];
-                $history_groups = array_values(array_filter($history_groups, function ($group) use ($meet_id) {
+                $meet_related_history_groups = array_values(array_filter($history_groups, function ($group) use ($meet_id) {
                     foreach ($group->bill_log as $log) {
                         if (($log->會議代碼 ?? false) == $meet_id) {
                             return true;
@@ -67,6 +67,10 @@ class LawController extends MiniEngine_Controller
                     }
                     return false;
                 }));
+                //會議還沒開的時候，還不會有關聯議案，會使得 $history_groups 整個是空的，改成陳列所有的經歷過程
+                if (!empty($meet_related_history_groups)) {
+                    $history_groups = $meet_related_history_groups;
+                }
                 $this->view->meet = $ret->meet;
             } elseif ('bill' == $type) {
                 $bill_id = explode(':', $source_input)[1];
