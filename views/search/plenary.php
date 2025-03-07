@@ -74,11 +74,23 @@ foreach ($this->data->meet->日期 as $d) {
                              <?php } ?>
                            </div>
                            <div class="party"><?= $this->escape($bill->主提案) ?></div>
-                           <?php if ($bill->article_numbers ?? false) { ?>
-                             <div class="sections">第 <?= implode(', ', ($bill->article_numbers)) ?> 條</div>
-                           <?php } else { ?>
-                             <?= $this->escape($bill->議案名稱) ?>
+                           <div class="sections">
+                               <?= $this->escape($bill->議案名稱) ?><br>
+                           提案人：<?php foreach ($bill->提案人 as $p) { ?>
+                           <?php $img = PartyHelper::getImageByTermAndName($bill->屆, $p); ?>
+                           <?php if ($img) { ?>
+                           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
                            <?php } ?>
+                           <?= $this->escape($p) ?> &nbsp;
+                           <?php } ?><br>
+                           連署人：<?php foreach ($bill->連署人 as $p) { ?>
+                           <?php $img = PartyHelper::getImageByTermAndName($bill->屆, $p); ?>
+                           <?php if ($img) { ?>
+                           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+                           <?php } ?>
+                           <?= $this->escape($p) ?> &nbsp;
+                           <?php } ?>
+                           </div>
                            <div class="details">
                              <a href="/law/compare?source=bill:<?= $billNo ?>" target="_blank">
                                議案詳細資訊

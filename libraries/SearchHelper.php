@@ -63,6 +63,8 @@ class SearchHelper
         $params[] = 'output_fields=法律編號';
         $params[] = 'output_fields=提案單位/提案委員';
         $params[] = 'output_fields=提案人';
+        $params[] = 'output_fields=連署人';
+        $params[] = 'output_fields=屆';
         $params[] = 'output_fields=對照表';
         $params[] = 'output_fields=議案名稱';
         foreach (array_keys($bills) as $bill_id) {
