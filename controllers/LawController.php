@@ -50,12 +50,6 @@ class LawController extends MiniEngine_Controller
         $version_id_selected = $versions_data->version_id_selected;
         $term_selected = $versions_data->term_selected;
         $this->view->version = $version_selected;
-        if (is_null($version_selected)) {
-            header('HTTP/1.1 404 No Found');
-            echo "<h1>404 No Found</h1>";
-            echo "<p>No version data with version_id {$version_id_input}</p>";
-            exit;
-        }
         $this->view->versions_data = $versions_data;
         $this->view->single_version = false;
         $history_groups = $version_selected->歷程 ?? [];

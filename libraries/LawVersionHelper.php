@@ -159,7 +159,7 @@ class LawVersionHelper
 
     public static function getVersionsWithProgresses($law_id, $version_id_input)
     {
-        $versions_data = self::getVersionsData($law_id, $version_id_input);
+        $versions_data = self::getVersionsData($law_id, $version_id_input) ?? (object) [];
         $versions_in_terms = $versions_data->versions_in_terms;
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
@@ -183,11 +183,13 @@ class LawVersionHelper
                 return 7 * 86400 > abs(strtotime($log_date) - strtotime($version_date));
             });
             $logs = array_values($logs);
-            $histories = $logs[0]->bill_log ?? [];
-            $version_selected = new StdClass;
-            $version_selected->日期 = $version_date;
-            $version_selected->動作 = "修正";
-            $versions_data->warning = 'history-from-progress';
+            if (!empty($logs)) {
+                $histories = $logs[0]->bill_log ?? [];
+                $version_selected = new StdClass;
+                $version_selected->日期 = $version_date;
+                $version_selected->動作 = "修正";
+                $versions_data->warning = 'history-from-progress';
+            }
         }
         if (isset($histories)) {
             $version_selected->歷程 = [
@@ -196,6 +198,12 @@ class LawVersionHelper
                     'bill_log' => $histories,
                 ],
             ];
+        }
+
+        //$version_in_terms need to be build when law is on draft
+        if (is_null($versions_in_terms)) {
+          $term_dates = LyDateHelper::$term_dates;
+          $versions_in_terms = array_fill_keys(array_keys($term_dates), []);
         }
 
         foreach ($versions_in_terms as $term => $versions) {
@@ -219,10 +227,22 @@ class LawVersionHelper
             $versions_in_terms[$term][] = $version;
         }
 
-        //filter out term with no version to choose
-        $versions_in_terms = array_filter($versions_in_terms, function($versions) {
-            return !empty($versions);
-        });
+        //Default query progress at latest term when law is on draft
+        if (is_null($version_id_selected)) {
+            $latest_term = reset($versions_in_terms);
+            $version_id_selected = $latest_term[0]->版本編號;
+            $term = explode('-', explode(':', $version_id_selected)[1])[0];
+            $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
+            $history_groups = $res->歷程;
+            //去掉三讀的 bill_log (跟 version 重複)
+            $history_groups = array_filter($history_groups, function ($history_group) {
+                $id = $history_group->id;
+                return mb_strpos($id, '三讀') === false;
+            });
+            $version->歷程 = $history_groups;
+            $version_selected = $version;
+            $term_selected = $term;
+        }
 
         //repack versions_data
         $versions_data->versions_in_terms = $versions_in_terms;
