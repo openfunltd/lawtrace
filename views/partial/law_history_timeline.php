@@ -35,7 +35,7 @@ $history_groups = $this->_data['history_groups'];
                   <?php } ?>
                   <?php if (property_exists($history, 'ppg_url')) { ?>
                     <div class="details">
-                      <a href="<?= $this->escape($history->ppg_url)?>" target="_blank">
+                      <a href="<?= $this->escape($history->compare_url)?>" target="_blank">
                         議案詳細資訊
                         <i class="bi bi-arrow-right"></i>
                       </a>
