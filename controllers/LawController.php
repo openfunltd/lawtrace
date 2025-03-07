@@ -161,24 +161,23 @@ class LawController extends MiniEngine_Controller
         $version_id_previous = $versions_data->version_id_previous;
         $this->view->version = $version_selected;
         $this->view->versions_data = $versions_data;
-        if (is_null($version_selected)) {
-            header('HTTP/1.1 404 No Found');
-            echo "<h1>404 No Found</h1>";
-            echo "<p>No version data with version_id {$version_id_input}</p>";
-            exit;
+        $source = '';
+
+        if (isset($version_selected)) {
+            $res = LYAPI::apiQuery(
+                "/law_version/{$version_id_selected}/contents",
+                "查詢版本條文 版本：{$version_id_selected}"
+            );
+            $res_total = $res->total ?? 0;
+            if ($res_total == 0) {
+                header('HTTP/1.1 404 No Found');
+                echo "<h1>404 No Found</h1>";
+                echo "<p>No law_conetnts with law_version_id {$version_id_selected}</p>";
+                exit;
+            }
+            $source = "version:{$law_id}:{$version_selected->日期}";
+            $this->view->law_contents = $res->lawcontents;
         }
-        $res = LYAPI::apiQuery(
-            "/law_version/{$version_id_selected}/contents",
-            "查詢版本條文 版本：{$version_id_selected}"
-        );
-        $res_total = $res->total ?? 0;
-        if ($res_total == 0) {
-            header('HTTP/1.1 404 No Found');
-            echo "<h1>404 No Found</h1>";
-            echo "<p>No law_conetnts with law_version_id {$version_id_selected}</p>";
-            exit;
-        }
-        $this->view->law_contents = $res->lawcontents;
 
         if (!is_null($version_id_previous)) {
             $res = LYAPI::apiQuery(
@@ -193,7 +192,7 @@ class LawController extends MiniEngine_Controller
             }
             $this->view->law_contents_previous = $res->lawcontents;
         }
-        $this->view->source = "version:{$law_id}:{$version_selected->日期}";
+        $this->view->source = $source;
     }
 
     public function compareAction()

@@ -4,6 +4,9 @@ $this->tab = 'diff';
 $this->source_type = 'version';
 $this->version = $version_id_input;
 
+$is_draft = is_null($this->versions_data); //還在草案階段的
+$this->is_draft = $is_draft;
+
 $selected_version_law_name = $this->law_contents[0]->內容;
 if (!is_null($this->law_contents_previous)) {
     $previous_law_name = $this->law_contents_previous[0]->內容;
@@ -11,7 +14,7 @@ if (!is_null($this->law_contents_previous)) {
 $law_name_changed_flag = (isset($previous_law_name) and ($selected_version_law_name != $previous_law_name));
 
 //filter contents, retrieve new modified contents in this version
-$modified_contents = array_filter($this->law_contents, function($content) {
+$modified_contents = array_filter($this->law_contents ?? [], function($content) {
     return ($content->版本追蹤 == 'new');
 });
 
@@ -87,6 +90,20 @@ $this->nav_link_history = $history_endpoint;
 <?= $this->partial('common/header', ['title' => "{$law_name} - 異動條文"]) ?>
 <div class="main">
   <?= $this->partial('/law/law_hero', $this) ?>  
+  <?php if ($is_draft) { ?>
+    <div class="main-content">
+      <section class="law-details">
+        <div class="container">
+          <div class="alert alert-primary" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+              本法處於草案階段，尚未有任何三讀的法律版本供瀏覽。想了解草案的討論過程，請點選「經歷過程」查閱。
+          </div>
+        </div>
+      </section>
+    </div>
+    </div>
+    <?php exit; ?>
+  <?php } ?>
   <div class="main-content">
     <section class="law-details">
       <div class="container">

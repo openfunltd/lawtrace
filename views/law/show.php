@@ -5,6 +5,7 @@ $this->tab = 'show';
 $this->source_type = 'version';
 
 $is_draft = is_null($this->versions_data); //還在草案階段的
+$this->is_draft = $is_draft;
 
 $chapters = array_filter($this->contents, function($content) {
     $chapter_name = $content->章名 ?? '';
