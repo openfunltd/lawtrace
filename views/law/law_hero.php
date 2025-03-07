@@ -155,7 +155,22 @@ if ($this->version ?? false) {
       </div>
       <?php } elseif ($this->source_type == 'bill') { ?>
       <div class="review-committee">
-          提案人：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?>
+          提案人：<?php foreach ($this->bill->提案人 as $p) { ?>
+          <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
+          <?php if ($img) { ?>
+          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+          <?php } ?>
+          <?= $this->escape($p) ?>&nbsp;
+          <?php } ?>
+      </div>
+      <div class="review-committee">
+          連署人：<?php foreach ($this->bill->連署人 as $p) { ?>
+          <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
+          <?php if ($img) { ?>
+          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+          <?php } ?>
+          <?= $this->escape($p) ?>&nbsp;
+          <?php } ?>
       </div>
       <div class="review-date">
           提案日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?>

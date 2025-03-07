@@ -2,6 +2,27 @@
 
 class PartyHelper
 {
+    protected static $_term_cache = [];
+
+    public static function getImageByTermAndName($term, $name)
+    {
+        if (!array_key_exists($term, self::$_term_cache)) {
+            $params = [];
+            $params[] = "屆={$term}";
+            $params[] = 'output_fields=黨籍';
+            $params[] = 'output_fields=委員姓名';
+            $ret = LYAPI::apiQuery("/legislators?".implode('&', $params), "查詢第 {$term} 屆立委資料");
+            self::$_term_cache[$term] = [];
+            foreach ($ret->legislators as $legislator) {
+                self::$_term_cache[$term][$legislator->委員姓名] = $legislator->黨籍;
+            }
+        }
+        if (array_key_exists($name, self::$_term_cache[$term])) {
+            return self::getImage(self::$_term_cache[$term][$name]);
+        }
+        return self::getImage($name);
+    }
+
     public static function getImage($input)
     {
         $img_paths = self::$img_paths;
