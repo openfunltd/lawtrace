@@ -201,7 +201,8 @@ class LawVersionHelper
         }
 
         //$version_in_terms need to be build when law is on draft
-        if (is_null($versions_in_terms)) {
+        $is_draft = is_null($versions_in_terms);
+        if ($is_draft) {
           $term_dates = LyDateHelper::$term_dates;
           $versions_in_terms = array_fill_keys(array_keys($term_dates), []);
         }
@@ -228,7 +229,7 @@ class LawVersionHelper
         }
 
         //Default query progress at latest term when law is on draft
-        if (is_null($version_id_selected)) {
+        if ($is_draft) {
             $latest_term = reset($versions_in_terms);
             $version_id_selected = $latest_term[0]->版本編號;
             $term = explode('-', explode(':', $version_id_selected)[1])[0];
