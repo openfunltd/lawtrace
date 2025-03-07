@@ -375,7 +375,7 @@ class LawHistoryHelper
         return $history_groups;
     }
 
-    private static function trimProposer($proposer)
+    public static function trimProposer($proposer)
     {
         $redundant_texts = ['本院委員', '本院'];
         foreach ($redundant_texts as $redundant_text) {
@@ -386,7 +386,7 @@ class LawHistoryHelper
         return $proposer;
     }
 
-    private static function getArticleNumbers($amendment)
+    public static function getArticleNumbers($amendment)
     {
         $type = $amendment->立法種類;
         $rows = $amendment->rows;
