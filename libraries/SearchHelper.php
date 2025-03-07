@@ -1,8 +1,8 @@
 <?php
 
-class PlenaryHelper
+class SearchHelper
 {
-    public static function getData($meet_id = null)
+    public static function getPlenaryData($meet_id = null)
     {
         if (is_null($meet_id) or trim($meet_id) == '') {
             $ret = LYAPI::apiQuery("/meets?會議種類=院會&limit=1", "取得最新院會");

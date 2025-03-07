@@ -15,7 +15,7 @@ class SearchController extends MiniEngine_Controller
     {
         $uri_terms = explode('/', $_SERVER['REQUEST_URI']);
         $meet_id = $uri_terms[3] ?? null;
-        $data = PlenaryHelper::getData($meet_id);
+        $data = SearchHelper::getPlenaryData($meet_id);
         $this->view->data = $data;
     }
 }
