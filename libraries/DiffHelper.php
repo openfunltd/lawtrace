@@ -102,6 +102,7 @@ class DiffHelper
         $params[] = 'output_fields=提案編號';
         $params[] = 'output_fields=法律編號';
         $params[] = 'output_fields=提案人';
+        $params[] = 'output_fields=連署人';
         $params[] = 'output_fields=對照表';
         $params[] = 'output_fields=議案流程';
         $params[] = 'output_fields=議案狀態';
@@ -243,7 +244,10 @@ class DiffHelper
             }
 
             if (is_array($bill->提案人 ?? null)) {
-                $version_data->title = sprintf("%s等%d人", $bill->提案人[0], count($bill->提案人));
+                $version_data->title = sprintf("%s等%d人",
+                    $bill->提案人[0],
+                    count($bill->提案人) + count($bill->連署人 ?? [])
+                );
                 $date = strtotime($bill->議案流程[0]->日期[0]);
                 $version_data->date = date('Y-m-d', $date);
                 $version_data->subtitle = sprintf("%03d/%02d/%02d 提案版本",
