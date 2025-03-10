@@ -1,6 +1,47 @@
 <?php
 $version_count = count($this->diff->choosed_version_ids);
-$this->title = "比較議案／條文";
+$versions = [];
+foreach ($this->diff->choosed_version_ids as $version_id) {
+    $version = $this->diff->versions->{$version_id};
+    $versions[] = $version->title;
+}
+if ($this->source_type == 'bill') {
+    if ($this->bill->提案來源 == '審查報告') {
+        $this->title = "{$this->law->名稱} | 審查報告";
+        $this->description = sprintf("審查完成「%s」，審查委員會：%s\n"
+            . "會議日期：%s\n"
+            . "相關版本：%s",
+            $this->law->名稱,
+            str_replace('本院', '', $this->bill->{'提案單位/提案委員'}),
+            LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? ''),
+            implode('、', $versions)
+        );
+    } else {
+        $this->title = "{$this->law->名稱} | {$this->bill->{'提案單位/提案委員'}}";
+        $this->description = $this->bill->案由;
+    }
+} elseif ($this->source_type == 'meet') {
+    $this->title = "{$this->law->名稱} | 審查會議";
+    $this->description = sprintf("%s\n"
+        . "會議日期：%s\n"
+        . "召委：%s\n"
+        . "審查法案：%s\n"
+        . "相關版本：%s",
+        $this->meet->會議標題,
+        LawVersionHelper::getMinguoDate($this->meet->日期[0]),
+        $this->meet->會議資料[0]->委員會召集委員 ?? '',
+        $this->law->名稱,
+        implode('、', $versions)
+    );
+} elseif ($this->source_type == 'version') {
+    $this->title = "{$this->law->名稱} | 三讀版本";
+    $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
+    $this->description = sprintf("三讀日期：%s\n"
+        . "相關版本：%s",
+        LawVersionHelper::getMinguoDate($version_date),
+        implode('、', $versions)
+    );
+}
 $this->body_class = 'law-compare-page';
 $this->tab = 'compare';
 ?>
