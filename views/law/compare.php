@@ -165,8 +165,8 @@ $this->tab = 'compare';
                         </small>
                     </div>
                     <div class="action">
-                      <div class="dropdown">
-                        <span data-bs-toggle="dropdown">
+                      <div class="dropstart">
+                        <span data-bs-toggle="dropdown" data-bs-boundary="scrollParent">
                           <i class="bi bi-three-dots-vertical"></i>
                         </span>
                         <ul class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
