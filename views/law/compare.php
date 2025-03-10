@@ -156,6 +156,9 @@ $this->tab = 'compare';
                   <?php $version = $this->diff->versions->{$version_id} ?>
                   <div class="law-diff-head <?= $version->first_version ? 'original' : '' ?>">
                     <div class="title" title="<?= $version->id ?>">
+                        <?php if ($version->party_img ?? false) { ?>
+                          <img src="<?= $this->escape($version->party_img) ?>">
+                        <?php } ?>
                         <?= $this->escape($version->title) ?>
                         <small>
                             <?= $this->escape($version->subtitle) ?>

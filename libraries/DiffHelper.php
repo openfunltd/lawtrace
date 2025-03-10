@@ -248,6 +248,7 @@ class DiffHelper
                     $bill->提案人[0],
                     count($bill->提案人) + count($bill->連署人 ?? [])
                 );
+                $version_data->party_img = PartyHelper::getImageByTermAndName($bill->屆, $bill->提案人[0]);
                 $date = strtotime($bill->議案流程[0]->日期[0]);
                 $version_data->date = date('Y-m-d', $date);
                 $version_data->subtitle = sprintf("%03d/%02d/%02d 提案版本",
@@ -410,6 +411,7 @@ class DiffHelper
                 'id' => $version->id,
                 'title' => $version->title,
                 'subtitle' => $version->subtitle,
+                'party_img' => $version->party_img ?? null,
                 '議案編號' => $version->議案編號,
                 '原始資料' => $version->原始資料,
                 'showed' => true,
