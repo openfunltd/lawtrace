@@ -17,7 +17,7 @@ if ($this->title ?? false) {
   <meta name="og:title" content="<?= $this->escape($this->og_title ?? $this->title ?? '') ?>">
   <meta name="og:description" content="<?= $this->escape($this->og_description ?? $this->description ?? '') ?>">
   <meta name="og:site_name" content="">
-  <meta name="og:image" content="<?= $this->escape($this->og_image ?? '') ?>">
+  <meta name="og:image" content="<?= $this->escape($this->og_image ?? '/static/images/logo_b.svg') ?>">
   <link rel="shortcut icon" href="/static/images/lawtrace_favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
