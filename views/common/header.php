@@ -12,10 +12,10 @@ if ($this->title ?? false) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= $this->escape($this->title ?? $this->app_name) ?></title>
-  <meta name=description content="">
+  <meta name="description" content="<?= $this->escape($this->description ?? '') ?>">
   <meta name="og:type" content="website">
   <meta name="og:title" content="<?= $this->escape($this->og_title ?? $this->title ?? '') ?>">
-  <meta name="og:description" content="<?= $this->escape($this->og_description ?? '') ?>">
+  <meta name="og:description" content="<?= $this->escape($this->og_description ?? $this->description ?? '') ?>">
   <meta name="og:site_name" content="">
   <meta name="og:image" content="">
   <link rel="shortcut icon" href="/static/images/lawtrace_favicon.svg">
