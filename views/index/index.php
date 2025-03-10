@@ -1,4 +1,7 @@
-<?= $this->partial('common/header', ['title' => 'LawTrace']) ?>
+<?php
+$this->og_description = "幫助你了解立法院在審查哪些法案，通過了哪些法案，讓立法過程更透明。";
+?>
+<?= $this->partial('common/header', $this) ?>
 <div class="main">
   <section class="page-hero search-form">
     <div class="container container-sm">

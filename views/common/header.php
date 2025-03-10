@@ -1,13 +1,21 @@
+<?php
+if ($this->title ?? false) {
+    $this->title = "{$this->title} | LawTrace 立法歷程查詢";
+} else {
+    $this->title = "LawTrace 立法歷程查詢";
+}
+
+?>
 <!DOCTYPE html>
 <html lang="zh-tw">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= $this->escape($this->_data['title'] ?? $this->app_name) ?></title>
+  <title><?= $this->escape($this->title ?? $this->app_name) ?></title>
   <meta name=description content="">
   <meta name="og:type" content="website">
-  <meta name="og:title" content="">
-  <meta name="og:description" content="">
+  <meta name="og:title" content="<?= $this->escape($this->og_title ?? $this->title ?? '') ?>">
+  <meta name="og:description" content="<?= $this->escape($this->og_description ?? '') ?>">
   <meta name="og:site_name" content="">
   <meta name="og:image" content="">
   <link rel="shortcut icon" href="/static/images/lawtrace_favicon.svg">
