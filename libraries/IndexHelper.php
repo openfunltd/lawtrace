@@ -4,10 +4,11 @@ class IndexHelper
 {
     public static function getExammedLaws()
     {
-        $url = 'https://v2.ly.govapi.tw/bills/?提案來源=審查報告&議案類別=法律案&sort=提案日期&output_fields=法律編號&output_fields=議案名稱&output_fields=提案日期&output_fields=議案狀態&output_fields=提案單位/提案委員&output_fields=議案編號';
-        $ret = json_decode(file_get_contents($url));
+        $path = '/bills/?提案來源=審查報告&議案類別=法律案&sort=提案日期&output_fields=法律編號&output_fields=議案名稱&output_fields=提案日期&output_fields=議案狀態&output_fields=提案單位/提案委員&output_fields=議案編號';
+        $res = LYAPI::apiQuery($path, '近期出爐的審查報告');
+
         $laws = [];
-        foreach ($ret->bills as $bill) {
+        foreach ($res->bills as $bill) {
             if (!($bill->{'法律編號:str'}[0] ?? false)) {
                 continue;
             }
@@ -18,11 +19,12 @@ class IndexHelper
 
     public static function getExammingLaws()
     {
-        $url = 'https://v2.ly.govapi.tw/meets?會議種類=委員會&limit=100';
-        $ret = json_decode(file_get_contents($url));
+        $path = '/meets?會議種類=委員會&limit=100';
+        $res = LYAPI::apiQuery($path, '近期審查會議');
+
         $meet_laws = [];
         $bills = [];
-        foreach ($ret->meets as $meet) {
+        foreach ($res->meets as $meet) {
             if (!($meet->議事網資料 ?? false)) {
                 continue;
             }
@@ -80,10 +82,11 @@ class IndexHelper
     public static function getThirdReadList()
     {
         $limit = 100;
-        $ret = json_decode(file_get_contents('https://v2.ly.govapi.tw/laws?limit=' . $limit));
+        $res = LYAPI::apiQuery('/laws?limit=' . $limit, '近期三讀會議');
         $laws = [];
         $versions = [];
-        foreach ($ret->laws as $law) {
+
+        foreach ($res->laws as $law) {
             $version_id = "{$law->法律編號}:{$law->最新版本->版本編號}";
             $laws[$version_id] = [
                 'law' => $law,
