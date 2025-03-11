@@ -44,7 +44,6 @@ if ('meet' == $this->source_type) {
     }
 }
 
-
 if (strpos($this->version_id_input, "{$this->law_id}:") === 0) { // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
     $version_date = sprintf("%s %s",
@@ -100,9 +99,11 @@ if ($this->version ?? false) {
             <li class="breadcrumb-item active">
             三讀版本
             </li>
-            <li class="breadcrumb-item active">
-            <?= $version_date ?>
-            </li>
+            <?php if (!($this->is_draft)) { ?>
+              <li class="breadcrumb-item active">
+              <?= $version_date ?>
+              </li>
+            <?php } ?>
           <?php } elseif ($this->source_type == 'single') { ?>
             <li class="breadcrumb-item active">
             單一條文
