@@ -14,9 +14,38 @@ class LawHistoryHelper
         $history_groups = self::updateBillDetails($history_groups, $legislators);
         $history_groups = self::updateMeetDetails($history_groups, $legislators);
         $history_groups = self::updateGroupMetadata($history_groups);
+        $history_groups = self::updateIncidentalResolution($history_groups);
         $history_groups = self::groupByTimeline($history_groups);
         $history_groups = self::orderGroups($history_groups);
 
+        return $history_groups;
+    }
+
+    //Incidental Resolution = 附帶決議
+    private static function updateIncidentalResolution($history_groups)
+    {
+        foreach ($history_groups as $history_group) {
+            $histories = $history_group->bill_log;
+            foreach ($histories as $history) {
+                if ($history->進度 == '附帶決議') {
+                    $gazette_id = $history->公報編號 ?? null;
+                    if (is_null($gazette_id)) {
+                        continue;
+                    }
+                    if (mb_substr($gazette_id, -2) === '00') {
+                        $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
+                    }
+                    $terms = self::getTermsFromGazetteId($gazette_id);
+                    $gazette_ppg_url = sprintf('https://ppg.ly.gov.tw/ppg/publications/official-gazettes/%02d/%02d/%02d/details',
+                        $terms[0],
+                        $terms[1],
+                        $terms[2]
+                    );
+                    $history->gazette_ppg_url = $gazette_ppg_url;
+                    $history->is_incidental_resolution = true;
+                }
+            }
+        }
         return $history_groups;
     }
 

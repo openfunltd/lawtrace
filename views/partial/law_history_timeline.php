@@ -53,7 +53,7 @@ $history_groups = $this->_data['history_groups'];
             </div>
           </div>
         </div>
-      <?php } elseif ($timeline_node->items[0]->is_meet) { ?>
+      <?php } elseif ($timeline_node->items[0]->is_meet or $timeline_node->items[0]->is_incidental_resolution) { ?>
         <div class="item-body">
           <?php $history = $timeline_node->items[0]; ?>
           <?php if ($history->convener) { ?>
