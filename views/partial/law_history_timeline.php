@@ -26,7 +26,7 @@ $history_groups = $this->_data['history_groups'];
                 <div class="grid-row">
                   <div class="party-img">
                     <?php if (property_exists($history, 'party_img_path')) { ?>
-                      <img src="<?= $history->party_img_path ?>">
+                      <img width="16" height="16" src="<?= $history->party_img_path ?>">
                     <?php } ?>
                   </div>
                   <div class="party"><?= $this->escape($history->proposers_str ?? $history->主提案) ?></div>
@@ -62,7 +62,7 @@ $history_groups = $this->_data['history_groups'];
                 召集人
               </div>
               <div class="card-right">
-                <img src="<?= $this->escape($history->convener_party_img_path) ?>">
+                <img width="16" height="16" src="<?= $this->escape($history->convener_party_img_path) ?>">
                 <?= $this->escape($history->convener) ?>
               </div>
             </div>

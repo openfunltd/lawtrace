@@ -70,7 +70,7 @@ foreach ($this->data->meet->日期 as $d) {
                          <div class="grid-row">
                            <div class="party-img">
                              <?php if ($bill->party_img_path ?? false) { ?>
-                             <img src="<?= $bill->party_img_path ?>">
+                             <img width="16" height="16" src="<?= $bill->party_img_path ?>">
                              <?php } ?>
                            </div>
                            <div class="party"><?= $this->escape($bill->主提案) ?></div>
@@ -79,14 +79,14 @@ foreach ($this->data->meet->日期 as $d) {
                            提案人：<?php foreach ($bill->提案人 as $p) { ?>
                            <?php $img = PartyHelper::getImageByTermAndName($bill->屆, $p); ?>
                            <?php if ($img) { ?>
-                           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+                           <img width="16" height="16" src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
                            <?php } ?>
                            <?= $this->escape($p) ?> &nbsp;
                            <?php } ?><br>
                            連署人：<?php foreach ($bill->連署人 as $p) { ?>
                            <?php $img = PartyHelper::getImageByTermAndName($bill->屆, $p); ?>
                            <?php if ($img) { ?>
-                           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+                           <img width="16" height="16" src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
                            <?php } ?>
                            <?= $this->escape($p) ?> &nbsp;
                            <?php } ?>
