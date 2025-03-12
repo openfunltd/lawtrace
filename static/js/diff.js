@@ -377,6 +377,18 @@ $(function(){
     $('input#splitContent').prop('checked', true).change();
     $('div.law-diff-content.original').each(gen_diff);
     $('input[name="diff-type"][value="only_add"]').prop('checked', true).change();
+
+    //decide to hide horizontal scoll buttons or not
+    lawDiffRow = $('.law-diff-row:not(.law-diff-header-row)').first();
+    rowWidth = lawDiffRow.outerWidth(true);
+    columnCnt = lawDiffRow.css('--col-count');
+    lawCell = $('.law-diff-content.law-diff-content-section').first();
+    cellWidth = lawCell.outerWidth(true);
+
+    if (cellWidth * columnCnt <= rowWidth) {
+      $('.compare-scroll-btns').first().hide();
+    }
+
 });
 
 
