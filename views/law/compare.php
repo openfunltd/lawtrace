@@ -132,20 +132,22 @@ $this->tab = 'compare';
                 -->
                 <div class="law-diff-row law-diff-header-row" style="--col-count: <?= $version_count ?>;">
                   <!-- 比較基準 & 比較對象 -->
-                  <div class="original compare-head">
-                    比較基準
-                  </div>
-                  <div class="compare-head">
-                    比較對象
-                    <span class="compare-scroll-btns">
-                      <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('left');">
-                        <i class="bi bi-arrow-left-circle"></i>
-                      </a>
-                      <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('right');">
-                        <i class="bi bi-arrow-right-circle"></i>
-                      </a>
-                    </span>
-                  </div>
+                  <?php if ($version_count != 1) { ?>
+                    <div class="original compare-head">
+                      比較基準
+                    </div>
+                    <div class="compare-head">
+                      比較對象
+                      <span class="compare-scroll-btns">
+                        <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('left');">
+                          <i class="bi bi-arrow-left-circle"></i>
+                        </a>
+                        <a role="button" class="link-primary cursor-pointer" onclick="scroll_compare_horizontal('right');">
+                          <i class="bi bi-arrow-right-circle"></i>
+                        </a>
+                      </span>
+                    </div>
+                  <?php } ?>
                   <!-- 如果大於2時，要以空白div補足數量 -->
                   <?php for ($i = 0; $i < $version_count - 2; $i ++) { ?>
                   <div class="compare-head"></div><!-- 用空白div的數量補足column數量 -->
