@@ -154,7 +154,7 @@ var gen_diff = function() {
 
         // 計算相同和不同的
         left_lineno = 0;
-        right_lineno = 0;
+        right_lineno = -1;
         for (var diff of new_diffs) {
             // same
             if (!diff.added && !diff.removed) {
@@ -181,7 +181,7 @@ var gen_diff = function() {
             // added
             right_lineno ++;
             if (right_lineno >= left_lineno) {
-                right_lineno = left_lineno - 1;
+                right_lineno = Math.max(0, left_lineno - 1);
             }
             if ('undefined' !== typeof diff_table[version_idx][right_lineno]) {
                 if (diff_table[version_idx][right_lineno].type == 'removed') {
