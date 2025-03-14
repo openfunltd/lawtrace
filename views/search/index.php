@@ -7,7 +7,10 @@ $res = LYAPI::apiQuery("/laws?q=\"{$q_url_encoded}\"&類別=母法&limit=100", "
 $laws = $res->laws;
 
 $laws = array_filter($laws, function($law) {
-    return isset($law->最新版本);
+    $law_status = $law->法律狀態 ?? '';
+    $is_unknown_status = ($law_status == '');
+    $has_latest_version = property_exists($law, '最新版本');
+    return $has_latest_version || ($is_unknown_status && !$has_latest_version);
 });
 
 //查詢 + filter 後如果沒有 law 則改搜尋 law_contents
