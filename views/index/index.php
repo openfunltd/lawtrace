@@ -1,5 +1,15 @@
 <?php
 $this->description = "幫助你了解立法院在審查哪些法案，通過了哪些法案，讓立法過程更透明。";
+
+$ch = curl_init('https://raw.githubusercontent.com/openfunltd/news/refs/heads/main/lawtrace/latest.json');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+$response = curl_exec($ch);
+curl_close($ch);
+$ret = curl_exec($ch);
+curl_close($ch);
+
+$news = json_decode($ret) ?? [];
 ?>
 <?= $this->partial('common/header', $this) ?>
 <div class="main">
@@ -26,6 +36,21 @@ $this->description = "幫助你了解立法院在審查哪些法案，通過了�
 
   <div class="main-content">
     <div class="container container">
+      <?php if (count($news) > 0) { ?>
+        <section class="lawtrace-news">
+          <h3>最新消息</h3>
+          <div class="news-list">
+            <?php foreach ($news as $news_item) { ?>
+              <div class="news-item">
+                <div class="date"><?= $this->escape($news_item->date) ?></div>
+                <a href="<?= $this->escape($news_item->link) ?>" target="_blank">
+                  <?= $this->escape($news_item->title) ?>
+                </a>
+              </div>
+            <?php } ?>
+          </div>
+        </section>
+      <?php } ?>
       <section class="law-status-info">
         <h3>
           查看法律條文及修法過程中的提案內容
