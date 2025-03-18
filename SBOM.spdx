@@ -1,0 +1,195 @@
+SPDXVersion: SPDX-2.0
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: lawtrace-website-v1.0
+DocumentNamespace: https://lawtrace.openfun.app/lawtrace-website-v1.0
+Creator: Organization: OpenFun Ltd. 歐噴有限公司, Person: tmonk Hsieh (tmonk@openfun.tw)
+Created: 2025-03-04T00:00:00Z
+
+##### Apache HTTP Server (from Debian 12 Bookworm) #####
+PackageName: Apache HTTP Server
+SPDXID: SPDXRef-ApacheHTTPServerDebianBookworm
+PackageVersion: 2.4.62
+PackageSupplier: Organization: Debian Apache Maintainers <debian-apache@lists.debian.org>, Person: Stefan Fritsch <sf@debian.org>, Person: Arno Töll <arno@debian.org>, Person: Ondřej Surý <ondrej@debian.org>, Person: Yadd <yadd@debian.org>, Person: Bastien Roucariès <rouca@debian.org>
+PackageHomePage: https://httpd.apache.org/
+PackageDownloadLocation: http://ftp.tw.debian.org/debian/pool/main/a/apache2/apache2_2.4.62-1~deb12u2_amd64.deb
+FilesAnalyzed: true
+PackageVerificationCode: 75953d017ef04957b4ede92821567c99247c52a6
+PackageLicenseConcluded: Apache-2.0
+PackageLicenseDeclared: Apache-2.0
+PackageLicenseInfoFromFiles: Apache-2.0
+PackageCopyrightText: Copyright 2025 Apache Software Foundation
+
+FileName: apache2_2.4.62-1~deb12u2_amd64.deb
+SPDXID: SPDXRef-File-ApacheHTTPServerDebianBookworm
+FileChecksum: SHA1: 75953d017ef04957b4ede92821567c99247c52a6
+FileChecksum: SHA256: cb6c8a0d8637a2fe2ee0407d853d9f445676db1275ecd648f28780cd472c9f5d
+LicenseConcluded: Apache-2.0
+FileCopyrightText: Copyright 2025 Apache Software Foundation
+
+##### PHP (from Debian 12 Bookworm) #####
+PackageName: PHP
+SPDXID: SPDXRef-PHP-DebianBookworm
+PackageVersion: 8.2.26
+PackageSupplier: Organization: Debian PHP Maintainers <team+pkg-php@tracker.debian.org>, Person: Ondřej Surý <ondrej@debian.org>, Person: Lior Kaplan <kaplan@debian.org>
+PackageHomePage: https://www.php.net/
+PackageDownloadLocation: http://ftp.tw.debian.org/debian/pool/main/p/php8.2/php8.2_8.2.26-1~deb12u1_all.deb
+FilesAnalyzed: true
+PackageVerificationCode: 370058d179e7e60fc39ea086e85c0786367f6a98
+PackageLicenseConcluded: PHP-3.01
+PackageLicenseDeclared: PHP-3.01
+PackageLicenseInfoFromFiles: PHP-3.01
+PackageCopyrightText: Copyright 2001-2025 The PHP Group
+
+FileName: php8.2_8.2.26-1~deb12u1_all.deb
+SPDXID: SPDXRef-File-PHP-DebianBookworm
+FileChecksum: SHA1: 370058d179e7e60fc39ea086e85c0786367f6a98
+FileChecksum: SHA256: d5fab192d682f480a3b971e94a2f397ce6489fa19f1e6d4a3464aca7db2e89f4
+LicenseConcluded: PHP-3.01
+FileCopyrightText: Copyright 2001-2025 The PHP Group
+
+##### mini-engine (custom PHP framework) #####
+PackageName: mini-engine
+SPDXID: SPDXRef-mini-engine
+PackageVersion: 2024-12-16
+PackageDescription: Custom PHP framework
+PackageSupplier: Organization: OpenFun Ltd. <contact@openfun.tw>, Person: Ronny Wang <ronny@openfun.tw>
+PackageHomePage: https://github.com/openfunltd/mini-engine
+PackageDownloadLocation: https://raw.githubusercontent.com/openfunltd/mini-engine/main/mini-engine.php
+FilesAnalyzed: true
+PackageVerificationCode: fbf19902c619bf75bd8c29cf176fc8a515c91a19
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: BSD-3-Clause
+PackageLicenseInfoFromFiles: BSD-3-Clause
+PackageCopyrightText: Copyright 2025 OpenFun Ltd.
+
+FileName: mini-engine.php
+SPDXID: SPDXRef-File-mini-engine-php
+FileType: SOURCE
+FileChecksum: SHA1: fbf19902c619bf75bd8c29cf176fc8a515c91a19
+FileChecksum: SHA256: 6b53dba88df14940a34ae5b193bb4c8da1afc43d52f90c51bc14fa4e9965ae34
+LicenseConcluded: BSD-3-Clause
+FileCopyrightText: Copyright 2025 OpenFun Ltd.
+
+##### ly-tc-toolkit (custom PHP toolkit) #####
+PackageName: ly-tc-toolkit
+SPDXID: SPDXRef-ly-tc-toolkit
+PackageVersion: 2025-02-21
+PackageDescription: PHP package for converting various zh-tw numerals into arabic
+PackageSupplier: Organization: OpenFun Ltd. <contact@openfun.tw>, Person: Ronny Wang <ronny@openfun.tw>
+PackageHomePage: https://github.com/openfunltd/ly-tc-toolkit
+PackageDownloadLocation: https://raw.githubusercontent.com/openfunltd/ly-tc-toolkit/refs/heads/main/src/LyTcToolkit.php
+FilesAnalyzed: true
+PackageVerificationCode: d3d342a1a938bc3c4264f399347fc3476eafd88d
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright 2025 OpenFun Ltd.
+
+FileName: LyTcToolkit.php
+SPDXID: SPDXRef-File-LyTcToolkit-php
+FileChecksum: SHA1: d3d342a1a938bc3c4264f399347fc3476eafd88d
+FileChecksum: SHA256: 8fc1563ea3e1c70dd2879ccbe39c98898db2f7fa7d379989918d5c984885d4ab
+FileCopyrightText: Copyright 2025 OpenFun Ltd.
+
+##### jQuery 3.7.1#####
+PackageName: jQuery
+SPDXID: SPDXRef-jQuery
+PackageVersion: 3.7.1
+PackageSupplier: Organization: OpenJS Foundation
+PackageHomePage: https://jquery.com/
+PackageDownloadLocation: https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js
+FilesAnalyzed: true
+PackageVerificationCode: ee48592d1fff952fcf06ce0b666ed4785493afdc
+PackageLicenseConcluded: MIT
+PackageLicenseDeclared: MIT
+PackageCopyrightText: Copyright OpenJS Foundation and other contributors
+
+FileName: jquery.min.js
+SPDXID: SPDXRef-File-jquery-min-js
+FileType: SOURCE
+FileChecksum: SHA1: ee48592d1fff952fcf06ce0b666ed4785493afdc
+FileChecksum: SHA256: fc9a93dd241f6b045cbff0481cf4e1901becd0e12fb45166a8f17f95823f0b1a
+LicenseConcluded: MIT
+FileCopyrightText: Copyright OpenJS Foundation
+
+##### Bootstrap 5.3.3 #####
+PackageName: Bootstrap Bundle
+SPDXID: SPDXRef-bootstrap-bundle
+PackageVersion: 5.3.3
+PackageSupplier: Organization: Bootstrap Team
+PackageHomePage: https://getbootstrap.com/
+PackageDownloadLocation: https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js
+FilesAnalyzed: true
+PackageVerificationCode: ddc6e9ead6d16ae9237399ce41e8c1620cc59c36
+PackageLicenseConcluded: MIT
+PackageLicenseDeclared: MIT
+PackageCopyrightText: Copyright Bootstrap Team and contributors
+
+FileName: bootstrap.bundle.min.js
+SPDXID: SPDXRef-File-bootstrap-bundle-min-js
+FileChecksum: SHA1: ddc6e9ead6d16ae9237399ce41e8c1620cc59c36
+FileChecksum: SHA256: 0833b2e9c3a26c258476c46266e6877fc75218625162e0460be9a3a098a61c6c
+LicenseConcluded: MIT
+FileCopyrightText: Copyright Bootstrap Team and contributors
+
+##### TextDiff 1.0.1 #####
+PackageName: TextDiff
+SPDXID: SPDXRef-textdiff
+PackageVersion: 1.0.1
+PackageDescription: JavaScript library for comparing text and generating text diffs
+PackageSupplier: Person: liddiard@github
+PackageHomePage: https://github.com/liddiard/text-diff
+PackageDownloadLocation: https://cdn.jsdelivr.net/npm/text-diff@1.0.1/+esm
+FilesAnalyzed: true
+PackageVerificationCode: 3dbb21357c4c64c0107b809b7c52cf1091852613
+PackageLicenseConcluded: Apache-2.0
+PackageLicenseDeclared: Apache-2.0
+PackageCopyrightText: Copyright 2015-2025 @liddiard and contributors
+
+FileName: text-diff.js
+SPDXID: SPDXRef-File-text-diff-js
+FileChecksum: SHA1: 3dbb21357c4c64c0107b809b7c52cf1091852613
+FileChecksum: SHA256: 5136e8338dea178dc322c181a4c8d3a45cbdaa3d999ed7825e97847175411e82
+LicenseConcluded: Apache-2.0
+FileCopyrightText: Copyright Bootstrap Team and contributors
+
+##### jsdiff (JavaScript library) #####
+PackageName: text-diff
+SPDXID: SPDXRef-textdiff
+PackageVersion: 1.0.1
+PackageDescription: JavaScript library for comparing text and generating text diffs
+PackageSupplier: Person: liddiard@github
+PackageHomePage: https://github.com/liddiard/text-diff
+PackageDownloadLocation: https://cdn.jsdelivr.net/npm/text-diff@1.0.1/+esm
+FilesAnalyzed: true
+PackageVerificationCode: 3dbb21357c4c64c0107b809b7c52cf1091852613
+PackageLicenseConcluded: Apache-2.0
+PackageLicenseDeclared: Apache-2.0
+PackageCopyrightText: Copyright 2015-2025 @liddiard and contributors
+
+FileName: diff.min.js
+SPDXID: SPDXRef-File-diff-min-js
+FileChecksum: SHA1: 337976db928ea0759a46190a3a95c5870a671de1
+FileChecksum: SHA256: c2a094e82c4e3747f1053f5cff027f746126e2603d6fb015b867eb02e0a098ee
+LicenseConcluded: BSD-3-Clause
+FileCopyrightText: Copyright 2011-2025 jsdiff contributors
+
+##### Google Font Noto Sans Traditional Chinese #####
+PackageName: Google Font Noto Sans Traditional Chinese
+SPDXID: SPDXRef-GoogleFontNotoSansTraditionalChinese
+PackageVersion: 2024.12.17
+PackageSupplier: Organization: Google LLC
+PackageHomePage: https://fonts.google.com/specimen/Noto+Sans+TC
+PackageDownloadLocation: https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap
+FilesAnalyzed: true
+PackageVerificationCode: ce45fe57f157e6b25ec69eca4986aec33981f113
+PackageLicenseConcluded: OFL-1.1
+PackageLicenseDeclared: OFL-1.1
+PackageCopyrightText: Copyright 2014-2021 Adobe
+
+FileName: https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap
+SPDXID: SPDXRef-File-google-font-noto-sans-tc
+FileChecksum: SHA1: ce45fe57f157e6b25ec69eca4986aec33981f113
+FileChecksum: SHA256: e01086bf7e93c54c19a410768c88018f58253a20ced1c10a9fd2ed8e5532230f
+LicenseConcluded: BSD-3-Clause
+FileCopyrightText: Copyright 2011-2025 jsdiff contributors
