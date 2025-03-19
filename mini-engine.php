@@ -1070,7 +1070,7 @@ class MiniEngine_Table_Rowset implements Countable, SeekableIterator
         return implode(' AND ', $terms);
     }
 
-    public function count()
+    public function count(): int
     {
         $params = [
             '::table' => $this->_table->getTableName(),
@@ -1080,12 +1080,12 @@ class MiniEngine_Table_Rowset implements Countable, SeekableIterator
         return $stmt->fetchColumn();
     }
 
-    public function seek($position)
+    public function seek($position): void
     {
         throw new Exception("Not implemented.");
     }
 
-    public function current()
+    public function current(): mixed
     {
         if (is_null($this->_data)) {
             $this->rewind();
@@ -1100,17 +1100,17 @@ class MiniEngine_Table_Rowset implements Countable, SeekableIterator
         return new $row_class($conf);
     }
 
-    public function next()
+    public function next(): void
     {
         ++ $this->_pointer;
     }
 
-    public function key()
+    public function key(): mixed
     {
         return $this->_pointer;
     }
 
-    public function valid()
+    public function valid(): bool
     {
         if (is_null($this->_data)) {
             $this->rewind();
@@ -1119,7 +1119,7 @@ class MiniEngine_Table_Rowset implements Countable, SeekableIterator
     
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         $params = [
             '::table' => $this->_table->getTableName(),
