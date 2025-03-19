@@ -17,7 +17,7 @@ LawTrace 將資訊彙整在一處。找尋資料時，我們可以少開幾個�
 
 ## Quick start
 ```
-php -S 0:8888 index.php
+php -S 0:8888 route.php
 ```
 
 ## Software stack
