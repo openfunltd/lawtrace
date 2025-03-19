@@ -155,7 +155,7 @@ class MiniEngine
     public static function initEnv()
     {
         self::registerAutoLoad();
-        error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+        error_reporting(E_ALL ^ E_NOTICE);
     }
 
     public static function defaultErrorHandler($error)
