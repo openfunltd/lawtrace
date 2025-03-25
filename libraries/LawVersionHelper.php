@@ -4,7 +4,7 @@ class LawVersionHelper
 {
     public static function getVersionsData($law_id, $version_id_input)
     {
-        $res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢 {$law->名稱} 各法律版本");
+        $res = LYAPI::apiQuery("/law/{$law_id}/versions", "查詢法律編號：{$law_id} 各法律版本");
         $res_total = $res->total ?? 0;
         if ($res_total == 0) {
             return NULL;
