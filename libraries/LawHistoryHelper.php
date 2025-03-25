@@ -346,13 +346,16 @@ class LawHistoryHelper
                             $agenda->會次,
                         );
                         $meet_ids[] = $meet_id;
-                        $history->meet_id = $meet_id;
+                        if (mb_strpos($history->進度, '公聽會') === false) { //排除進度：委員會(公聽會) 的狀況
+                            $history->meet_id = $meet_id;
+                        }
                         $history->meet_committees = $agenda_committees;
                         break;
                     }
                 }
             }
         }
+
         $meet_ids = array_unique($meet_ids);
 
         //get meets' data within one query
