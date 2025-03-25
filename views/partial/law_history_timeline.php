@@ -56,7 +56,7 @@ $history_groups = $this->_data['history_groups'];
       <?php } elseif ($timeline_node->items[0]->is_meet or $timeline_node->items[0]->is_incidental_resolution) { ?>
         <div class="item-body">
           <?php $history = $timeline_node->items[0]; ?>
-          <?php if ($history->convener) { ?>
+          <?php if (property_exists($history, 'convener')) { ?>
             <div class="history-card">
               <div class="card-left">
                 召集人
@@ -67,7 +67,7 @@ $history_groups = $this->_data['history_groups'];
               </div>
             </div>
           <?php } ?>
-          <?php if ($history->meet_committees) { ?>
+          <?php if (property_exists($history, 'meet_committees')) { ?>
             <div class="history-card">
               <div class="card-left">
                 委員會
@@ -77,7 +77,7 @@ $history_groups = $this->_data['history_groups'];
               </div>
             </div>
           <?php } ?>
-          <?php if ($history->review_report_doc) { ?>
+          <?php if (property_exists($history, 'review_report_doc')) { ?>
             <div class="history-card">
               <div class="card-left">審查報告</div>
               <div class="card-right">
@@ -88,7 +88,7 @@ $history_groups = $this->_data['history_groups'];
               </div>
             </div>
           <?php } ?>
-          <?php if (isset($history->gazette_ppg_url)) { ?>
+          <?php if (property_exists($history, 'gazette_ppg_url')) { ?>
             <div class="history-card">
               <div class="card-left">
                 公報
