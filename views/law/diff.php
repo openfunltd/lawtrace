@@ -15,7 +15,7 @@ $law_name_changed_flag = (isset($previous_law_name) and ($selected_version_law_n
 
 //filter contents, retrieve new modified contents in this version
 $modified_contents = array_filter($this->law_contents ?? [], function($content) {
-    return ($content->版本追蹤 == 'new');
+    return property_exists($content, '版本追蹤') && ($content->版本追蹤 == 'new');
 });
 
 $commit = [];
@@ -38,7 +38,7 @@ foreach ($modified_contents as $content) {
     $base_content = new stdClass();
     if (!is_null($this->law_contents_previous)) {
         foreach ($this->law_contents_previous as $previous_content) {
-            $previous_article_number = $previous_content->條號;
+            $previous_article_number = $previous_content->條號 ?? '';
             if ($previous_article_number == $article_number) {
                 $base_content = $previous_content;
                 break;
