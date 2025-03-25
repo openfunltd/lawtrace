@@ -124,14 +124,17 @@ class LawVersionHelper
             $carry[] = $version->版本編號;
             return $carry;
         }, []);
-        $res = LYAPI::apiQuery('/law_contents?版本編號=' . implode('&版本編號=', $version_ids) . '&limit=3000',
+        $res = LYAPI::apiQuery('/law_contents?版本編號=' . implode('&版本編號=', $version_ids) . '&limit=9999',
             '查詢所有版本編號的所有條文（之後再依條號 filter）'
         );
         $law_contents = $res->lawcontents ?? [];
         foreach ($versions as $version) {
             $version_id = $version->版本編號;
             foreach ($law_contents as $law_content) {
-                if ($law_content->版本編號 == $version_id and $law_content->條號 == $law_content_name) {
+                if (!property_exists($law_content, '條號')) {
+                    continue;
+                }
+                if ($law_content->版本編號 == $version_id and $law_content->條號 == $law_content_name_encoded) {
                     $version->law_content_id = $law_content->法條編號;
                     break;
                 }

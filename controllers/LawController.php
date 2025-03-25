@@ -125,6 +125,7 @@ class LawController extends MiniEngine_Controller
         $this->view->law_content = $law_content;
         $this->view->chapter_name = $chapter_name;
 
+        $law_content_name = $law_content->條號;
         $versions_data = LawVersionHelper::getVersionsForSingle($law_id, $version_id_input, $law_content_name);
         if (is_null($versions_data)) {
             header('HTTP/1.1 404 No Found');
@@ -134,7 +135,7 @@ class LawController extends MiniEngine_Controller
         }
         $this->view->version_data = $versions_data;
 
-        $version_selected = $versions_data->version_selected;
+        $version_selected = $versions_data->version_selected ?? null;
         if (is_null($version_selected)) {
             header('HTTP/1.1 404 No Found');
             echo "<h1>404 No Found</h1>";
