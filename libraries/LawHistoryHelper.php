@@ -83,7 +83,8 @@ class LawHistoryHelper
         foreach ($history_groups as $history_group) {
             $histories = $history_group->bill_log;
             $id = $history_group->id ?? null;
-            if (is_null($id) or $id == '未分類') {
+            //不處理三讀版本的 group metadata
+            if (is_null($id) or $id == '未分類' or mb_strpos($id, ':') !== false) {
                 continue;
             }
             $proposers = [];
