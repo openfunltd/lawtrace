@@ -14,6 +14,6 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
     require_once(__DIR__ . '/vendor/autoload.php');
 }
 if (!getenv('LYAPI_HOST')) {
-    putenv('LYAPI_HOST=v2.ly.govapi.tw');
+    putenv('LYAPI_HOST=ly.govapi.tw/v2');
 }
 MiniEngine::initEnv();
