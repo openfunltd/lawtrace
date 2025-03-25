@@ -220,7 +220,7 @@ class DiffHelper
 
                 if ('' == ($row->{'修正'} ?? '') and $row->{'審查會通過條文:備註'} ?? false) {
                     $new = "(" . $row->{'審查會通過條文:備註'} . ")\n" . $new;
-                } elseif ('' == $row->{'增訂'} and $row->{'審查會通過條文:備註'} ?? false) {
+                } elseif ('' == ($row->{'增訂'} ?? '') and $row->{'審查會通過條文:備註'} ?? false) {
                     $new = "(" . $row->{'審查會通過條文:備註'} . ")\n" . $new;
                 };
                 if (strpos($rule_no, '名稱：') === 0) {
