@@ -188,7 +188,8 @@ class LawHistoryHelper
                         }
                     }
                     //提案關係文書
-                    if ($related_doc->類型 == '提案') {
+                    $related_doc_type = $related_doc->類型 ?? '';
+                    if ($related_doc_type == '提案') {
                         $history->related_doc_url = $related_doc->連結;
                     }
                     continue;
