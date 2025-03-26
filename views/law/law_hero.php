@@ -44,15 +44,18 @@ if ('meet' == $this->source_type) {
     }
 }
 
-// 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作；還要檢查是否為未議決議案
-if (strpos($this->version_id_input, "{$this->law_id}:") === 0 and strpos($this->version_id_input, 'progress') === false) {
+// 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作；還要檢查不是未議決議案
+$is_progress = (strpos($this->version_id_input, 'progress') !== false);
+if (strpos($this->version_id_input, "{$this->law_id}:") === 0 and !$is_progress) {
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
     $version_date = sprintf("%s %s",
         LawVersionHelper::getMinguoDate($version_date),
         '修正'
     );
 }
-if ($this->version ?? false) {
+
+// 一樣要額外檢查不是未議決議案
+if ($this->version ?? false and !$is_progress) {
     if (is_object($this->version)) {
         $version_date = sprintf("%s %s",
             LawVersionHelper::getMinguoDate($this->version->日期),
