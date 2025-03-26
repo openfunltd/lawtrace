@@ -89,9 +89,9 @@ if (strpos($version_id_input, "-progress")) {
                   <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
                 <?php } else { ?>
                   <?php foreach ($history_group->bill_log as $bill) { ?>
-                    <div id="<?= $this->escape($bill->bill_id) ?>" class="version-section-bar">
+                    <div id="<?= $this->escape($bill->bill_id ?? '') ?>" class="version-section-bar">
                       <div class="title">
-                        <?= $this->escape($bill->主提案) ?>版本
+                        <?= $this->escape($bill->主提案 ?? '') ?>版本
                         <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
                       </div>
                       <div class="actions">
