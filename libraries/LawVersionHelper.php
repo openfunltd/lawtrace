@@ -260,6 +260,10 @@ class LawVersionHelper
 
     public static function getMinguoDate($version_date)
     {
+        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date) !== false);
+        if (!$is_valid) {
+            return $version_date;
+        }
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "民國 {$minguo} 年 {$month} 月 {$day} 日";
