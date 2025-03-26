@@ -53,6 +53,9 @@ class LawHistoryHelper
     {
         //order by date
         usort($history_groups, function ($groupA, $groupB) {
+            if ($groupA->id === '未分類' or $groupB->id === '未分類') {
+                return 0;
+            }
             $id_arrayA = explode('-', $groupA->id);
             $id_arrayB = explode('-', $groupB->id);
             $dateA = sprintf('%d-%d-%d', $id_arrayA[1], $id_arrayA[2], $id_arrayA[3]);
