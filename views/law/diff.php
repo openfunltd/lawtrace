@@ -33,7 +33,7 @@ foreach ($modified_contents as $content) {
     if (mb_strpos($modified_text, $article_number) === 0) {
         $modified_text = mb_substr($modified_text, mb_strlen($article_number) + 1);
     }
-    $reason = $content->立法理由;
+    $reason = $content->立法理由 ?? '';
 
     $base_content = new stdClass();
     if (!is_null($this->law_contents_previous)) {
