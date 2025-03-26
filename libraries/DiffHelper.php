@@ -193,11 +193,11 @@ class DiffHelper
                     $rule_no = explode('　', $row->現行)[0];
                     $origin = explode('　', $row->現行, 2)[1];
                     $law_content_id = $row->law_content_id ?? null;
-                    $new = explode('　', $row->修正)[1];
+                    $new = explode('　', $row->修正)[1] ?? '';
                 } else if (($row->現行法 ?? false) and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->現行法)[0];
                     $origin = explode('　', $row->現行法, 2)[1];
-                    $new = explode('　', $row->修正)[1];
+                    $new = explode('　', $row->修正)[1] ?? '';
                 } elseif ($row->增訂 ?? false) {
                     $rule_no = explode('　', $row->增訂)[0];
                     $origin = '';
@@ -205,7 +205,7 @@ class DiffHelper
                 } elseif (property_exists($row, '現行') and $row->現行 == '' and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->修正)[0];
                     $origin = '';
-                    $new = explode('　', $row->修正, 2)[1];
+                    $new = explode('　', $row->修正, 2)[1] ?? '';
                 } elseif (property_exists($row, '增訂') and $row->增訂 == '' and property_exists($row, '審查會通過條文:備註')) {
                     if (strpos(trim($row->條號), '名稱：') === 0) {
                         $rule_no = '法律名稱';
