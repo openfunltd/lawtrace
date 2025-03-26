@@ -291,10 +291,12 @@ class LawHistoryHelper
                         $history->gazette_ppg_url = $gazette_ppg_url;
                     }
 
-                    foreach ($related_docs as $related_doc) {
-                        if ($related_doc->類型 == '審查報告') {
-                            $history->review_report_doc = $related_doc->連結;
-                            break;
+                    if (isset($related_docs)) {
+                        foreach ($related_docs as $related_doc) {
+                            if ($related_doc->類型 == '審查報告') {
+                                $history->review_report_doc = $related_doc->連結;
+                                break;
+                            }
                         }
                     }
                 }
