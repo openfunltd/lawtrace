@@ -76,7 +76,11 @@ class LawController extends MiniEngine_Controller
                 $bill_id = explode(':', $source_input)[1];
                 $history_groups = array_values(array_filter($history_groups, function ($group) use ($bill_id) {
                     foreach ($group->bill_log as $log) {
-                        if (($log->關係文書->billNo ?? false) == $bill_id) {
+                        $related_doc = $log->關係文書;
+                        if (is_array($related_doc)) {
+                            $related_doc = $log->關係文書[0];
+                        }
+                        if (($related_doc->billNo ?? false) == $bill_id) {
                             return true;
                         }
                     }
