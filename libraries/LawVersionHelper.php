@@ -19,6 +19,7 @@ class LawVersionHelper
         });
 
         $invalid_version = true;
+        $version_id_selected = null;
 
         if ($version_id_input != 'latest') {
             $filtered_versions = array_filter($versions, function ($version) use ($version_id_input) {
@@ -165,9 +166,9 @@ class LawVersionHelper
     {
         $versions_data = self::getVersionsData($law_id, $version_id_input) ?? (object) [];
         $versions_in_terms = $versions_data->versions_in_terms;
-        $version_selected = $versions_data->version_selected;
-        $version_id_selected = $versions_data->version_id_selected;
-        $term_selected = $versions_data->term_selected;
+        $version_selected = $versions_data->version_selected ?? null;
+        $version_id_selected = $versions_data->version_id_selected ?? null;
+        $term_selected = $versions_data->term_selected ?? null;
         $term_dates = LyDateHelper::$term_dates;
         $version_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
 
