@@ -1,6 +1,6 @@
 <?php
 
-include(__DIR__ . '/LyTcToolkit.php');
+include_once(__DIR__ . '/LyTcToolkit.php');
 
 class DiffHelper
 {
