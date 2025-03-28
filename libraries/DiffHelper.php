@@ -1,7 +1,5 @@
 <?php
 
-include_once(__DIR__ . '/LyTcToolkit.php');
-
 class DiffHelper
 {
     public static function getBillNosFromSource($id)
@@ -467,11 +465,11 @@ class DiffHelper
     public static function ruleNoToNumber($rule_no)
     {
         if (preg_match('#^第(.*)條$#u', $rule_no, $matches)) {
-            return OpenFun\LyTcToolkit\LyTcToolkit::parseNumber($matches[1]) * 1000;
+            return LyTcToolkit::parseNumber($matches[1]) * 1000;
         }
 
         if (preg_match('#^第(.*)條之([^第]*)(第.*項)?$#u', $rule_no, $matches)) {
-            return OpenFun\LyTcToolkit\LyTcToolkit::parseNumber($matches[1]) * 1000 + OpenFun\LyTcToolkit\LyTcToolkit::parseNumber($matches[2]);
+            return LyTcToolkit::parseNumber($matches[1]) * 1000 + LyTcToolkit::parseNumber($matches[2]);
         }
 
         return 0;
