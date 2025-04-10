@@ -8,7 +8,7 @@ class LawHistoryHelper
     {
         //get legislators' data for checking party later
         $res = LYAPI::apiQuery(
-            "/legislators?屆={$term_selected}",
+            "/legislators?屆={$term_selected}&limit=300",
             "查詢第 {$term_selected} 屆立委基本資料（主要查詢黨籍）"
         );
         $legislators = $res->legislators ?? [];
