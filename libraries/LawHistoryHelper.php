@@ -444,7 +444,11 @@ class LawHistoryHelper
             $article_number = mb_ereg_replace('章', '', $article_number);
             $article_number_arr = explode('之', $article_number);
             foreach ($article_number_arr as $idx => $number) {
-                $article_number_arr[$idx] = LyTcToolkit::parseNumber($number);
+                try {
+                    $article_number_arr[$idx] = LyTcToolkit::parseNumber($number);
+                } catch (Exception $e) {
+                    return '';
+                }
             }
             $article_number = implode('-', $article_number_arr);
             return $article_number;
