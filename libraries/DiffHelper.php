@@ -197,11 +197,16 @@ class DiffHelper
                     $origin = explode('　', $row->現行法, 2)[1];
                     $new = explode('　', $row->修正)[1] ?? '';
                 } elseif ($row->增訂 ?? false) {
-                    $rule_no = explode('　', $row->增訂)[0];
+                    if ($row->條號 ?? false and strlen($row->條號) < 20) {
+                        // 有條號以條號優先，但是有時條號有 bug 會錯誤，所以字數要小於 20
+                        $rule_no = $row->條號;
+                    } else {
+                        $rule_no = explode('　', $row->增訂)[0];
+                    }
                     $origin = '';
                     $new = explode('　', $row->增訂, 2)[1] ?? '';
                 } elseif (property_exists($row, '現行') and $row->現行 == '' and property_exists($row, '修正')) {
-                    $rule_no = explode('　', $row->修正)[0];
+                    $rule_no = $row->條號 ?? explode('　', $row->修正)[0];
                     $origin = '';
                     $new = explode('　', $row->修正, 2)[1] ?? '';
                 } elseif (property_exists($row, '增訂') and $row->增訂 == '' and property_exists($row, '審查會通過條文:備註')) {
