@@ -14,7 +14,7 @@ $history_groups = $this->_data['history_groups'];
           </a>
         <?php } ?>
       </div>
-      <?php if ($timeline_node->進度 == '一讀') {?>
+      <?php if (in_array($timeline_node->進度, ['一讀', '撤案'])) { ?>
         <div class="item-body">
           <div class="history-grid">
             <div class="grid-head">
