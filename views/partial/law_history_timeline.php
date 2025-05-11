@@ -30,9 +30,14 @@ $history_groups = $this->_data['history_groups'];
                     <?php } ?>
                   </div>
                   <div class="party"><?= $this->escape($history->proposers_str ?? $history->主提案) ?></div>
-                  <?php if (property_exists($history, 'article_numbers')) { ?>
-                    <div class="sections">第 <?= implode(', ', ($history->article_numbers)) ?> 條</div>
-                  <?php } ?>
+                  <div class="sections">
+                    <?php if (property_exists($history, '該提案最新狀態') and $history->該提案最新狀態 == '撤案') { ?>
+                      （已撤案）
+                    <?php } ?>
+                    <?php if (property_exists($history, 'article_numbers')) { ?>
+                      第 <?= implode(', ', ($history->article_numbers)) ?> 條
+                    <?php } ?>
+                  </div>
                   <?php if (property_exists($history, 'ppg_url')) { ?>
                     <div class="details">
                       <a href="<?= $this->escape($history->compare_url)?>" target="_blank">
