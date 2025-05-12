@@ -66,6 +66,18 @@ class DiffHelper
                     $hit_version->歷程 = $log->bill_log;
                     break;
                 }
+                if (is_null($hit_version->歷程)) {
+                    // 找不到三讀的，可以先拿有「二讀(討論)」來頂一下
+                    foreach ($ret->歷程 as $log) {
+                        $last_bill_log = $log->bill_log[count($log->bill_log) - 1];
+                        if ($last_bill_log->進度 != '二讀(討論)') {
+                            continue;
+                        }
+                        $log_date = $last_bill_log->會議日期;
+                        $hit_version->歷程 = $log->bill_log;
+                        break;
+                    }
+                }
             }
             foreach ($hit_version->歷程 as $record) {
                 if (is_array($record->關係文書)) {
