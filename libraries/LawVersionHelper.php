@@ -18,6 +18,8 @@ class LawVersionHelper
             return $date_v2 <=> $date_v1;
         });
 
+        $latest_third_reading_date = ($version_cnt > 0) ? $versions[0]->日期 : '1912-01-01';
+
         $invalid_version = true;
         $version_id_selected = null;
 
@@ -85,6 +87,7 @@ class LawVersionHelper
         if ($invalid_version) {
             return (object) [
                 'versions' => $versions,
+                'latest_third_reading_date' => $latest_third_reading_date,
                 'versions_in_terms' => $versions_in_terms,
                 'versions_in_terms_filtered' => $versions_in_terms_filtered,
             ];
@@ -95,6 +98,7 @@ class LawVersionHelper
 
         $versions_data = (object) [
             'versions' => $versions,
+            'latest_third_reading_date' => $latest_third_reading_date,
             'versions_in_terms' => $versions_in_terms,
             'versions_in_terms_filtered' => $versions_in_terms_filtered,
             'version_selected' => $version_selected,
@@ -166,6 +170,7 @@ class LawVersionHelper
     {
         $versions_data = self::getVersionsData($law_id, $version_id_input) ?? (object) [];
         $versions_in_terms = $versions_data->versions_in_terms;
+        $latest_third_reading_date = $versions_data->latest_third_reading_date;
         $version_selected = $versions_data->version_selected ?? null;
         $version_id_selected = $versions_data->version_id_selected ?? null;
         $term_selected = $versions_data->term_selected ?? null;
@@ -187,6 +192,7 @@ class LawVersionHelper
                 $log_date = explode('-', $log->id, 2)[1] ?? NULL;
                 return 7 * 86400 > abs(strtotime($log_date) - strtotime($version_date));
             });
+
             $logs = array_values($logs);
             if (!empty($logs)) {
                 $histories = $logs[0]->bill_log ?? [];
@@ -220,11 +226,18 @@ class LawVersionHelper
             if (is_null($version_id_selected) and $version_id_input == $version_id) {
                 $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
                 $history_groups = $res->歷程;
+
                 //去掉三讀的 bill_log (跟 version 重複)
-                $history_groups = array_filter($history_groups, function ($history_group) {
+                //尚未有正式三讀資料前則保留三讀
+                $history_groups = array_filter($history_groups, function ($history_group) use ($latest_third_reading_date) {
                     $id = $history_group->id;
-                    return mb_strpos($id, '三讀') === false;
+                    if (mb_strpos($id, '三讀') === 0) {
+                        $date = mb_substr($id, 3);
+                        return $date > $latest_third_reading_date;
+                    }
+                    return true;
                 });
+
                 $version->歷程 = $history_groups;
                 $version_selected = $version;
                 $version_id_selected = $version_id;
@@ -240,11 +253,18 @@ class LawVersionHelper
             $term = explode('-', explode(':', $version_id_selected)[1])[0];
             $res = LYAPI::apiQuery("/law/{$law_id}/progress?屆={$term}", "查詢 law_id: {$law_id} 第 {$term} 屆 progress");
             $history_groups = $res->歷程;
+
             //去掉三讀的 bill_log (跟 version 重複)
-            $history_groups = array_filter($history_groups, function ($history_group) {
+            //尚未有正式三讀資料前則保留三讀
+            $history_groups = array_filter($history_groups, function ($history_group) use ($latest_third_reading_date) {
                 $id = $history_group->id;
-                return mb_strpos($id, '三讀') === false;
+                if (mb_strpos($id, '三讀') === 0) {
+                    $date = mb_substr($id, 3);
+                    return $date > $latest_third_reading_date;
+                }
+                return true;
             });
+
             $version->歷程 = $history_groups;
             $version_selected = $version;
             $term_selected = $term;
