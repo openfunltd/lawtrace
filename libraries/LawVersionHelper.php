@@ -200,6 +200,7 @@ class LawVersionHelper
                 $version_selected->日期 = $version_date;
                 $version_selected->動作 = "修正";
                 $versions_data->warning = 'history-from-progress';
+                $term_selected = LyDateHelper::getTermViaDate($version_date);
             }
         }
         if (isset($histories)) {

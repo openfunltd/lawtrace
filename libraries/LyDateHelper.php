@@ -17,4 +17,16 @@ class LyDateHelper
         //第 0 屆為中華民國政府開始有第一屆立法委員前所立的法律
         0  => ['1912-01-01', '1948-05-16'],
     ];
+
+    public static function getTermViaDate($date)
+    {
+        foreach (self::$term_dates as $term => $dates) {
+            $start_date = $dates[0];
+            $end_date = $dates[1];
+            if ($start_date <= $date and $date <= $end_date) {
+                return $term;
+            }
+        }
+        return null;
+    }
 }
