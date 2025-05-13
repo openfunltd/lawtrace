@@ -56,7 +56,7 @@ if (strpos($this->version_id_input, "{$this->law_id}:") === 0 and !$is_progress)
 
 // 一樣要額外檢查不是未議決議案
 if ($this->version ?? false and !$is_progress) {
-    if (is_object($this->version)) {
+    if (is_object($this->version) and property_exists($this->version, '日期')) {
         $version_date = sprintf("%s %s",
             LawVersionHelper::getMinguoDate($this->version->日期),
             $this->version->動作
@@ -69,6 +69,7 @@ if ($this->version ?? false and !$is_progress) {
         );
     }
 }
+
 ?>
     <section class="page-hero law-details-info">
     <div class="container">
