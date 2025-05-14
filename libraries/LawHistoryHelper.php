@@ -13,6 +13,7 @@ class LawHistoryHelper
         );
         $legislators = $res->legislators ?? [];
 
+        $history_groups = self::removeUngroupedMeet($history_groups);
         $history_groups = self::updateBillDetails($history_groups, $legislators);
         $history_groups = self::updateMeetDetails($history_groups, $legislators);
         $history_groups = self::updateGroupMetadata($history_groups);
@@ -20,6 +21,19 @@ class LawHistoryHelper
         $history_groups = self::groupByTimeline($history_groups);
         $history_groups = self::orderGroups($history_groups);
 
+        return $history_groups;
+    }
+
+    private static function removeUngroupedMeet($history_groups)
+    {
+        //去除「未分類」的 progress 中的審查會議資料
+        foreach ($history_groups as $group) {
+            if ($group->id == '未分類') {
+                $group->bill_log = array_filter($group->bill_log, function ($progress) {
+                    return mb_strpos($progress->進度, '審查') === false;
+                });
+            }
+        }
         return $history_groups;
     }
 
