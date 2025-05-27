@@ -91,7 +91,7 @@ if (strpos($version_id_input, "-progress")) {
                   <?php foreach ($history_group->bill_log as $bill) { ?>
                     <div id="<?= $this->escape($bill->bill_id ?? '') ?>" class="version-section-bar">
                       <div class="title">
-                        <?= $this->escape($bill->主提案 ?? '') ?>版本
+                        <?= $this->escape($bill->主提案 ?? $bill->proposers_str) ?>版本
                         <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
                         <?php if ($bill->withdraw_status) { ?>
                           （<?= $this->escape($bill->withdraw_status) ?>）
