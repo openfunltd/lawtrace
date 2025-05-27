@@ -166,6 +166,7 @@ class LawHistoryHelper
         $res = LYAPI::apiQuery($url, "整批查詢提案詳細資訊");
         $res_total = $res->total ?? 0;
         $bills = ($res_total > 0) ? $res->bills : [];
+        $withdraw_texts = ['撤案', '同意撤回'];
 
         //enrich history data with bill data
         foreach ($history_groups as $history_group) {
@@ -181,6 +182,17 @@ class LawHistoryHelper
                 $history->會議民國日期v2 = self::getMinguoDateFormat3($date);
                 $history->compare_url = "/law/compare?source=bill:{$bill_id}";
                 $history->review_ppg_url = "https://ppg.ly.gov.tw/ppg/bills/{$bill_id}/details";
+
+                //check is withdrew
+                $latest_status = $history->該提案最新狀態 ?? null;
+                $progress_status = $history->進度 ?? null;
+                $history->withdraw_status = '';
+                if (in_array($latest_status, $withdraw_texts)) {
+                    $history->withdraw_status = $latest_status;
+                }
+                if (in_array($progress_status, $withdraw_texts)) {
+                    $history->withdraw_status = $progress_status;
+                }
 
                 //filter to get desired bill data
                 $bill_filtered = array_filter($bills, function($bill) use ($bill_id) {

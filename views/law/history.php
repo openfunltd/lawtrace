@@ -93,6 +93,9 @@ if (strpos($version_id_input, "-progress")) {
                       <div class="title">
                         <?= $this->escape($bill->主提案 ?? '') ?>版本
                         <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
+                        <?php if ($bill->withdraw_status) { ?>
+                          （<?= $this->escape($bill->withdraw_status) ?>）
+                        <?php } ?>
                       </div>
                       <div class="actions">
                         <a href="<?= $this->escape($bill->compare_url) ?>" class="btn btn-sm btn-outline-primary">

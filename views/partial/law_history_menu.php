@@ -47,6 +47,9 @@ foreach ($history_groups as $history_group) {
                 <?= $this->escape($bill->主提案 ?? '') ?>版本
                 <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
               </a>
+              <?php if ($bill->withdraw_status) { ?>
+                （<?= $this->escape($bill->withdraw_status) ?>）
+              <?php } ?>
             </li>
           <?php } ?>
         <?php } ?>
