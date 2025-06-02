@@ -129,8 +129,9 @@ class LawVersionHelper
             $carry[] = $version->版本編號;
             return $carry;
         }, []);
-        $res = LYAPI::apiQuery('/law_contents?版本編號=' . implode('&版本編號=', $version_ids) . '&limit=9999',
-            '查詢所有版本編號的所有條文（之後再依條號 filter）'
+        $res = LYAPI::apiQuery(
+            '/law_contents?版本編號=' . implode('&版本編號=', $version_ids) . "&條號={$law_content_name_encoded}" .'&limit=9999',
+            "查詢法律: {$law_id} {$law_content_name} 的所有版本編號"
         );
         $law_contents = $res->lawcontents ?? [];
         foreach ($versions as $version) {
