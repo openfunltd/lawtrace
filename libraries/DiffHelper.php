@@ -26,6 +26,13 @@ class DiffHelper
             $obj->version_id_input = sprintf("%s:%d-progress", $law_id, explode('-', $meet_id)[1]);
             foreach ($ret->data->議事網資料 ?? [] as $data) {
                 foreach ($data->關係文書->議案 ?? [] as $bill) {
+                    if (preg_match('#建請改交.*審查，請查照案#', $bill->標題 ?? '')) {
+                        $ret2 = LYAPI::apiQuery("/bills/{$bill->議案編號}", "抓取議案 {$bill->議案編號} 資料");
+                        foreach ($ret2->data->關連議案 ?? [] as $related_bill) {
+                            $obj->billNos[] = $related_bill->議案編號;
+                        }
+                        continue;
+                    }
                     if (!in_array($law_id, $bill->法律編號)) {
                         continue;
                     } 
