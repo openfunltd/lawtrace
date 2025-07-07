@@ -30,7 +30,8 @@ class LYAPI
         // referer
         curl_setopt($curl, CURLOPT_REFERER, 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         // user agent
-        curl_setopt($curl, CURLOPT_USERAGENT, $_SERVER['HTTP_USER_AGENT']);
+        $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
+        curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
         $res = curl_exec($curl);
         $res_json = json_decode($res);
         curl_close($curl);
