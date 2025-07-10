@@ -186,7 +186,10 @@ class DiffHelper
             }
 
             $bill->對照表 = array_values(array_filter($bill->對照表, function($table){
-                if ($table->立法種類 == '修正名稱') {
+                if (in_array($table->立法種類, [
+                    '增訂條文名稱',
+                    '修正名稱',
+                ])) {
                     return false;
                 }
                 return true;
