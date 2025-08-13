@@ -7,6 +7,8 @@ $this->source_type = 'version';
 $is_draft = is_null($this->versions_data); //還在草案階段的
 $this->is_draft = $is_draft;
 
+$is_announced = $this->is_announced; //總統府是否已公告
+
 $chapters = array_filter($this->contents, function($content) {
     $chapter_name = $content->章名 ?? '';
     $chapter_unit = ($chapter_name != '') ? LawChapterHelper::getChapterUnit($chapter_name) : '';
@@ -44,6 +46,19 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
           <div class="alert alert-primary" role="alert">
             <i class="bi bi-exclamation-triangle-fill"></i>
               本法處於草案階段，尚未有任何三讀的法律版本供瀏覽。想了解草案的討論過程，請點選「經歷過程」查閱。
+          </div>
+        </div>
+      </section>
+    </div>
+    </div>
+    <?php exit; ?>
+  <?php } else if (!$is_announced) { ?>
+    <div class="main-content">
+      <section class="law-details">
+        <div class="container">
+          <div class="alert alert-primary" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+              本三讀通過之版本，需待總統府公告後，才能於「立法院法律系統」查詢取得條文內容，並於本站顯示。
           </div>
         </div>
       </section>

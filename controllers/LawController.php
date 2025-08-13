@@ -17,6 +17,23 @@ class LawController extends MiniEngine_Controller
 
         $this->view->versions_data = $versions_data;
 
+        $is_announced = true;
+        if (is_null($version_select_id_selected)) {
+            //在立法院法律系統中查無此版本時，檢查是係否因總統府尚未公告的關係
+            $res = LYAPI::apiQuery("/laws?limit=100", "近期三讀法律");
+            $laws_new = $res->laws ?? [];
+            foreach ($laws_new as $law_new) {
+                $law_id_new = $law_new->法律編號;
+                $date_new = $law_new->最新版本->日期;
+                $version_id_new = "$law_id_new:$date_new";
+                if ($law_id_new == $law_id and $version_id_new == $version_id_input) {
+                    $is_announced = false;
+                    break;
+                }
+            }
+        }
+        $this->view->is_announced = $is_announced;
+
         $contents = [];
         $source = '';
 
