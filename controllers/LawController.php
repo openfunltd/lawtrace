@@ -11,14 +11,14 @@ class LawController extends MiniEngine_Controller
         $this->view->law = $this->getLawData($law_id);
 
         $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
-        $versions = $versions_data->versions;
-        $version_selected = $versions_data->version_selected;
-        $version_id_selected = $versions_data->version_id_selected;
+        $versions = $versions_data->versions ?? null;
+        $version_selected = $versions_data->version_selected ?? null;
+        $version_id_selected = $versions_data->version_id_selected ?? null;
 
         $this->view->versions_data = $versions_data;
 
         $is_announced = true;
-        if (is_null($version_select_id_selected)) {
+        if (is_null($version_id_selected)) {
             //在立法院法律系統中查無此版本時，檢查是係否因總統府尚未公告的關係
             $res = LYAPI::apiQuery("/laws?limit=100", "近期三讀法律");
             $laws_new = $res->laws ?? [];
