@@ -19,7 +19,9 @@ class IndexHelper
 
     public static function getExammingLaws()
     {
-        $path = '/meets?會議種類=委員會&會議種類=聯席會議&limit=100';
+        $path = '/meets?會議種類=委員會&會議種類=聯席會議&limit=50';
+        $path .= '&output_fields=會議代碼&output_fields=會議名稱&output_fields=會議日期&output_fields=議事網資料&output_fields=委員會代號';
+        $path .= '&output_fields=日期';
         $res = LYAPI::apiQuery($path, '近期審查會議');
 
         $meet_laws = [];
