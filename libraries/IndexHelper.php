@@ -5,7 +5,7 @@ class IndexHelper
     public static function getExammedLaws()
     {
         $path = '/bills/?提案來源=審查報告&議案類別=法律案&sort=提案日期&output_fields=法律編號&output_fields=議案名稱&output_fields=提案日期&output_fields=議案狀態&output_fields=提案單位/提案委員&output_fields=議案編號';
-        $res = LYAPI::apiQuery($path, '近期出爐的審查報告');
+        $res = LYAPI::apiQuery($path, '近期出爐的審查報告', 300);
 
         $laws = [];
         foreach ($res->bills as $bill) {
@@ -22,7 +22,7 @@ class IndexHelper
         $path = '/meets?會議種類=委員會&會議種類=聯席會議&limit=50';
         $path .= '&output_fields=會議代碼&output_fields=會議名稱&output_fields=會議日期&output_fields=議事網資料&output_fields=委員會代號';
         $path .= '&output_fields=日期';
-        $res = LYAPI::apiQuery($path, '近期審查會議');
+        $res = LYAPI::apiQuery($path, '近期審查會議', 300);
 
         $meet_laws = [];
         $bills = [];
@@ -84,7 +84,7 @@ class IndexHelper
     public static function getThirdReadList()
     {
         $limit = 100;
-        $res = LYAPI::apiQuery('/laws?limit=' . $limit, '近期三讀會議');
+        $res = LYAPI::apiQuery('/laws?limit=' . $limit, '近期三讀會議', 300);
         $laws = [];
         $versions = [];
 

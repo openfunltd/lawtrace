@@ -13,9 +13,26 @@ class LYAPI
         return self::$log;
     }
 
-    public static function apiQuery($url, $reason)
+    public static function apiQuery($url, $reason, $cache = null)
     {
         $url = 'https://' . getenv('LYAPI_HOST') . $url;
+
+        $cache_key = null;
+        $cache_file = null;
+
+        if (!is_null($cache)) {
+            $cache_key = 'lyapi_' . crc32($url) . '_' . md5($url);
+            $cache_file = "/tmp/lyapicache-{$cache_key}.json";
+            if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $cache) {
+                error_log("cache hit");
+                $res_json = json_decode(file_get_contents($cache_file));
+                if (is_null(self::$log)) {
+                    self::$log = [];
+                }
+                self::$log[] = [$url, $reason, 'cached'];
+                return $res_json;
+            }
+        }
 
         $curl = curl_init();
         if (getenv('LYAPI_TOKEN')) {
@@ -39,6 +56,14 @@ class LYAPI
             self::$log = [];
         }
         self::$log[] = [$url, $reason];
+
+        if (!is_null($cache_file)) {
+            if (is_null($res_json)) {
+                $res_json = new stdClass();
+                $res_json->error = 'Invalid JSON response';
+            }
+            file_put_contents($cache_file, json_encode($res_json, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT));
+        }
 
         return $res_json;
     }
