@@ -87,7 +87,7 @@ class DiffHelper
                 }
             }
             foreach ($hit_version->歷程 as $record) {
-                if (is_array($record->關係文書)) {
+                if (is_array($record->關係文書 ?? false)) {
                     foreach ($record->關係文書 as $bill) {
                         if ($bill->billNo ?? false) {
                             $obj->billNos[] = $bill->billNo;
