@@ -1,15 +1,7 @@
 <?php
 $this->description = "幫助你了解立法院在審查哪些法案，通過了哪些法案，讓立法過程更透明。";
+$news = IndexHelper::getOpenfunLog();
 
-$ch = curl_init('https://raw.githubusercontent.com/openfunltd/news/refs/heads/main/lawtrace/latest.json');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-$response = curl_exec($ch);
-curl_close($ch);
-$ret = curl_exec($ch);
-curl_close($ch);
-
-$news = json_decode($ret) ?? [];
 ?>
 <?= $this->partial('common/header', $this) ?>
 <div class="main">

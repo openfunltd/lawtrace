@@ -2,6 +2,22 @@
 
 class IndexHelper
 {
+    public static function getOpenfunLog()
+    {
+        $cache_file = "/tmp/lawtrace_news.json";
+        if (file_exists($cache_file) && filemtime($cache_file) > time() - 300) {
+            $ret = file_get_contents($cache_file);
+            return json_decode($ret) ?? [];
+        }
+        $ch = curl_init('https://raw.githubusercontent.com/openfunltd/news/refs/heads/main/lawtrace/latest.json');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $ret = curl_exec($ch);
+        curl_close($ch);
+        file_put_contents($cache_file, $ret);
+        return json_decode($ret) ?? [];
+    }
+
     public static function getExammedLaws()
     {
         $path = '/bills/?提案來源=審查報告&議案類別=法律案&sort=提案日期&output_fields=法律編號&output_fields=議案名稱&output_fields=提案日期&output_fields=議案狀態&output_fields=提案單位/提案委員&output_fields=議案編號';
