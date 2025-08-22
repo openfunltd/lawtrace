@@ -165,7 +165,7 @@ if ($this->version ?? false and !$is_progress) {
           提案人：<?php foreach ($this->bill->提案人 as $p) { ?>
           <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
           <?php if ($img) { ?>
-          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">
           <?php } ?>
           <?= $this->escape($p) ?>&nbsp;
           <?php } ?>
@@ -174,7 +174,7 @@ if ($this->version ?? false and !$is_progress) {
           連署人：<?php foreach ($this->bill->連署人 as $p) { ?>
           <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
           <?php if ($img) { ?>
-          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>">
+          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">
           <?php } ?>
           <?= $this->escape($p) ?>&nbsp;
           <?php } ?>
