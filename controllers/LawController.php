@@ -271,6 +271,32 @@ class LawController extends MiniEngine_Controller
         $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
     }
 
+    public function sub_lawsAction($law_id)
+    {
+        $this->view->law_id = $law_id;
+        $this->view->law = self::getLawData($law_id);
+
+        //查詢子法
+        $res = LYAPI::apiQuery(
+            "/laws?母法編號={$law_id}&類別=子法&limit=100",
+            "查詢子法列表, 母法: {$law_id}"
+        );
+
+        $law_moj_base = 'https://law.moj.gov.tw/Law/LawSearchResult.aspx?ty=ONEBAR&kw=';
+        $sub_laws = [];
+        $sub_law_count = $res->total ?? 0;
+        $sub_laws = $res->laws ?? [];
+        foreach ($sub_laws as $sub_law) {
+            $aliases = $sub_law->別名 ?? [];
+            $other_names = $sub_law->其他名稱 ?? [];
+            $sub_law->aliases_merged = array_merge($aliases, $other_names);
+            $sub_law->law_moj_url = $law_moj_base . $sub_law->名稱;
+        }
+
+        $this->view->sub_law_count = $sub_law_count;
+        $this->view->sub_laws = $sub_laws;
+    }
+
     public function getLawData($law_id)
     {
         if (!ctype_digit($law_id)) {
