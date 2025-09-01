@@ -1,9 +1,11 @@
 <?php
-$version_count = count($this->diff->choosed_version_ids);
-$versions = [];
-foreach ($this->diff->choosed_version_ids as $version_id) {
-    $version = $this->diff->versions->{$version_id};
-    $versions[] = $version->title;
+if (is_null($this->error)) {
+    $version_count = count($this->diff->choosed_version_ids);
+    $versions = [];
+    foreach ($this->diff->choosed_version_ids as $version_id) {
+        $version = $this->diff->versions->{$version_id};
+        $versions[] = $version->title;
+    }
 }
 if ($this->source_type == 'bill') {
     if ($this->bill->提案來源 == '審查報告') {
@@ -36,11 +38,13 @@ if ($this->source_type == 'bill') {
 } elseif ($this->source_type == 'version') {
     $this->title = "{$this->law->名稱} | 三讀版本";
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));
-    $this->description = sprintf("三讀日期：%s\n"
-        . "相關版本：%s",
-        LawVersionHelper::getMinguoDate($version_date),
-        implode('、', $versions)
-    );
+    if (is_null($this->error)) {
+        $this->description = sprintf("三讀日期：%s\n"
+            . "相關版本：%s",
+            LawVersionHelper::getMinguoDate($version_date),
+            implode('、', $versions)
+        );
+    }
 }
 $this->body_class = 'law-compare-page';
 $this->tab = 'compare';
@@ -49,6 +53,22 @@ $this->tab = 'compare';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jsdiff/7.0.0/diff.min.js" integrity="sha512-immo//J6lKoR+nRIFDPxoxfL2nd/0N3w8l4LwH4HSSVovtUjab5kbh4AhixLH5z9mIv37llY9Q2i8AfEDXyYjw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <div class="main">
       <?= $this->partial('law/law_hero', $this) ?>
+      <?php if (isset($this->error)) { ?>
+      <div class="main-content">
+        <section class="law-details">
+          <div class="container">
+            <div class="law-compare-wrapper">
+              <div class="alert alert-primary" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                  立法院第 8 屆以前(~2016-01-31)的議案檔案，並非完整的數位化，僅為掃描成圖檔後存成 PDF 的檔案。
+                  故無法在本頁利用對照表進行條文比較，還請見諒。
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <?php exit; ?>
+      <?php } ?>
       <div class="main-content">
         <section class="law-details">
           <div class="container">
