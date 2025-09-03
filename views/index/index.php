@@ -32,13 +32,14 @@ $news = IndexHelper::getOpenfunLog();
         <section class="lawtrace-news">
           <h3>最新消息</h3>
           <div class="news-list">
-            <?php foreach ($news as $news_item) { ?>
+            <?php foreach ($news as $idx => $news_item) { ?>
               <div class="news-item">
                 <div class="date"><?= $this->escape($news_item->date) ?></div>
                 <a href="<?= $this->escape($news_item->link) ?>" target="_blank">
                   <?= $this->escape($news_item->title) ?>
                 </a>
               </div>
+              <?php if ($idx == 2) { break; } ?>
             <?php } ?>
           </div>
         </section>
