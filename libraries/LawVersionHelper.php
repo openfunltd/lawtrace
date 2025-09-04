@@ -170,8 +170,8 @@ class LawVersionHelper
     public static function getVersionsWithProgresses($law_id, $version_id_input)
     {
         $versions_data = self::getVersionsData($law_id, $version_id_input) ?? (object) [];
-        $versions_in_terms = $versions_data->versions_in_terms;
-        $latest_third_reading_date = $versions_data->latest_third_reading_date;
+        $versions_in_terms = $versions_data->versions_in_terms ?? null;
+        $latest_third_reading_date = $versions_data->latest_third_reading_date ?? null;
         $version_selected = $versions_data->version_selected ?? null;
         $version_id_selected = $versions_data->version_id_selected ?? null;
         $term_selected = $versions_data->term_selected ?? null;
@@ -249,7 +249,7 @@ class LawVersionHelper
         }
 
         //Default query progress at latest term when law is on draft
-        if ($is_draft) {
+        if ($version_id_input == 'latest' and $is_draft) {
             $latest_term = reset($versions_in_terms);
             $version_id_selected = $latest_term[0]->版本編號;
             $term = explode('-', explode(':', $version_id_selected)[1])[0];
