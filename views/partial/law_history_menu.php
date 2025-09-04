@@ -19,8 +19,7 @@ foreach ($history_groups as $history_group) {
     <i class="bi bi-exclamation-triangle-fill"></i>
     無該屆未議決議案資料
   </div>
-<?php exit; ?>
-<?php } ?>
+<?php } else { ?>
 <div class="history-menu">
   <?php foreach ($menu_groups as $idx => $menu_group) { ?>
     <div class="title">
@@ -57,3 +56,4 @@ foreach ($history_groups as $history_group) {
     </ul>
   <?php } ?>
 </div>
+<?php } ?>
