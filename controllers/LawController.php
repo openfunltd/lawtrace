@@ -61,7 +61,7 @@ class LawController extends MiniEngine_Controller
         $this->view->law = self::getLawData($law_id);
 
         $versions_data = LawVersionHelper::getVersionsWithProgresses($law_id, $version_id_input, $source_input);
-        $versions = $versions_data->versions ? null;
+        $versions = $versions_data->versions ?? null;
         $versions_in_terms = $versions_data->versions_in_terms;
         $version_selected = $versions_data->version_selected;
         $version_id_selected = $versions_data->version_id_selected;
