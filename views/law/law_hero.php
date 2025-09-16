@@ -29,9 +29,11 @@ if ('single' != $this->source_type) {
     }
     if ($this->source ?? false) {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
+        $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}"];
         $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
     } else {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
+        $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}"];
     }
 }
 if ('meet' == $this->source_type) {
