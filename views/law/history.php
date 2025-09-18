@@ -40,7 +40,13 @@ if (strpos($version_id_input, "-progress")) {
                       <?php foreach ($versions as $version) { ?>
                         <div class="menu-item level-3">
                           <div class="menu-head <?= ($version->版本編號 == $version_id_selected) ? 'active' : '' ?>">
-                            <a href="/law/history/<?= $this->escape($this->law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
+                            <?php
+                            $history_url = "/law/history/{$this->law_id}?version={$version->版本編號}";
+                            if (property_exists($version, '動作')) {
+                                $history_url .= "&source=version:{$version->法律編號}:{$version->日期}";
+                            }
+                            ?>
+                            <a href="<?= $this->escape($history_url) ?>">
                               <?php if (property_exists($version, '動作')) { ?>
                                 <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
                               <?php } else { ?>
