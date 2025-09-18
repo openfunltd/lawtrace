@@ -2,6 +2,7 @@
 $law_id = $this->law_id;
 $sub_law_count = $this->sub_law_count;
 $sub_laws = $this->sub_laws;
+$this->tab = 'sub_laws';
 ?>
 <?php $law_name = $this->escape($this->law->名稱 ?? ''); ?>
 <?= $this->partial('common/header', ['title' => "{$law_name} - 子法列表"]) ?>
