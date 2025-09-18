@@ -12,7 +12,7 @@ $sub_laws = $this->sub_laws;
       <div class="container container-sm">
         <div class="result-info">
           <div>
-            總計有 <em><?= $sub_law_count ?> 筆子法</em>
+            總計有 <em><?= $sub_law_count ?> 筆子法</em>，但其中包含已失效子法。失效於否可在全國法規資料庫中確認。
           </div>
         </div>
         <?php foreach ($sub_laws as $sub_law) { ?>
