@@ -114,13 +114,12 @@ $this->nav_link_history = $history_endpoint;
                 選擇版本
               </div>
               <div class="side-menu version-menu">
-                <?php $is_current_term = true; ?>
+                <?php $term_latest = array_keys(LyDateHelper::$term_dates)[0]; ?>
                 <?php foreach ($this->versions_data->versions_in_terms_filtered as $term => $versions) { ?>
                   <div class="menu-item level-1">
                     <div class="menu-head">
-                      <?php if ($is_current_term) { ?>
+                      <?php if ($term == $term_latest) { ?>
                         第<?= $term ?>屆 (目前屆期)
-                        <?php $is_current_term = false; ?>
                       <?php } else { ?>
                         第<?= $term ?>屆
                       <?php } ?>
