@@ -41,6 +41,9 @@ if (strpos($version_id_input, "-progress")) {
                         <div class="menu-item level-3">
                           <div class="menu-head <?= ($version->版本編號 == $version_id_selected) ? 'active' : '' ?>">
                             <?php
+                            if ($version->版本編號 == $version_id_selected) {
+                                $term_selected = $term;
+                            }
                             $history_url = "/law/history/{$this->law_id}?version={$version->版本編號}";
                             if (property_exists($version, '動作')) {
                                 $history_url .= "&source=version:{$version->法律編號}:{$version->日期}";
@@ -64,6 +67,12 @@ if (strpos($version_id_input, "-progress")) {
             </div>
           </div>
           <div>
+            <?php if ($term_selected == 0) { ?>
+            <div class="alert alert-primary" role="alert">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+              在<a href="https://lis.ly.gov.tw/lglawc/lglawkm">立法院法律系統</a>立法沿革中有收錄立法院設立前的三讀版本條文，但無收錄立法歷程。第 0 屆係指立法院設立前所制定的法律。立法院於民國 17 年設立，在此之前最高立法機關為中華民國國會。
+            </div>
+            <?php } ?>
             <?php if ($is_third_read_history or $this->single_version) { ?>
               <?php if ('history-from-progress' == $version_warning) { ?>  
                 <div class="alert alert-primary" role="alert">
