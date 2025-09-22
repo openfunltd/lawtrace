@@ -357,6 +357,8 @@ class LawHistoryHelper
                         $agenda->結束頁碼 >= $gazette_agenda_start_page) {
 
                         $agenda_committees_str = mb_substr($agenda->案由, 0, mb_strpos($agenda->案由, '委員會'));
+                        //example: '經濟、財政兩' => '經濟、財政'
+                        $agenda_committees_str = str_replace('兩', '', $agenda_committees_str);
                         $agenda_committees = explode('、', $agenda_committees_str);
 
                         $meet_committees = [];
