@@ -221,6 +221,10 @@ class LawVersionHelper
         }
 
         foreach ($versions_in_terms as $term => $versions) {
+            //邏輯上不存在第 0 屆的未議決議案，略過不顯示
+            if ($term == 0) {
+                continue;
+            }
             $version_id = "{$law_id}:{$term}-progress";
             $version = (object) [
                 '版本編號' => $version_id,
