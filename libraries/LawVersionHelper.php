@@ -252,6 +252,11 @@ class LawVersionHelper
             $versions_in_terms[$term][] = $version;
         }
 
+        //第 0 屆如果沒有三讀版本，整個分類拿掉
+        if (empty($versions_in_terms[0])) {
+            unset($versions_in_terms[0]);
+        }
+
         //Default query progress at latest term when law is on draft
         if ($version_id_input == 'latest' and $is_draft) {
             $latest_term = reset($versions_in_terms);
