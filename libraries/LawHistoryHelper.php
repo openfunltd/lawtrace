@@ -467,6 +467,11 @@ class LawHistoryHelper
             $text = $row->{$key};
             $text = mb_ereg_replace('　', ' ', $text);
             $article_number = explode(' ', $text)[0];
+
+            //多檢查 start index
+            $start_idx = mb_strpos($article_number, '第');
+            $article_number = mb_substr($article_number, $start_idx);
+
             $article_number = mb_ereg_replace('第', '', $article_number);
             $article_number = mb_ereg_replace('條', '', $article_number);
             $article_number = mb_ereg_replace('章', '', $article_number);
