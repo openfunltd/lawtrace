@@ -109,6 +109,12 @@ $this->tab = 'compare';
                       分句顯示(BETA)
                     </label>
                   </div>
+                  <div class="ms-3">
+                    <button id="download-xlsx" class="btn btn-success">
+                      下載 XLSX
+                      <i class="bi bi-file-earmark-spreadsheet-fill ms-1"></i>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div class="diff-info rwd-full">
@@ -351,6 +357,7 @@ $this->tab = 'compare';
         </div>
       </div>
   </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 diff_data = <?= json_encode([
     'diff' => $this->diff,
@@ -358,8 +365,7 @@ diff_data = <?= json_encode([
     'source' => $this->source,
 ]) ?>;
 </script>
-  <script src="/static/js/diff.js"></script>
-  <script src="/static/js/scroll.js"></script>
-<script>
-</script>
+<script src="/static/js/diff.js"></script>
+<script src="/static/js/scroll.js"></script>
+<script src="/static/js/download_xlsx.js"></script>
 <?= $this->partial('common/footer') ?>
