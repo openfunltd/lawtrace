@@ -46,7 +46,14 @@ $("#download-xlsx").on("click", function() {
     return $(ele).text().trim();
   });
 
+  law_contents_split_aoa = getLawContentsAoa(last_section_idx, articleNums, true);
+  law_contents_aoa = getLawContentsAoa(last_section_idx, articleNums, false);
+});
+
+function getLawContentsAoa(last_section_idx, articleNums, split) {
   law_contents_aoa = [];
+  classname = (split) ? 'law-diff-content-section' : 'law-diff-content-origin';
+
   for (section_idx = 0; section_idx <= last_section_idx; section_idx++) {
     if (section_idx < last_section_idx) {
       divBetween = $('#section-' + section_idx).nextUntil('#section-' + (section_idx + 1));
@@ -54,7 +61,7 @@ $("#download-xlsx").on("click", function() {
       divBetween = $('#section-' + section_idx).nextAll();
     }
 
-    divBetween = divBetween.filter('.law-diff-content.law-diff-content-section').toArray();
+    divBetween = divBetween.filter('.law-diff-content.' + classname).toArray();
     single_law_contents = divBetween.map(function(ele) {
       return $(ele).text().trim();
     });
@@ -70,7 +77,8 @@ $("#download-xlsx").on("click", function() {
     law_contents_aoa = law_contents_aoa.concat(single_law_contents_aoa);
   }
 
-});
+  return law_contents_aoa;
+}
 
 function chunkArray(arr, n) {
   let result = [];
