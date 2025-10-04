@@ -40,15 +40,42 @@ $("#download-xlsx").on("click", function() {
   //get number of bills
   bill_count = titles.length - 1;
 
+  //get article number(條號)
+  const articleNumDivs = $("div[id^='section-']").toArray();
+  articleNums = articleNumDivs.map(function(ele) {
+    return $(ele).text().trim();
+  });
 
+  law_contents_aoa = [];
   for (section_idx = 0; section_idx <= last_section_idx; section_idx++) {
     if (section_idx < last_section_idx) {
       divBetween = $('#section-' + section_idx).nextUntil('#section-' + (section_idx + 1));
     } else {
       divBetween = $('#section-' + section_idx).nextAll();
     }
-    divBetween = divBetween.filter('.law-diff-content.law-diff-content-section');
-    //TODO text to array
+
+    divBetween = divBetween.filter('.law-diff-content.law-diff-content-section').toArray();
+    single_law_contents = divBetween.map(function(ele) {
+      return $(ele).text().trim();
+    });
+    single_law_contents_aoa = chunkArray(single_law_contents, bill_count);
+    for (let i = 0; i < single_law_contents_aoa.length; i++) {
+      prepend = '';
+      if (i == 0) {
+        prepend = articleNums[section_idx];
+      }
+      single_law_contents_aoa[i].unshift(prepend);
+    }
+    //TODO get reason(立法理由)
+    law_contents_aoa = law_contents_aoa.concat(single_law_contents_aoa);
   }
 
 });
+
+function chunkArray(arr, n) {
+  let result = [];
+  for (let i = 0; i < arr.length; i += n) {
+    result.push(arr.slice(i, i + n));
+  }
+  return result;
+}
