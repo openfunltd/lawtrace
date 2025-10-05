@@ -46,12 +46,12 @@ $("#download-xlsx").on("click", function() {
     return $(ele).text().trim();
   });
 
-  law_contents_split_aoa = getLawContentsAoa(last_section_idx, articleNums, true);
-  law_contents_aoa = getLawContentsAoa(last_section_idx, articleNums, false);
+  law_aoa_split = getLawAoa(last_section_idx, articleNums, bill_count, true);
+  law_aoa = getLawAoa(last_section_idx, articleNums, bill_count, false);
 });
 
-function getLawContentsAoa(last_section_idx, articleNums, split) {
-  law_contents_aoa = [];
+function getLawAoa(last_section_idx, articleNums, bill_count, split) {
+  law_aoa = [];
   classname = (split) ? 'law-diff-content-section' : 'law-diff-content-origin';
 
   for (section_idx = 0; section_idx <= last_section_idx; section_idx++) {
@@ -62,25 +62,36 @@ function getLawContentsAoa(last_section_idx, articleNums, split) {
     }
 
     divBetween = divBetween.filter('.law-diff-content.' + classname).toArray();
-    single_law_contents = divBetween.map(function(ele) {
+    law_content = divBetween.map(function(ele) {
       return getLawText(ele);
     });
 
+    //法律內文 law_content
+    law_content_aoa = chunkArray(law_content, bill_count);
+
     //first column: article number(條號) or 空白
-    single_law_contents_aoa = chunkArray(single_law_contents, bill_count);
-    for (let i = 0; i < single_law_contents_aoa.length; i++) {
+    for (let i = 0; i < law_content_aoa.length; i++) {
       prepend = '';
       if (i == 0) {
         prepend = articleNums[section_idx];
       }
-      single_law_contents_aoa[i].unshift(prepend);
+      law_content_aoa[i].unshift(prepend);
     }
 
-    //TODO get reason(立法理由)
-    law_contents_aoa = law_contents_aoa.concat(single_law_contents_aoa);
+    law_aoa = law_aoa.concat(law_content_aoa);
+
+    //立法理由 law_reason
+    divLastRow = divBetween.slice(-1 * bill_count);
+    law_reason_aoa = divLastRow.map(function (ele) {
+      return getLawReason(ele);
+    });
+    law_reason_aoa.unshift('立法理由');
+
+    law_aoa.push(law_reason_aoa);
+
   }
 
-  return law_contents_aoa;
+  return law_aoa;
 }
 
 function getLawText(ele) {
@@ -88,6 +99,13 @@ function getLawText(ele) {
     return $(ele).children('div').first().text().trim();
   }
   return $(ele).text().trim();
+}
+
+function getLawReason(ele) {
+  if (hasReason(ele)) {
+    return $(ele).find('div.help-body').text().trim();
+  }
+  return '';
 }
 
 //判斷 div 裡頭是否有包含 div.help-title(立法理由)
