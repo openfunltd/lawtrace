@@ -63,8 +63,10 @@ function getLawContentsAoa(last_section_idx, articleNums, split) {
 
     divBetween = divBetween.filter('.law-diff-content.' + classname).toArray();
     single_law_contents = divBetween.map(function(ele) {
-      return $(ele).text().trim();
+      return getLawText(ele);
     });
+
+    //first column: article number(條號) or 空白
     single_law_contents_aoa = chunkArray(single_law_contents, bill_count);
     for (let i = 0; i < single_law_contents_aoa.length; i++) {
       prepend = '';
@@ -73,11 +75,24 @@ function getLawContentsAoa(last_section_idx, articleNums, split) {
       }
       single_law_contents_aoa[i].unshift(prepend);
     }
+
     //TODO get reason(立法理由)
     law_contents_aoa = law_contents_aoa.concat(single_law_contents_aoa);
   }
 
   return law_contents_aoa;
+}
+
+function getLawText(ele) {
+  if (hasReason(ele)) {
+    return $(ele).children('div').first().text().trim();
+  }
+  return $(ele).text().trim();
+}
+
+//判斷 div 裡頭是否有包含 div.help-title(立法理由)
+function hasReason(ele) {
+  return $(ele).find('> div').length === 2;
 }
 
 function chunkArray(arr, n) {
