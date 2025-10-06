@@ -67,8 +67,13 @@ $("#download-xlsx").on("click", function() {
   XLSX.utils.book_append_sheet(workbook, worksheet1, "對照表");
   XLSX.utils.book_append_sheet(workbook, worksheet2, "對照表（分句）");
 
+  //get law_name, source_str and timestamp for excel file name
+  const law_name = $('li.breadcrumb-item').eq(1).find('a').text().trim();
+  const source_str = buildSourceStr();
+  const time = getTimestamp();
+
   //downlaod excel file
-  XLSX.writeFile(workbook, "法律名稱-時間.xlsx");
+  XLSX.writeFile(workbook, `${law_name}-${source_str}-${time}.xlsx`);
 });
 
 function getLawAoa(last_section_idx, articleNums, bill_count, split) {
@@ -140,10 +145,42 @@ function hasReason(ele, split) {
   return $(ele).find('> div').length === 1;
 }
 
+function buildSourceStr() {
+  const source_type_str = $('li.breadcrumb-item').eq(2).text().trim();
+  let str = source_type_str;
+  if (source_type_str == '三讀版本') {
+    str = str + '-' + $('li.breadcrumb-item').eq(3).text().trim().replace(/\s+/g, '');
+  } else if (source_type_str == '審查報告') {
+    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
+    str = str + '-' + $('div.review-committee').first().text().trim().split('：')[1];
+  } else if (source_type_str == '法律議案') {
+    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
+    str = str + '-' + $('li.breadcrumb-item').eq(3).text().trim();
+  } else if (source_type_str == '委員會審查') {
+    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
+    str = str + '-' + $('div.review-committee').first().text().trim().split('：')[1];
+  } else {
+    str = str + '-unknown_source';
+  }
+  return str;
+}
+
 function chunkArray(arr, n) {
   let result = [];
   for (let i = 0; i < arr.length; i += n) {
     result.push(arr.slice(i, i + n));
   }
   return result;
+}
+
+function getTimestamp() {
+  const now = new Date();
+  return (
+    now.getFullYear().toString() +
+    String(now.getMonth() + 1).padStart(2, '0') +
+    String(now.getDate()).padStart(2, '0') +
+    String(now.getHours()).padStart(2, '0') +
+    String(now.getMinutes()).padStart(2, '0') +
+    String(now.getSeconds()).padStart(2, '0')
+  );
 }
