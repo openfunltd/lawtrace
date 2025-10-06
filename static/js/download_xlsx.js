@@ -1,5 +1,6 @@
 $("#download-xlsx").on("click", function() {
   let data = [];
+  let data_split = [];
   let titles = ['版本名稱'];
   let proposal_dates = ['提案日期'];
   let ppg_links = ['原始資料'];
@@ -32,6 +33,10 @@ $("#download-xlsx").on("click", function() {
   data.push(proposal_dates);
   data.push(ppg_links);
 
+  data_split.push(titles);
+  data_split.push(proposal_dates);
+  data_split.push(ppg_links);
+
   //get max index of id='section-i' (選擇章節的項目index)
   const lastSection = $(".law-diff-row").eq(1).children("div[id^='section-']").last();
   lastIdParts = lastSection.attr('id').split('-');
@@ -46,8 +51,24 @@ $("#download-xlsx").on("click", function() {
     return $(ele).text().trim();
   });
 
-  law_aoa_split = getLawAoa(last_section_idx, articleNums, bill_count, true);
   law_aoa = getLawAoa(last_section_idx, articleNums, bill_count, false);
+  data = data.concat(law_aoa);
+
+  law_aoa_split = getLawAoa(last_section_idx, articleNums, bill_count, true);
+  data_split = data_split.concat(law_aoa_split);
+
+  //build xlsx
+  //create worksheets
+  const worksheet1 = XLSX.utils.aoa_to_sheet(data);
+  const worksheet2 = XLSX.utils.aoa_to_sheet(data_split);
+
+  //create workbook
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet1, "對照表");
+  XLSX.utils.book_append_sheet(workbook, worksheet2, "對照表（分句）");
+
+  //downlaod excel file
+  XLSX.writeFile(workbook, "法律名稱-時間.xlsx");
 });
 
 function getLawAoa(last_section_idx, articleNums, bill_count, split) {
@@ -63,7 +84,7 @@ function getLawAoa(last_section_idx, articleNums, bill_count, split) {
 
     divBetween = divBetween.filter('.law-diff-content.' + classname).toArray();
     law_content = divBetween.map(function(ele) {
-      return getLawText(ele);
+      return getLawText(ele, split);
     });
 
     //法律內文 law_content
@@ -83,7 +104,7 @@ function getLawAoa(last_section_idx, articleNums, bill_count, split) {
     //立法理由 law_reason
     divLastRow = divBetween.slice(-1 * bill_count);
     law_reason_aoa = divLastRow.map(function (ele) {
-      return getLawReason(ele);
+      return getLawReason(ele, split);
     });
     law_reason_aoa.unshift('立法理由');
 
@@ -94,23 +115,29 @@ function getLawAoa(last_section_idx, articleNums, bill_count, split) {
   return law_aoa;
 }
 
-function getLawText(ele) {
-  if (hasReason(ele)) {
-    return $(ele).children('div').first().text().trim();
+function getLawText(ele, split) {
+  if (hasReason(ele, split)) {
+    if (split) {
+      return $(ele).children('div').first().text().trim();
+    }
+    return $(ele).children('span').first().text().trim();
   }
   return $(ele).text().trim();
 }
 
-function getLawReason(ele) {
-  if (hasReason(ele)) {
+function getLawReason(ele, split) {
+  if (hasReason(ele, split)) {
     return $(ele).find('div.help-body').text().trim();
   }
   return '';
 }
 
 //判斷 div 裡頭是否有包含 div.help-title(立法理由)
-function hasReason(ele) {
-  return $(ele).find('> div').length === 2;
+function hasReason(ele, split) {
+  if (split) {
+    return $(ele).find('> div').length === 2;
+  }
+  return $(ele).find('> div').length === 1;
 }
 
 function chunkArray(arr, n) {
