@@ -79,6 +79,10 @@ $this->tab = 'compare';
                     設定比較對象
                     <i class="bi bi-pencil-fill ms-1"></i>
                   </button>
+                  <button id="download-xlsx" class="btn btn-outline-primary ms-1">
+                    匯出 excel
+                    <i class="bi bi-download ms-1"></i>
+                  </button>
               </div>
                 <div class="range-info">
               <!-- TODO: 待實作
@@ -108,12 +112,6 @@ $this->tab = 'compare';
                     <label class="form-check-label" for="splitContent" title="將條文分成一句一句顯示，有可能會分句失敗">
                       分句顯示(BETA)
                     </label>
-                  </div>
-                  <div class="ms-3">
-                    <button id="download-xlsx" class="btn btn-success">
-                      下載 XLSX
-                      <i class="bi bi-file-earmark-spreadsheet-fill ms-1"></i>
-                    </button>
                   </div>
                 </div>
               </div>
