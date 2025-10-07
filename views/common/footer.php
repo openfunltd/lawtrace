@@ -35,7 +35,7 @@
           </li>
         </ul>
         <p class="my-0">
-          如果您在使用本頁面時遇到任何問題，歡迎透過<a href="https://forms.gle/LhZUtZbwNpTDyhNC6" target="_blank">這份回報表單</a>告訴我們。
+          如果您在使用本頁面時遇到問題、發現錯誤或有其他建議，歡迎透過<a href="https://forms.gle/LhZUtZbwNpTDyhNC6" target="_blank">這份回報表單</a>告訴我們。
         </p>
       </div>
       <div class="links">
