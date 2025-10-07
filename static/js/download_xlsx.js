@@ -57,25 +57,25 @@ $("#download-xlsx").on("click", function() {
   law_aoa_split = getLawAoa(last_section_idx, articleNums, bill_count, true);
   data_split = data_split.concat(law_aoa_split);
 
-  //metadata
-  const metadata_aoa = getMetadataAoa();
-
   //ppg_links
   const ppg_link_aoa = getPpgLinkAoa(titles, proposal_dates, ppg_links);
 
+  //metadata
+  const metadata_aoa = getMetadataAoa();
+
   //build xlsx
   //create worksheets
-  const worksheet1 = XLSX.utils.aoa_to_sheet(metadata_aoa);
-  const worksheet2 = XLSX.utils.aoa_to_sheet(ppg_link_aoa);
-  const worksheet3 = XLSX.utils.aoa_to_sheet(data);
-  const worksheet4 = XLSX.utils.aoa_to_sheet(data_split);
+  const worksheet1 = XLSX.utils.aoa_to_sheet(data);
+  const worksheet2 = XLSX.utils.aoa_to_sheet(data_split);
+  const worksheet3 = XLSX.utils.aoa_to_sheet(ppg_link_aoa);
+  const worksheet4 = XLSX.utils.aoa_to_sheet(metadata_aoa);
 
   //create workbook
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet1, "詮釋資料");
-  XLSX.utils.book_append_sheet(workbook, worksheet2, "提案原始資料連結");
-  XLSX.utils.book_append_sheet(workbook, worksheet3, "對照表");
-  XLSX.utils.book_append_sheet(workbook, worksheet4, "對照表（分句）");
+  XLSX.utils.book_append_sheet(workbook, worksheet1, "對照表");
+  XLSX.utils.book_append_sheet(workbook, worksheet2, "對照表（分句）");
+  XLSX.utils.book_append_sheet(workbook, worksheet3, "提案原始資料連結");
+  XLSX.utils.book_append_sheet(workbook, worksheet4, "詮釋資料");
 
   //get law_name, source_str and timestamp for excel file name
   const law_name = $('li.breadcrumb-item').eq(1).find('a').text().trim();
