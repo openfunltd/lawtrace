@@ -57,15 +57,25 @@ $("#download-xlsx").on("click", function() {
   law_aoa_split = getLawAoa(last_section_idx, articleNums, bill_count, true);
   data_split = data_split.concat(law_aoa_split);
 
+  //metadata
+  const metadata_aoa = getMetadataAoa();
+
+  //ppg_links
+  const ppg_link_aoa = getPpgLinkAoa(titles, proposal_dates, ppg_links);
+
   //build xlsx
   //create worksheets
-  const worksheet1 = XLSX.utils.aoa_to_sheet(data);
-  const worksheet2 = XLSX.utils.aoa_to_sheet(data_split);
+  const worksheet1 = XLSX.utils.aoa_to_sheet(metadata_aoa);
+  const worksheet2 = XLSX.utils.aoa_to_sheet(ppg_link_aoa);
+  const worksheet3 = XLSX.utils.aoa_to_sheet(data);
+  const worksheet4 = XLSX.utils.aoa_to_sheet(data_split);
 
   //create workbook
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet1, "對照表");
-  XLSX.utils.book_append_sheet(workbook, worksheet2, "對照表（分句）");
+  XLSX.utils.book_append_sheet(workbook, worksheet1, "詮釋資料");
+  XLSX.utils.book_append_sheet(workbook, worksheet2, "提案原始資料連結");
+  XLSX.utils.book_append_sheet(workbook, worksheet3, "對照表");
+  XLSX.utils.book_append_sheet(workbook, worksheet4, "對照表（分句）");
 
   //get law_name, source_str and timestamp for excel file name
   const law_name = $('li.breadcrumb-item').eq(1).find('a').text().trim();
@@ -165,6 +175,27 @@ function buildSourceStr() {
   return str;
 }
 
+function getMetadataAoa() {
+  let metadata_aoa = [];
+  const source_type_str = $('li.breadcrumb-item').eq(2).text().trim();
+  metadata_aoa.push(['Lawtrace 網址', window.location.href]);
+  metadata_aoa.push(['檔案下載時間', getTimestampHumanReadable()]);
+  metadata_aoa.push(['法律名稱', $('li.breadcrumb-item').eq(1).find('a').text().trim()]);
+  metadata_aoa.push(['比較來源', source_type_str]);
+
+  return metadata_aoa;
+}
+
+function getPpgLinkAoa(titles, proposal_dates, ppg_links) {
+  //transpose 轉置
+  let ppg_link_aoa = [];
+  for (let i = 0; i < titles.length; i++) {
+    ppg_link_aoa.push([titles[i], proposal_dates[i], ppg_links[i]])
+  }
+
+  return ppg_link_aoa;
+}
+
 function chunkArray(arr, n) {
   let result = [];
   for (let i = 0; i < arr.length; i += n) {
@@ -181,6 +212,18 @@ function getTimestamp() {
     String(now.getDate()).padStart(2, '0') +
     String(now.getHours()).padStart(2, '0') +
     String(now.getMinutes()).padStart(2, '0') +
+    String(now.getSeconds()).padStart(2, '0')
+  );
+}
+
+function getTimestampHumanReadable() {
+  const now = new Date();
+  return (
+    now.getFullYear().toString() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0') + ' ' +
+    String(now.getHours()).padStart(2, '0') + ':' +
+    String(now.getMinutes()).padStart(2, '0') + ':' +
     String(now.getSeconds()).padStart(2, '0')
   );
 }
