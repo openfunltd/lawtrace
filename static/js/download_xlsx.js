@@ -186,9 +186,9 @@ function getMetadataAoa() {
   if (source_type_str == '三讀版本') {
     metadata_aoa.push(['版本', $('li.breadcrumb-item').eq(3).text().trim()]);
   } else if (source_type_str == '審查報告') {
-    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().trim().split('：')[1]]);
-    metadata_aoa.push(['審查會發文日期', $('div.review-date').eq(0).text().trim().split('：')[1]]);
-    metadata_aoa.push(['議案狀態', $('div.review-date').eq(1).text().trim().split('：')[1]]);
+    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().split('：')[1].trim()]);
+    metadata_aoa.push(['審查會發文日期', $('div.review-date').eq(0).text().split('：')[1].trim()]);
+    metadata_aoa.push(['議案狀態', $('div.review-date').eq(1).text().split('：')[1].trim()]);
   } else if (source_type_str == '法律議案') {
     divs = $('div.review-committee').toArray();
 
@@ -235,13 +235,13 @@ function getMetadataAoa() {
     metadata_aoa.push(proposer_aoa);
     metadata_aoa.push(cosigner_aoa);
     metadata_aoa.push(proposing_unit_aoa);
-    metadata_aoa.push(['提案日期', $('div.review-date').eq(0).text().trim().split('：')[1]]);
-    metadata_aoa.push(['提案狀態', $('div.review-date').eq(1).text().trim().split('：')[1]]);
+    metadata_aoa.push(['提案日期', $('div.review-date').eq(0).text().split('：')[1].trim()]);
+    metadata_aoa.push(['提案狀態', $('div.review-date').eq(1).text().split('：')[1].trim()]);
     metadata_aoa.push(bill_proposal_aoa);
   } else if (source_type_str == '委員會審查') {
-    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().trim().split('：')[1]]);
-    metadata_aoa.push(['審查會議日期', $('div.review-date').first().text().trim().split('：')[1]]);
-    metadata_aoa.push(['召委', $('div.convener').first().text().trim().split('：')[1]]);
+    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().split('：')[1].trim()]);
+    metadata_aoa.push(['審查會議日期', $('div.review-date').first().text().split('：')[1].trim()]);
+    metadata_aoa.push(['召委', $('div.convener').first().text().split('：')[1].trim()]);
   }
 
   return metadata_aoa;
