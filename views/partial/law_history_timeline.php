@@ -99,9 +99,9 @@ $history_groups = $this->_data['history_groups'];
                 公報
               </div>
               <div class="card-right">
-                <?php if ($history->進度 == '委員會審查' and property_exists($history, '公報議程編號')) { ?>
+                <?php if ($history->進度 == '委員會審查' and property_exists($history, 'agenda_id')) { ?>
                 <a class="btn btn-sm btn-outline-primary"
-                  href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->公報議程編號 ?>"
+                  href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->agenda_id ?>"
                   target="_blank"
                 >
                   LYZER AI摘要
