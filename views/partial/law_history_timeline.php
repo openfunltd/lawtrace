@@ -99,7 +99,16 @@ $history_groups = $this->_data['history_groups'];
                 公報
               </div>
               <div class="card-right">
-               <a class="btn btn-sm btn-outline-primary"
+                <?php if ($history->進度 == '委員會審查' and property_exists($history, '公報議程編號')) { ?>
+                <a class="btn btn-sm btn-outline-primary"
+                  href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->公報議程編號 ?>"
+                  target="_blank"
+                >
+                  LYZER AI摘要
+                  <i class="bi bi-box-arrow-up-right"></i>
+                </a>
+                <?php } ?>
+                <a class="btn btn-sm btn-outline-primary"
                   href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
                   原始資料
                   <i class="bi bi-box-arrow-up-right"></i>

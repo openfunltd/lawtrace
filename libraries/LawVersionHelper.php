@@ -181,6 +181,7 @@ class LawVersionHelper
         //repack 歷程 as 歷程 in progress
         if ($version_selected->歷程 ?? false) {
             $histories = $version_selected->歷程;
+            GazetteHelper::linkAgendaId($histories);
         } else {
             // 沒有歷程，可能是最新的版本，要去 progress API 找
             $res = LYAPI::apiQuery("/law/{$law_id}/progress", "查詢法律 {$law_id} 的進度");

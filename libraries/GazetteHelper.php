@@ -13,6 +13,16 @@ class GazetteHelper
                 $linked_data[] = $data;
             }
         }
+        $linked_data = self::queryAgendas($linked_data);
+        foreach ($histories as $history) {
+            foreach ($linked_data as $data) {
+                if ($history->立法紀錄 == $data->key) {
+                    $history->公報議程編號 = $data->公報議程編號;
+                }
+            }
+        }
+
+        return $histories;
     }
 
     private static function decomposeKey($data)
@@ -45,5 +55,46 @@ class GazetteHelper
 
     private static function queryAgendas($linked_data)
     {
+        //gather variables in query string
+        $scrolls = [];
+        $issues = [];
+        $volumes = [];
+        foreach ($linked_data as $data) {
+            if (!in_array($data->scroll, $scrolls)) {
+                $scrolls[] = $data->scroll;
+            }
+            if (!in_array($data->issue, $issues)) {
+                $issues[] = $data->issue;
+            }
+            if (!in_array($data->volume, $volumes)) {
+                $volumes[] = $data->volume;
+            }
+        }
+
+        //build query string
+        $url = sprintf("/gazette_agendas?%s&%s&%s&limit=1000",
+            '卷=' . implode('&卷=', $scrolls),
+            '期=' . implode('&期=', $issues),
+            '冊別=' . implode('&冊別=', $volumes)
+        );
+
+        $ret = LYAPI::apiQuery($url, "整批查詢公報議程編號（gazette_agenda_ids）");
+
+        //get matched gazette agenda
+        $agendas = $ret->gazetteagendas;
+        foreach ($linked_data as $data) {
+            foreach ($agendas as $agenda) {
+                if (
+                    $agenda->卷 == $data->scroll and $agenda->期 == $data->issue and $agenda->冊別 == $data->volume and
+                    $agenda->起始頁碼 <= $data->page_start and $data->page_end <= $agenda->結束頁碼
+                ) {
+                    $data->agenda = $agenda;
+                    $data->公報議程編號 = $agenda->公報議程編號;
+                    break;
+                }
+            }
+        }
+
+        return $linked_data;
     }
 }
