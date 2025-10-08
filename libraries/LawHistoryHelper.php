@@ -412,6 +412,16 @@ class LawHistoryHelper
                     if ($meet->會議代碼 != $history->meet_id) {
                         continue;
                     }
+
+                    //get 委員會名稱 array
+                    if ($history->進度 == '委員會審查' and !property_exists($history, 'meet_committees')) {
+                        $meet_committees = $meet->{'委員會代號:str'};
+                        foreach ($meet_committees as $idx => $meet_committee) {
+                           $meet_committees[$idx] = str_replace('委員會', '', $meet_committees[$idx]); 
+                        }
+                        $history->meet_committees = $meet_committees;
+                    }
+
                     //flatten meet related data into history(object)
                     $meet_data = $meet->會議資料 ?? [];
                     foreach ($meet_data as $single_date_meet_data) {
@@ -438,6 +448,31 @@ class LawHistoryHelper
                         }
                         break;
                     }
+
+                    //get ppg_gazette_url, agenda_id in meet property 公報發言紀錄
+                    if (property_exists($meet, '公報發言紀錄')) {
+                        foreach ($meet->公報發言紀錄 as $single_gazette_data) {
+                            if ($single_gazette_data->會議代碼 != $history->meet_id or !in_array($history->會議日期, $single_gazette_data->meetingDate)) {
+                                continue;
+                            }
+                            if (!property_exists($history, 'ppg_gazette_url')) {
+                                $history->gazette_ppg_url = $single_gazette_data->ppg_gazette_url;
+                            }
+                            if (!property_exists($history, '立法紀錄')) {
+                                $gazette_id = $single_gazette_data->gazette_id;
+                                $history->立法紀錄 = sprintf('%s卷%s期%s冊 %s-%s頁',
+                                    substr($gazette_id, 0, 3),
+                                    substr($gazette_id, 3, 2),
+                                    substr($gazette_id, 5, 2),
+                                    $single_gazette_data->page_start,
+                                    $single_gazette_data->page_end,
+                                );
+                            }
+                            $history->agenda_id = $single_gazette_data->agenda_id;
+                            break;
+                        }
+                    }
+
                     break;
                 }
             }
