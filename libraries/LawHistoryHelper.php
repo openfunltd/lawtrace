@@ -409,34 +409,36 @@ class LawHistoryHelper
                     continue;
                 }
                 foreach ($meets as $meet) {
-                    if ($meet->會議代碼 == $history->meet_id) {
-                        //flatten meet related data into history(object)
-                        $meet_data = $meet->會議資料 ?? [];
-                        foreach ($meet_data as $single_date_meet_data) {
-                            if ($single_date_meet_data->日期 == $history->會議日期) {
-                                //get ppg_url
-                                $history->ppg_url = $single_date_meet_data->ppg_url;
+                    if ($meet->會議代碼 != $history->meet_id) {
+                        continue;
+                    }
+                    //flatten meet related data into history(object)
+                    $meet_data = $meet->會議資料 ?? [];
+                    foreach ($meet_data as $single_date_meet_data) {
+                        if ($single_date_meet_data->日期 != $history->會議日期) {
+                            continue;
+                        }
+                        //get ppg_url
+                        $history->ppg_url = $single_date_meet_data->ppg_url;
 
-                                //get convener(召委) and it's party
-                                $convener = $single_date_meet_data->委員會召集委員 ?? null;
-                                if (isset($convener)) {
-                                    $convener = str_replace('委員', '', $convener);
-                                    $legislators_filtered = array_filter($legislators, function ($legislator) use ($convener) {
-                                        return $legislator->委員姓名 == $convener;
-                                    });
-                                    $legislator = reset($legislators_filtered);
-                                    if ($legislator !== false) {
-                                        $party = $legislator->黨籍;
-                                        $party_img_path = PartyHelper::getImage($party);
-                                    }
-                                    $history->convener = $convener;
-                                    $history->convener_party_img_path = $party_img_path;
-                                }
-                                break;
+                        //get convener(召委) and it's party
+                        $convener = $single_date_meet_data->委員會召集委員 ?? null;
+                        if (isset($convener)) {
+                            $convener = str_replace('委員', '', $convener);
+                            $legislators_filtered = array_filter($legislators, function ($legislator) use ($convener) {
+                                return $legislator->委員姓名 == $convener;
+                            });
+                            $legislator = reset($legislators_filtered);
+                            if ($legislator !== false) {
+                                $party = $legislator->黨籍;
+                                $party_img_path = PartyHelper::getImage($party);
                             }
+                            $history->convener = $convener;
+                            $history->convener_party_img_path = $party_img_path;
                         }
                         break;
                     }
+                    break;
                 }
             }
         }
