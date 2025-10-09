@@ -96,7 +96,7 @@ $history_groups = $this->_data['history_groups'];
           <?php if (property_exists($history, 'gazette_ppg_url')) { ?>
             <div class="history-card">
               <div class="card-left">
-                公報
+                公報位置
               </div>
               <div class="card-right">
                 <?= $this->escape($history->立法紀錄) ?>
