@@ -99,22 +99,22 @@ $history_groups = $this->_data['history_groups'];
                 公報
               </div>
               <div class="card-right">
-                <?php if (mb_strpos($history->進度, '委員會') !== false and property_exists($history, 'agenda_id')) { ?>
-                <a class="btn btn-sm btn-outline-primary"
-                  href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->agenda_id ?>"
-                  target="_blank"
-                >
-                  LYZER AI摘要
-                  <i class="bi bi-box-arrow-up-right"></i>
-                </a>
-                <?php } ?>
-                <a class="btn btn-sm btn-outline-primary"
-                  href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
-                  原始資料
-                  <i class="bi bi-box-arrow-up-right"></i>
-                </a>
+                <?= $this->escape($history->立法紀錄) ?>
                 <div class="hostory-rec">
-                  相關紀錄位置：<?= $this->escape($history->立法紀錄) ?>
+                  <?php if (mb_strpos($history->進度, '委員會') !== false and property_exists($history, 'agenda_id')) { ?>
+                  <a class="btn btn-sm btn-outline-primary"
+                    href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->agenda_id ?>"
+                    target="_blank"
+                  >
+                    LYZER AI 公報摘要
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
+                  <?php } ?>
+                  <a class="btn btn-sm btn-outline-primary"
+                    href="<?= $this->escape($history->gazette_ppg_url) ?>" target="_blank">
+                    下載位置
+                    <i class="bi bi-box-arrow-up-right"></i>
+                  </a>
                 </div>
               </div>
             </div>
