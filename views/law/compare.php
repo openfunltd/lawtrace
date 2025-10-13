@@ -79,6 +79,10 @@ $this->tab = 'compare';
                     設定比較對象
                     <i class="bi bi-pencil-fill ms-1"></i>
                   </button>
+                  <button id="download-xlsx" class="btn btn-outline-primary ms-1">
+                    匯出 excel
+                    <i class="bi bi-download ms-1"></i>
+                  </button>
               </div>
                 <div class="range-info">
               <!-- TODO: 待實作
@@ -351,6 +355,7 @@ $this->tab = 'compare';
         </div>
       </div>
   </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 diff_data = <?= json_encode([
     'diff' => $this->diff,
@@ -358,8 +363,7 @@ diff_data = <?= json_encode([
     'source' => $this->source,
 ]) ?>;
 </script>
-  <script src="/static/js/diff.js"></script>
-  <script src="/static/js/scroll.js"></script>
-<script>
-</script>
+<script src="/static/js/diff.js"></script>
+<script src="/static/js/scroll.js"></script>
+<script src="/static/js/download_xlsx.js"></script>
 <?= $this->partial('common/footer') ?>
