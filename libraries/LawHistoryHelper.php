@@ -356,6 +356,7 @@ class LawHistoryHelper
                         $agenda->起始頁碼 <= $gazette_agenda_start_page and
                         $agenda->結束頁碼 >= $gazette_agenda_start_page) {
 
+                        $history->agenda_id = $agenda->公報議程編號;
                         $agenda_committees_str = mb_substr($agenda->案由, 0, mb_strpos($agenda->案由, '委員會'));
                         //example: '經濟、財政兩' => '經濟、財政'
                         $agenda_committees_str = str_replace('兩', '', $agenda_committees_str);
@@ -468,7 +469,9 @@ class LawHistoryHelper
                                     $single_gazette_data->page_end,
                                 );
                             }
-                            $history->agenda_id = $single_gazette_data->agenda_id;
+                            if (!property_exists($history, 'agenda_id')) {
+                                $history->agenda_id = $single_gazette_data->agenda_id;
+                            }
                             break;
                         }
                     }
