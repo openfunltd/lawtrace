@@ -59,7 +59,7 @@ $news = IndexHelper::getOpenfunLog();
                 近期三讀通過
               </span>
               <div class="refer">
-                動態資訊來源：立法院法律系統
+                  動態資訊來源：<a href="https://lis.ly.gov.tw/lglawc/lglawkm" target="_blank">立法院法律系統</a>
               </div>
             </div>
             <?php foreach ($this->third_read_laws as $law) { ?>
@@ -79,7 +79,7 @@ $news = IndexHelper::getOpenfunLog();
                 近期出爐審查報告
               </span>
               <div class="refer">
-                動態資訊來源：立法院議事暨公報資訊網
+                  動態資訊來源：<a href="https://ppg.ly.gov.tw/ppg/bills/search?&criteria=proposalType&value=3&criteria=billAction&value=09&criteria=queryType&value=0" target="_blank">立法院議事暨公報資訊網</a>
               </div>
             </div>
             <?php foreach ($this->exammed_laws as $law) { ?>
@@ -99,7 +99,7 @@ $news = IndexHelper::getOpenfunLog();
                 近期審查會議
               </span>
               <div class="refer">
-                動態資訊來源：立法院議事暨公報資訊網
+                  動態資訊來源：<a href="https://ppg.ly.gov.tw/ppg/sittings/search?&criteria=keyword&value=%E5%AF%A9%E6%9F%A5&criteria=sittingCategory&value=%E4%B8%80%E8%88%AC%E6%9C%83%E8%AD%B0" target="_blank">立法院議事暨公報資訊網</a>
               </div>
             </div>
             <?php foreach ($this->examming_laws as $law) { ?>
