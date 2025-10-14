@@ -35,9 +35,13 @@ $news = IndexHelper::getOpenfunLog();
             <?php foreach ($news as $idx => $news_item) { ?>
               <div class="news-item">
                 <div class="date"><?= $this->escape($news_item->date) ?></div>
+                <?php if (property_exists($news_item, 'link')) { ?>
                 <a href="<?= $this->escape($news_item->link) ?>" target="_blank">
                   <?= $this->escape($news_item->title) ?>
                 </a>
+                <?php } else { ?>
+                <?= $this->escape($news_item->title) ?>
+                <?php } ?>
               </div>
               <?php if ($idx == 2) { break; } ?>
             <?php } ?>
