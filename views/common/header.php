@@ -1,8 +1,8 @@
 <?php
 if ($this->title ?? false) {
-    $this->title = "{$this->title} | LawTrace 立法歷程查詢";
+    $this->title = "{$this->title} | LawTrace 立法足跡";
 } else {
-    $this->title = "LawTrace 立法歷程查詢";
+    $this->title = "LawTrace 立法足跡";
 }
 
 ?>
@@ -32,7 +32,7 @@ if ($this->title ?? false) {
     <nav class="lt-navbar">
       <a class="logo" href="/">
         <img src="/static/images/logo_b.svg" alt="LawTrace">
-        立法歷程查詢
+        立法足跡
       </a>
       <a href="/about" class="lt-nav-items">
         關於我們
