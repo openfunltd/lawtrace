@@ -2,7 +2,7 @@
     <a href="">
         <img
             alt="Lawtrace"
-            src="https://github.com/user-attachments/assets/007b9a94-ffde-447b-89ac-301664534c54"
+            src="https://github.com/user-attachments/assets/70b14d6c-bdf8-496e-bbbf-2a438a09d3ec"
             width="300">
     </a>
 </div>
