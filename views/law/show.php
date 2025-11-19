@@ -107,6 +107,12 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
               $law_content = $content->內容 ?? '';
               $law_content_id = $content->法條編號 ?? '';
               $law_reason = $content->立法理由 ?? '';
+              $law_reason_source_version = $content->版本追蹤 ?? '';
+              if ($law_reason_source_version != '') {
+                  $law_reason_source_version = explode(':', $law_reason_source_version)[1];
+                  $law_reason_source_version_date = mb_substr($law_reason_source_version, 0, 10);
+                  $law_reason_source_version_action = mb_substr($law_reason_source_version, 11);
+              }
               ?>
               <?php if ($title_level !== false) { ?>
                 <div
@@ -144,6 +150,9 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
                       <div class="card-help">
                         <div class="help-title">
                           立法說明
+                          <?php if ($law_reason_source_version != '') { ?>
+                          (<?= LawVersionHelper::getMinguoDate($law_reason_source_version_date) ?> <?= $this->escape($law_reason_source_version_action) ?>)
+                          <?php } ?>
                           <i class="bi bi-chevron-down icon"></i>
                         </div>
                         <div class="help-body">
