@@ -104,7 +104,8 @@ if (strpos($version_id_input, "-progress")) {
                   <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
                 <?php } else { ?>
                   <?php foreach ($history_group->bill_log as $bill) { ?>
-                    <div id="<?= $this->escape($bill->bill_id ?? '') ?>" class="version-section-bar">
+                    <?php $id = $bill->bill_id ?? $bill->policy_uid ?? ''; ?>
+                    <div id="<?= $this->escape($id) ?>" class="version-section-bar">
                       <div class="title">
                         <?= $this->escape($bill->主提案 ?? $bill->proposers_str) ?>版本
                         <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
@@ -113,14 +114,19 @@ if (strpos($version_id_input, "-progress")) {
                         <?php } ?>
                       </div>
                       <div class="actions">
+                        <?php if ($bill->compare_url) { ?>
                         <a href="<?= $this->escape($bill->compare_url) ?>" class="btn btn-sm btn-outline-primary">
                           <i class="bi-arrow-right"></i>
                           比較議案
                         </a>
-                        <a href="<?= $this->escape($bill->review_ppg_url) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
+                        <?php } ?>
+                        <?php $source_url = $bill->review_ppg_url ?? $bill->policy_url ?? null ?>
+                        <?php if ($source_url) { ?>
+                        <a href="<?= $this->escape($source_url) ?>" class="btn btn-sm btn-outline-primary" target="_blank">
                           <i class="bi-box-arrow-up-right"></i>
                           原始資料
                         </a>
+                        <?php } ?>
                       </div>
                     </div>
                   <?php } ?>
