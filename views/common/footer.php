@@ -27,6 +27,9 @@
                     <?php foreach (LYAPI::getLogs() as $log) { ?>
                     <li><a class="dropdown-item" href="<?= $this->escape($log[0]) ?>" target="_blank"><?= $this->escape($log[1]) ?></a></li>
                     <?php } ?>
+                    <?php foreach (PolicyAPI::getLogs() as $log) {?>
+                    <li><a class="dropdown-item" href="<?= $this->escape($log[0]) ?>" target="_blank"><?= $this->escape($log[1]) ?></a></li>
+                    <?php } ?>
                 </ul>
             </span>）
           </li>
