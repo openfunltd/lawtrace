@@ -213,11 +213,11 @@ class DiffHelper
                     $rule_no = explode('　', $row->現行)[0];
                     $origin = explode('　', $row->現行, 2)[1];
                     $law_content_id = $row->law_content_id ?? null;
-                    $new = explode('　', $row->修正)[1] ?? '';
+                    $new = explode('　', $row->修正, 2)[1] ?? '';
                 } else if (($row->現行法 ?? false) and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->現行法)[0];
                     $origin = explode('　', $row->現行法, 2)[1];
-                    $new = explode('　', $row->修正)[1] ?? '';
+                    $new = explode('　', $row->修正, 2)[1] ?? '';
                 } elseif ($row->增訂 ?? false) {
                     if ($row->條號 ?? false and strlen($row->條號) < 20) {
                         // 有條號以條號優先，但是有時條號有 bug 會錯誤，所以字數要小於 20
