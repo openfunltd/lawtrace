@@ -239,6 +239,8 @@ class LawController extends MiniEngine_Controller
             $this->view->bill = $ret->bill;
         } elseif ('version' == $type) {
             $law_id = explode(':', $source_input)[1];
+        } elseif ('join-policy' == $type) {
+            $policy_uid = explode(':', $source_input)[1];
         }
         if ($ret->version_id_input ?? false) {
             $this->view->version_id_input = $ret->version_id_input;
@@ -256,7 +258,7 @@ class LawController extends MiniEngine_Controller
 
         // 透過議案編號取得版本資訊
         $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos, $source_input);
-        if ('bill' == $type) {
+        if (in_array($type, ['bill', 'join-policy'])) {
             $this->view->version_id_input = $all_versions->version_id_input;
         }
         $this->view->law_id = $law_id = $all_versions->law_id;

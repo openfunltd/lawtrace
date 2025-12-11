@@ -38,6 +38,12 @@ class PolicyHelper
             //proposers_str
             //article_numbers
             //review_ppg_url
+            $compare_url = sprintf("https://%s/law/compare?source=join-policy:%s:%s",
+                $_SERVER['HTTP_HOST'],
+                $policy->policy_uid,
+                $law_id
+            );
+            $policy_formatted->compare_url = $compare_url;
             $policy_formatted->policy_url = "https://join.gov.tw/policies/detail/{$policy->policy_uid}";
             $policy_log[] = $policy_formatted;
         }
