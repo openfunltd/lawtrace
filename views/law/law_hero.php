@@ -44,6 +44,9 @@ if ('meet' == $this->source_type) {
     } else {
         $tabs[] = ['議案原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
     }
+} elseif ('join-policy' == $this->source_type) {
+    $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]);
+    $tabs[] = ['部預告版原始資料', $join_policy_url, 'join-policy', ['icon' => 'bi bi-box-arrow-up-right']];
 }
 
 // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作；還要檢查不是未議決議案
