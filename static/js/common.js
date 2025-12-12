@@ -23,6 +23,23 @@ function init () {
     }
   });
 
+  $(document).on('click', (event) => {
+    const dropdown = event.target.closest('.dropdown-select');
+
+    // close all dropdown but clicked dropdown
+    $('.dropdown-select').each((idx, elem) => {
+      if (elem === dropdown) {
+        return;
+      }
+
+      const select = $(elem);
+      const icon = select.find('.icon');
+      const menu = select.find('.select-list');
+      icon.removeClass(openIcon).addClass(closeIcon);
+      menu.removeClass(show);
+    });
+  });
+
   // 樹狀選單
   $(document).on('click', '.side-menu .menu-head i', (event) => {
     const menuItem = $(event.currentTarget.parentNode.parentNode);
@@ -96,8 +113,37 @@ function init () {
     });
   }
 
-  $('.add-compare-target, .set-compare-target').on('click', () => {
+  $('.add-compare-target, .add-compare-target-link, .set-compare-target').on('click', event => {
     $('.compare-target-modal').modal('show');
+    event.preventDefault();
+  });
+
+  function calcScrollableCompareLawDiffRowStickyY () {
+    const lawCompareDiffRow = $('.law-compare-wrapper .law-diff-row:not(.law-diff-header-row)');
+    const stickyStartY = 260;
+    const stickyAddY = 6;
+
+    if (lawCompareDiffRow.length === 0) return;
+    if (lawCompareDiffRow[0].getBoundingClientRect().top > stickyStartY) {
+      lawCompareDiffRow.css('--sticky-y', '0');
+    };
+
+    const stickyY = Math.floor(stickyAddY - lawCompareDiffRow[0].getBoundingClientRect().top + stickyStartY);
+    lawCompareDiffRow.css('--sticky-y', `${stickyY}px`);
+  }
+
+  window.addEventListener('scroll', calcScrollableCompareLawDiffRowStickyY, { passive: true });
+  window.addEventListener('resize', calcScrollableCompareLawDiffRowStickyY, { passive: true });
+
+  $('.law-diff-head [data-bs-toggle="dropdown"]').each((idx, elem) => {
+    new bootstrap.Dropdown(elem, {
+      popperConfig(defaults) {
+        return {
+          ...defaults,
+          strategy: 'fixed',
+        }
+      }
+    });
   });
 }
 
