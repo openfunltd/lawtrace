@@ -48,15 +48,90 @@ class PolicyHelper
             $policy_log[] = $policy_formatted;
         }
 
-        //case: 未議決議案:僅未審查一種分類
-        if (count($history_groups) == 1 and $history_groups[0]->id == '未分類') {
-            $merged = array_merge($history_groups[0]->bill_log, $policy_log);
+        //非未審查的分類中，有院版的 bill，納入鏈結的部預告版進入分類中
+        foreach ($history_groups as $group_key => $history_group) {
+            if ($history_group->id == '未分類') continue;
+            foreach ($history_group->bill_log  as $bill) {
+                if (mb_strpos($bill->主提案, '行政院') === false) continue;
+                $res = PolicyAPI::apiQuery("/policy/bybill/{$law_id}/{$bill->bill_id}", "依法律{$law_id}查詢部預告版");
+                $linked_policies = $res->policies;
+                $linked_policy_uids = array_map(fn($linked_policy) => $linked_policy->policy_uid, $linked_policies);
+                foreach ($policy_log as $key => $policy) {
+                    if (($matched_key = array_search($policy->policy_uid, $linked_policy_uids)) === false) {
+                        $policy_log[$key]->is_linked = false;
+                        continue;
+                    }
+                    $policy_log[$key]->is_linked = true;
+                    //TODO list article_nums of policy
+                    $policy_log[$key]->article_numbers = self::getArticleNums($linked_policies[$matched_key]->對照表);
+
+                    //insert join policy into timeline
+                    $history_groups[$group_key]->timeline[] = (object) [
+                        '會議民國日期' => $policy->會議民國日期,
+                        '進度' => '部預告版發布',
+                        'items' => [$policy],
+                    ];
+                    usort($history_groups[$group_key]->timeline, function($tl_a, $tl_b) {
+                        return $tl_a->會議民國日期 <=> $tl_b->會議民國日期;
+                    });
+                }
+            }
+        }
+        $policy_log = array_filter($policy_log, fn($policy) => !$policy->is_linked);
+
+        //剩下的 policies 放進未審查分類中
+        foreach ($history_groups as $key => $history_group) {
+            if ($history_group->id != '未分類') continue;
+            $merged = array_merge($history_group->bill_log, $policy_log);
             usort($merged, function($bill_a, $bill_b) {
                 return $bill_a->會議日期 <=> $bill_b->會議日期;
             });
-            $history_groups[0]->bill_log = $merged;
+            $history_groups[$key]->bill_log = $merged;
         }
 
         return $history_groups;
+    }
+
+    public static function getArticleNums($amendment_table)
+    {
+        $key = (property_exists($amendment_table[0], '修正')) ? '修正' : '條文';
+
+        $article_nums = array_map(function($row) use ($key) {
+            $text = $row->{$key};
+            $text = mb_ereg_replace('　', ' ', $text);
+            $article_num = explode(' ', $text)[0];
+
+            //多檢查 start index
+            $start_idx = mb_strpos($article_num, '第');
+            $article_num = mb_substr($article_num, $start_idx);
+
+            $article_num = mb_ereg_replace('第', '', $article_num);
+            $article_num = mb_ereg_replace('條', '', $article_num);
+            $article_num = mb_ereg_replace('章', '', $article_num);
+            $article_num_arr = explode('之', $article_num);
+            foreach ($article_num_arr as $idx => $number) {
+                try {
+                    $article_num_arr[$idx] = LyTcToolkit::parseNumber($number);
+                } catch (Exception $e) {
+                    return '';
+                }
+            }
+            $article_num = implode('-', $article_num_arr);
+            return $article_num;
+        }, $amendment_table ?? []);
+
+        //filter out chapters
+        //TODO 確認是否要呈現修改章節名稱
+        $article_nums = array_filter($article_nums, function($article_num) {
+            $chapter_units = ['篇', '章', '節', '款', '目'];
+            foreach ($chapter_units as $unit) {
+                if (mb_strpos($article_num, $unit) !== false) {
+                    return false;
+                }
+            }
+            return true;
+        });
+
+        return $article_nums;
     }
 }
