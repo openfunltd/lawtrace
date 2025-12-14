@@ -260,6 +260,14 @@ class LawController extends MiniEngine_Controller
         $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos, $source_input);
         if (in_array($type, ['bill', 'join-policy'])) {
             $this->view->version_id_input = $all_versions->version_id_input;
+            foreach ($all_versions->bills as $bill_name => $bill) {
+                $current_policy_uid = $bill->policy_uid ?? null;
+                if ($current_policy_uid == $policy_uid) {
+                    $this->view->policy_hostname = $bill_name;
+                    $this->view->hostname = $bill->主協辦單位;
+                    $this->view->published_date = $bill->發布日期;
+                };
+            }
         }
         $this->view->law_id = $law_id = $all_versions->law_id;
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表

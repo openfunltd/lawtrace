@@ -128,6 +128,13 @@ if ($this->version ?? false and !$is_progress) {
             <li class="breadcrumb-item active">
             <?= sprintf("第 %d 屆", $this->progress_term) ?>
             </li>
+          <?php } elseif ($this->source_type == 'join-policy') { ?>
+            <li class="breadcrumb-item active">
+              部預告版
+            </li>
+            <li class="breadcrumb-item active">
+            <?= $this->escape($this->policy_hostname) ?>
+            </li>
           <?php } ?>
         </ol>
       </nav>
@@ -200,6 +207,13 @@ if ($this->version ?? false and !$is_progress) {
             案由：<?= $this->escape($this->bill->案由) ?>
         </div>
         <?php } ?>
+      <?php } elseif ($this->source_type == 'join-policy') { ?>
+      <div class="review-committee">
+        主協辦單位：<?= $this->escape($this->hostname) ?>
+      </div>
+      <div class="review-date">
+        發布日期：<?= $this->escape($this->published_date) ?>
+      </div>
       <?php } ?>
       </div>
       <div class="btn-group law-pages">
