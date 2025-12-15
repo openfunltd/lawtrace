@@ -55,7 +55,7 @@ class PolicyHelper
                 if (mb_strpos($bill->主提案, '行政院') === false) continue;
                 if (!property_exists($bill, 'bill_id')) continue;
                 $res = PolicyAPI::apiQuery("/policy/bybill/{$law_id}/{$bill->bill_id}", "依法律{$law_id}查詢部預告版");
-                $linked_policies = $res->policies;
+                $linked_policies = $res->policies ?? [];
                 $linked_policy_uids = array_map(fn($linked_policy) => $linked_policy->policy_uid, $linked_policies);
                 foreach ($policy_log as $key => $policy) {
                     if (($matched_key = array_search($policy->policy_uid, $linked_policy_uids)) === false) {
@@ -134,5 +134,48 @@ class PolicyHelper
         });
 
         return $article_nums;
+    }
+
+    public static function getPolicyComparison($law_id, $bill_id)
+    {
+        $res = PolicyAPI::apiQuery("/policy/bybill/{$law_id}/{$bill_id}", "查詢 {$bill_id} 的關聯部預告版");
+        $policy = $res->policies[0] ?? null;
+        if (is_null($policy)) return null;
+
+        $policy_version = (object) [
+            'id' => $policy->policy_uid,
+            'title' => "{$policy->主協辦單位}部預告版本",
+            'subtitle' => LawHistoryHelper::getMinguoDateFormat2($policy->發布日期),
+            '原始資料' => "https://join.gov.tw/policies/detail/{$policy->policy_uid}",
+            '提案單位' => $policy->主協辦單位,
+            '對照表' => self::getComparison($policy->對照表),
+        ];
+        return [$policy_version, $policy];
+    }
+
+    //用在 /law/comapare 的格式的對照表
+    public static function getComparison($amendment_table)
+    {
+        $comparison = [];
+        foreach ($amendment_table as $row) {
+            //修正 keys: 現行法、說明、修正
+            if (property_exists($row, '現行法')) {
+                $origin = str_replace("　", " ", $row->現行法);
+                $origin = mb_substr($origin, mb_strpos($origin, ' ') + 1);
+                $new = str_replace("　", " ", $row->修正);
+                $rule_no = explode(' ', $new)[0];
+                $new = mb_substr($new, mb_strpos($new, ' ') + 1);
+            } else { //新法草案 keys: 條文、說明
+                $new = str_replace("　", " ", $row->條文);
+                $rule_no = explode('', $new)[0];
+                $new = mb_substr($new, mb_strpos($new, ' ') + 1);
+            }
+            $comparison[] = [
+                '條文' => $rule_no,
+                '內容' => $new,
+                '說明' => $row->說明,
+            ];
+        }
+        return $comparison;
     }
 }

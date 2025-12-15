@@ -494,6 +494,18 @@ class DiffHelper
             return strtotime($a->date) - strtotime($b->date);
         });
         $obj->versions = array_values($obj->versions);
+
+        $policy_comparison_data_arr = [];
+        foreach ($obj->versions as $key => $version) {
+            if (!str_contains($version->提案單位, '行政院')) continue;
+            if (is_null($policy_comparison_data = PolicyHelper::getPolicyComparison($obj->law_id, $version->議案編號))) continue;
+            $policy_comparison_data_arr[$version->議案編號] = array_merge([$key], $policy_comparison_data);
+        }
+        foreach ($policy_comparison_data_arr as $bill_id => $policy_comparison_data) {
+            [$key, $policy_version, $policy] = $policy_comparison_data;
+            array_splice($obj->versions, $key + 1, 0, [$policy_version]);
+            $obj->bills->{$policy_version->title} = $policy;
+        }
         return $obj;
     }
 
