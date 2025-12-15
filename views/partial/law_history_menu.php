@@ -42,7 +42,8 @@ foreach ($history_groups as $history_group) {
         <?php } else { ?>
           <?php foreach ($history_group->bill_log as $bill) { ?>
             <li>
-              <a href="#<?= $this->escape($bill->bill_id ?? '') ?>">
+              <?php $id = $bill->bill_id ?? $bill->policy_uid ?? ''; ?>
+              <a href="#<?= $this->escape($id) ?>">
                 <?= $this->escape($bill->主提案 ?? $bill->proposers_str) ?>版本
                 <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
               </a>

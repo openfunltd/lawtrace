@@ -44,6 +44,9 @@ if ('meet' == $this->source_type) {
     } else {
         $tabs[] = ['議案原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
     }
+} elseif ('join-policy' == $this->source_type) {
+    $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]);
+    $tabs[] = ['部預告版原始資料', $join_policy_url, 'join-policy', ['icon' => 'bi bi-box-arrow-up-right']];
 }
 
 // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作；還要檢查不是未議決議案
@@ -125,6 +128,13 @@ if ($this->version ?? false and !$is_progress) {
             <li class="breadcrumb-item active">
             <?= sprintf("第 %d 屆", $this->progress_term) ?>
             </li>
+          <?php } elseif ($this->source_type == 'join-policy') { ?>
+            <li class="breadcrumb-item active">
+              部預告版
+            </li>
+            <li class="breadcrumb-item active">
+            <?= $this->escape($this->policy_hostname) ?>
+            </li>
           <?php } ?>
         </ol>
       </nav>
@@ -197,6 +207,13 @@ if ($this->version ?? false and !$is_progress) {
             案由：<?= $this->escape($this->bill->案由) ?>
         </div>
         <?php } ?>
+      <?php } elseif ($this->source_type == 'join-policy') { ?>
+      <div class="review-committee">
+        主協辦單位：<?= $this->escape($this->hostname) ?>
+      </div>
+      <div class="review-date">
+        發布日期：<?= $this->escape($this->published_date) ?>
+      </div>
       <?php } ?>
       </div>
       <div class="btn-group law-pages">

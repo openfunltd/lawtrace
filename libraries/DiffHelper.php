@@ -4,13 +4,16 @@ class DiffHelper
 {
     public static function getBillNosFromSource($id)
     {
-        // 可來自 會議、審查報告、三讀版本
+        // 可來自 會議、審查報告、三讀版本、JOIN 平台眾開講
         //   會議：meet:{meet_id}:{law_id} Ex: meet:委員會-11-2-23-20:02017 
         //     因為一場會議可能有多個法案，需指定 law_id ，會抓取該會議的相關議案
         //   審查報告：bill:{billNo} Ex: bill:203110083270000
         //     審查報告會有關係議案
         //   三讀版本：version:{law_id}:{date} Ex: version:01254:2024-12-31
         //     三讀版本也會有完整關係議案
+        //   JOIN 平台眾開講(policy)
+        //     id 格式: {8hex}-{4hex}-{4hex}-{4hex}-{12hex}
+        //     一個 policy 可能有多個法案，需指定 law_id
         $terms = explode(':', $id);
         $type = $terms[0];
         $obj = new StdClass;
@@ -97,6 +100,12 @@ class DiffHelper
                     $obj->billNos[] = $record->關係文書->billNo;
                 }
             }
+        } elseif ('join-policy' == $type) {
+            $policy_uid = $terms[1];
+            if (!($terms[2] ?? false)) {
+                throw new Exception("policy_uid 必須指定 law_id");
+            }
+            $obj->billNos[] = $policy_uid;
         }
 
         $obj->billNos = array_values(array_unique($obj->billNos));
@@ -114,6 +123,72 @@ class DiffHelper
         if (!count($billnos)) {
             throw new Exception("No bill found");
         }
+
+        if (strpos($source, 'join-policy:') === 0) {
+            $policy_uid = explode(':', $source)[1];
+            $ret = PolicyAPI::apiQuery("/policy/show/{$policy_uid}", "抓取部預告版 {$policy_uid} 資料");
+            $policy = $ret->data;
+            $version_name = $policy->主協辦單位 . '部預告版本';
+            $law_id = explode(':', $source)[2];
+            $published_date = $policy->發布日期;
+            $term = LyDateHelper::getTermViaDate($published_date);
+            $comparison = $policy->對照表 ?? [];
+            if (empty($comparison)) {
+                throw new Exception("無部預告版對照表資料或因技術困難尚未解析出對照表資料<br>部預告版原始資料：https://join.gov.tw/policies/detail/{$policy_uid}");
+            }
+
+            if (property_exists($comparison[0], '現行法')) { //修正時有現行版本
+                $obj->versions['現行版本'] = (object)[
+                    'id' => '現行版本',
+                    'title' => '現行版本',
+                    'subtitle' => '',
+                    'law_id' => $obj->law_id,
+                    '原始資料' => 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $obj->law_id,
+                    '議案編號' => '',
+                    '對照表' => [],
+                ];
+            }
+            $obj->versions[$policy_uid] = (object)[
+                'id' => $policy_uid,
+                'title' => $version_name,
+                'subtitle' => LawHistoryHelper::getMinguoDateFormat2($published_date),
+                '原始資料' => "https://join.gov.tw/policies/detail/{$policy_uid}",
+                '提案單位' => $policy->主協辦單位,
+                '對照表' => [],
+            ];
+            foreach ($comparison as $row) {
+                //修正 keys: 現行法、說明、修正
+                if (property_exists($row, '現行法')) {
+                    $origin = str_replace("　", " ", $row->現行法);
+                    $rule_no = explode(' ', $origin)[0];
+                    $origin = mb_substr($origin, mb_strpos($origin, ' ') + 1);
+                    $new = str_replace("　", " ", $row->修正);
+                    $new = mb_substr($new, mb_strpos($new, ' ') + 1);
+
+                    $obj->versions['現行版本']->{'對照表'}[$rule_no] = [
+                        '條文' => $rule_no,
+                        '內容' => $origin,
+                        '說明' => '',
+                    ];
+                } else { //新法草案 keys: 條文、說明
+                    $new = str_replace("　", " ", $row->條文);
+                    $rule_no = explode(' ', $new)[0];
+                    $new = mb_substr($new, mb_strpos($new, ' ') + 1);
+                }
+                $obj->versions[$policy_uid]->{'對照表'}[$rule_no] = [
+                    '條文' => $rule_no,
+                    '內容' => $new,
+                    '說明' => $row->說明,
+                ];
+            }
+
+            $obj->bills->{$version_name} = $policy;
+            $obj->law_id = $law_id;
+            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, $term);
+
+            return $obj;
+        }
+
         $params = [];
         $params[] = 'output_fields=提案單位/提案委員';
         $params[] = 'output_fields=提案編號';
@@ -419,6 +494,18 @@ class DiffHelper
             return strtotime($a->date) - strtotime($b->date);
         });
         $obj->versions = array_values($obj->versions);
+
+        $policy_comparison_data_arr = [];
+        foreach ($obj->versions as $key => $version) {
+            if (!str_contains($version->提案單位, '行政院')) continue;
+            if (is_null($policy_comparison_data = PolicyHelper::getPolicyComparison($obj->law_id, $version->議案編號))) continue;
+            $policy_comparison_data_arr[$version->議案編號] = array_merge([$key], $policy_comparison_data);
+        }
+        foreach ($policy_comparison_data_arr as $bill_id => $policy_comparison_data) {
+            [$key, $policy_version, $policy] = $policy_comparison_data;
+            array_splice($obj->versions, $key + 1, 0, [$policy_version]);
+            $obj->bills->{$policy_version->title} = $policy;
+        }
         return $obj;
     }
 

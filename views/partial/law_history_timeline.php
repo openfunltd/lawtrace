@@ -14,7 +14,7 @@ $history_groups = $this->_data['history_groups'];
           </a>
         <?php } ?>
       </div>
-      <?php if (in_array($timeline_node->進度, ['一讀', '撤案'])) { ?>
+      <?php if (in_array($timeline_node->進度, ['一讀', '部預告版發布', '撤案'])) { ?>
         <div class="item-body">
           <div class="history-grid">
             <div class="grid-head">
@@ -38,7 +38,7 @@ $history_groups = $this->_data['history_groups'];
                       第 <?= implode(', ', ($history->article_numbers)) ?> 條
                     <?php } ?>
                   </div>
-                  <?php if (property_exists($history, 'ppg_url')) { ?>
+                  <?php if (property_exists($history, 'ppg_url') or property_exists($history, 'compare_url')) { ?>
                     <div class="details">
                       <a href="<?= $this->escape($history->compare_url)?>" target="_blank">
                         議案詳細資訊

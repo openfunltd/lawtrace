@@ -120,6 +120,8 @@ class LawController extends MiniEngine_Controller
             $this->view->source = $source_input;
         }
         $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
+        $history_groups = PolicyHelper::addToHistoryGroup($law_id, $term_selected, $history_groups);
+
         $this->view->history_groups = $history_groups;
     }
 
@@ -237,6 +239,8 @@ class LawController extends MiniEngine_Controller
             $this->view->bill = $ret->bill;
         } elseif ('version' == $type) {
             $law_id = explode(':', $source_input)[1];
+        } elseif ('join-policy' == $type) {
+            $policy_uid = explode(':', $source_input)[1];
         }
         if ($ret->version_id_input ?? false) {
             $this->view->version_id_input = $ret->version_id_input;
@@ -254,8 +258,16 @@ class LawController extends MiniEngine_Controller
 
         // 透過議案編號取得版本資訊
         $all_versions = DiffHelper::getVersionsFromBillNos($ret->billNos, $source_input);
-        if ('bill' == $type) {
+        if (in_array($type, ['bill', 'join-policy'])) {
             $this->view->version_id_input = $all_versions->version_id_input;
+            foreach ($all_versions->bills as $bill_name => $bill) {
+                $current_policy_uid = $bill->policy_uid ?? null;
+                if ($current_policy_uid == $policy_uid) {
+                    $this->view->policy_hostname = $bill_name;
+                    $this->view->hostname = $bill->主協辦單位;
+                    $this->view->published_date = $bill->發布日期;
+                };
+            }
         }
         $this->view->law_id = $law_id = $all_versions->law_id;
         // 如果有透過 $_GET['version'] 指定要篩選的版本，就只取出這些版本的對照表
