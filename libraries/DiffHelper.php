@@ -172,7 +172,7 @@ class DiffHelper
                     ];
                 } else { //新法草案 keys: 條文、說明
                     $new = str_replace("　", " ", $row->條文);
-                    $rule_no = explode('', $new)[0];
+                    $rule_no = explode(' ', $new)[0];
                     $new = mb_substr($new, mb_strpos($new, ' ') + 1);
                 }
                 $obj->versions[$policy_uid]->{'對照表'}[$rule_no] = [

@@ -167,7 +167,7 @@ class PolicyHelper
                 $new = mb_substr($new, mb_strpos($new, ' ') + 1);
             } else { //新法草案 keys: 條文、說明
                 $new = str_replace("　", " ", $row->條文);
-                $rule_no = explode('', $new)[0];
+                $rule_no = explode(' ', $new)[0];
                 $new = mb_substr($new, mb_strpos($new, ' ') + 1);
             }
             $comparison[] = [
