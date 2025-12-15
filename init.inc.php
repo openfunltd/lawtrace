@@ -18,4 +18,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 if (!getenv('LYAPI_HOST')) {
     putenv('LYAPI_HOST=ly.govapi.tw/v2');
 }
+if (!getenv('POLICYAPI_HOST')) {
+    putenv('POLICYAPI_HOST=policy.join.govapi.tw');
+}
 MiniEngine::initEnv();
