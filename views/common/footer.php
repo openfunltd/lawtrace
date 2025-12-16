@@ -36,6 +36,9 @@
           <li>
             加入 <a href="https://g0v-tw.slack.com/archives/CDRE0Q0CE" target="_blank">g0v 國會松頻道</a>交流與協作。若您尚未註冊 g0v slack 帳號，請<a href="https://g0v.hackmd.io/@jothon/joing0vslack#g0v-Slack-%E8%A8%BB%E5%86%8A%E6%AD%A5%E9%A9%9F%E5%9C%96%E8%A7%A3-g0v-Slack-Registration-Tutorial" target="_blank">先到這裡</a>註冊
           </li>
+          <li>
+            本網站於每日更新，皆使用來自立法院之原始開放資料（不使用 AI 判讀轉譯）
+          </li>
         </ul>
         <p class="my-0">
           如果您在使用本頁面時遇到問題、發現錯誤或有其他建議，歡迎透過<a href="https://forms.gle/LhZUtZbwNpTDyhNC6" target="_blank">這份回報表單</a>告訴我們。
