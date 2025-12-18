@@ -82,6 +82,10 @@ if (strpos($version_id_input, "-progress")) {
               <?php } ?>
               <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
             <?php } elseif ($is_progress_history) { ?>
+              <div class="alert alert-primary" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                本頁資料只包含來自「立法院法律系統」的經歷過程、「立法院議事暨公報資訊網」的相關會議頁面、「立法院議事及發言系統」的三讀狀態、及「公共政策網路參與平臺」的眾開講法令草案預告，並於每日更新。
+              </div>
               <?= $this->partial('partial/law_history_menu', ['history_groups' => $this->history_groups]) ?>
               <?php foreach ($this->history_groups as $history_group) { ?>
                 <?php if ($history_group->id != '未分類') { ?>
