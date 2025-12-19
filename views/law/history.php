@@ -51,9 +51,9 @@ if (strpos($version_id_input, "-progress")) {
                             ?>
                             <a href="<?= $this->escape($history_url) ?>">
                               <?php if (property_exists($version, '動作')) { ?>
-                                <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
+                              <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
                               <?php } else { ?>
-                                未議決議案
+                              <?= ($is_current_term ? '待審議案' : '過期議案')?>
                               <?php } ?>
                             </a>
                           </div>
