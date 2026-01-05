@@ -578,6 +578,10 @@ class DiffHelper
 
     public static function ruleNoToNumber($rule_no)
     {
+        if (preg_match('#^第(.*)之(.*)條$#u', $rule_no, $matches)) {
+            return LyTcToolkit::parseNumber($matches[1]) * 1000 + LyTcToolkit::parseNumber($matches[2]);
+        }
+
         if (preg_match('#^第(.*)條$#u', $rule_no, $matches)) {
             return LyTcToolkit::parseNumber($matches[1]) * 1000;
         }
