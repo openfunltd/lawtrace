@@ -391,4 +391,106 @@ $(function(){
 
 });
 
+var law_versions = null;
+$('.set-compare-target').on('modal-show', function() {
+    // 從 diff_data.diff.versions 把他寫入 
+    $('.version-list').html('');
+    for (var version_id of diff_data.diff.choosed_version_ids) {
+      version_data = diff_data.diff.versions[version_id];
+      version_list_dom = $($('#tmpl-version-list').html());
+      $('label.form-check-label', version_list_dom).text(version_data.title + '｜' + version_data.subtitle);
+      $('.version-list').append(version_list_dom);
+    }
+    check_term_by_date = function(date) {
+      range = {
+        11: [ 20240201, 20280131 ],
+        10: [ 20200201, 20240131 ],
+        9: [ 20160201, 20200131 ],
+        8: [ 20120201, 20160131 ],
+        7: [ 20080201, 20120131 ], // 任期改為4年
+        6: [ 20050201, 20080131 ],
+        5: [ 20020201, 20050131 ],
+        4: [ 19990201, 20020131 ],
+        3: [ 19960201, 19990131 ],
+        2: [ 19930201, 19960131 ],
+        1: [ 19480201, 19930131 ], // 萬年國會
+      }
+      // 如果是 string ，去掉 - 轉成 int
+      if (typeof date === 'string') {
+          date = parseInt(date.replace(/-/g, ''));
+      }
+      // 檢查 date(int YYYYMMDD) 在哪個 range 裡面
+      for (var term in range) {
+        if (date >= range[term][0] && date <= range[term][1]) {
+          return term;
+        }
+      }
+    };
+    $.when(
+            $.get(ly_api_base + '/stat'),
+            $.get(ly_api_base + '/law/' + diff_data.law_id + '/versions')
+          ).done(function(stats_data, lawversions_data){
+              // 幫每個 version 加上 term
+              term_versions = [];
+              law_versions = lawversions_data[0].lawversions;
+              for (var i = 0; i < law_versions.length; i++) {
+                  term = check_term_by_date(law_versions[i]['日期']);
+                  law_versions[i].term = term;
+                  if ('undefined' === typeof(term_versions[term])) {
+                      term_versions[term] = [];
+                  }
+                  term_versions[term].push(law_versions[i]);
+              }
+
+              current_term = stats_data[0].legislator.terms[0].term;
+              $('#version-select-list').html('');
+              for (term = current_term; term >= law_versions[0].term; term--) {
+                term_str = "第 " + term + " 屆";
+                if (term == current_term) {
+                    term_str += "（目前屆期）";
+                }
+                $('<div></div>')
+                   .addClass('dropdown-item disabled group-label')
+                   .text(term_str)
+                   .appendTo('#version-select-list');
+                if ('undefined' === typeof(term_versions[term])) {
+                    versions = [];
+                } else { 
+                    versions = term_versions[term];
+                }
+                for (var version of versions) {
+                  date_term = version['日期'].split('-');
+                  version['日期'] = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
+                  version_str = version['日期'] + '｜' + version['動作'];
+
+                  version_dom = $('<span></span>')
+                      .addClass('dropdown-item')
+                      .data('version_id', version['版本編號'])
+                      .text(version_str)
+                      .appendTo('#version-select-list');
+                }
+
+                if (term == current_term) {
+                    more_str = `第 ${term} 屆待審議案`;
+                } else {
+                    more_str = `第 ${term} 屆過期議案`;
+                }
+                version_dom = $('<span></span>')
+                    .addClass('dropdown-item')
+                    .data('version_id', 'more-' + term)
+                    .text(more_str)
+                    .appendTo('#version-select-list');
+              }
+    });
+
+    $('#version-select-list').on('click', '.dropdown-item', function(e){
+        var version_id = $(this).data('version_id');
+        $('#version-choose-list').html('');
+        if (version_id.toString().startsWith('more-')) {
+            term = version_id.toString().split('-')[1];
+            return;
+        } else {
+        }
+    });
+});
 
