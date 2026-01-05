@@ -64,7 +64,7 @@ class LyTcToolkit
         for ($i = 0; $i < mb_strlen($str); $i++) {
             $char = mb_substr($str, $i, 1);
             if (!isset($map[$char])) {
-                throw new \Exception("Invalid character: $char");
+                throw new \Exception("Invalid character: $char ($str)");
             }
 
             $ret .= $map[$char];
@@ -91,7 +91,9 @@ class LyTcToolkit
             $char = array_shift($chars);
             $char_number = $map[$char] ?? null;
             if (is_null($char_number)) {
-                throw new \Exception("Invalid character: $char");
+                print_r(debug_backtrace());
+                exit;
+                throw new \Exception("Invalid character: $char ($str)");
             }
 
             // 如果是一到九，放入 stack
