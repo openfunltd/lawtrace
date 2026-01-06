@@ -425,6 +425,7 @@ $('.set-compare-target').on('modal-show', function() {
           return term;
         }
       }
+      return 1;
     };
     $.when(
             $.get(ly_api_base + '/stat'),
@@ -439,7 +440,7 @@ $('.set-compare-target').on('modal-show', function() {
                   if ('undefined' === typeof(term_versions[term])) {
                       term_versions[term] = [];
                   }
-                  term_versions[term].push(law_versions[i]);
+                  term_versions[term].unshift(law_versions[i]);
               }
 
               current_term = stats_data[0].legislator.terms[0].term;
