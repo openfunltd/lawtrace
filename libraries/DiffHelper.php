@@ -2,7 +2,7 @@
 
 class DiffHelper
 {
-    public static function getBillNosFromSource($id)
+    public static function getBillNosFromSource($id, $versions = [])
     {
         // 可來自 會議、審查報告、三讀版本、JOIN 平台眾開講
         //   會議：meet:{meet_id}:{law_id} Ex: meet:委員會-11-2-23-20:02017 
@@ -108,7 +108,11 @@ class DiffHelper
             $obj->billNos[] = $policy_uid;
         }
 
-        $obj->billNos = array_values(array_unique($obj->billNos));
+        if ($versions) {
+            $obj->billNos = array_values(array_unique(array_merge($obj->billNos, $versions)));
+        } else {
+            $obj->billNos = array_values(array_unique($obj->billNos));
+        }
         return $obj;
     }
 
