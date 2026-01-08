@@ -496,6 +496,7 @@ class DiffHelper
                 'party_img' => $version->party_img ?? null,
                 '議案編號' => $version->議案編號,
                 '原始資料' => $version->原始資料,
+                'article_numbers' => $version->article_numbers ?? [],
                 'showed' => true,
                 'first_version' => false,
             ];
@@ -641,6 +642,12 @@ class DiffHelper
                 date('n', $date),
                 date('j', $date),
             );
+        }
+        $amendment = $bill->對照表 ?? [];
+        $amendment = $amendment[0] ?? new stdClass();
+        if (!empty((array)$amendment)) {
+            $article_numbers = LawHistoryHelper::getArticleNumbers($amendment);
+            $version_data->article_numbers = $article_numbers;
         }
         return $version_data;
     }

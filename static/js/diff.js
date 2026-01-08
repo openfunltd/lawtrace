@@ -412,6 +412,13 @@ $('.set-compare-target').on('modal-show', function() {
       if (version_data.subtitle && version_data.subtitle != '') {
           version_str += '｜' + version_data.subtitle;
       }
+      if (version_data.article_numbers && version_data.article_numbers.length > 0) {
+          if (version_data.article_numbers.length < 7) {
+              version_str += "（第 " + version_data.article_numbers.join('、') + " 條）";
+          } else {
+              version_str += "（第 " + version_data.article_numbers.slice(0, 5).join('、') + " 等 " + version_data.article_numbers.length + " 條）";
+          }
+      }
       $('label.form-check-label', version_list_dom).text(version_str);
       $('input.form-check-input[name="versions[]"]', version_list_dom).prop('value', version_id);
       $('input.form-check-input[name="base"]', version_list_dom).prop('value', version_id);
@@ -516,6 +523,11 @@ $('.set-compare-target').on('modal-show', function() {
             version_str = version_data.title;
             if (version_data.subtitle && version_data.subtitle != '') {
                 version_str += '｜' + version_data.subtitle;
+            }
+            if (version_data.article_numbers.length < 7) {
+                version_str += "（第 " + version_data.article_numbers.join('、') + " 條）";
+            } else {
+                version_str += "（第 " + version_data.article_numbers.slice(0, 5).join('、') + " 等 " + version_data.article_numbers.length + " 條）";
             }
             $('label.form-check-label', version_list_dom).text("[新增] " + version_str);
             $('input.form-check-input[name="versions[]"]', version_list_dom).prop('value', version_id);
