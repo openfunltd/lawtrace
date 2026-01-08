@@ -516,7 +516,7 @@ $('.set-compare-target').on('modal-show', function() {
             if (version_data.subtitle && version_data.subtitle != '') {
                 version_str += '｜' + version_data.subtitle;
             }
-            $('label.form-check-label', version_list_dom).text(version_str);
+            $('label.form-check-label', version_list_dom).text("[新增] " + version_str);
             $('input.form-check-input[name="versions[]"]', version_list_dom).prop('value', version_id);
             $('input.form-check-input[name="base"]', version_list_dom).prop('value', version_id);
             $('input.form-check-input[name="versions[]"]', version_list_dom).prop('checked', true);
