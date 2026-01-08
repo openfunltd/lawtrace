@@ -509,9 +509,22 @@ $('.set-compare-target').on('modal-show', function() {
     });
 
     $('#version-choose-list').on('click', '.dropdown-item', function(e){
-        var bill_no = $(this).data('bill-no');
-        $.get(ly_api_base + '/bill/' + bill_no).done(function(bill_data){
-            console.log(bill_data);
+        var version_id = $(this).data('bill-no');
+        $.get("/law/billdata?billno=" + version_id).done(function(version_data){
+            version_list_dom = $($('#tmpl-version-list').html());
+            version_str = version_data.title;
+            if (version_data.subtitle && version_data.subtitle != '') {
+                version_str += '｜' + version_data.subtitle;
+            }
+            $('label.form-check-label', version_list_dom).text(version_str);
+            $('input.form-check-input[name="versions[]"]', version_list_dom).prop('value', version_id);
+            $('input.form-check-input[name="base"]', version_list_dom).prop('value', version_id);
+            $('input.form-check-input[name="versions[]"]', version_list_dom).prop('checked', true);
+            if (version_id == diff_data.base_version_id) {
+                $('input.form-check-input[name="base"]', version_list_dom).prop('checked', true);
+            }
+            $('.version-list').append(version_list_dom);
+            $('#version-select-list').click();
         });
     });
 
