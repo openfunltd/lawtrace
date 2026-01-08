@@ -292,7 +292,7 @@ $this->tab = 'compare';
     </label>
     </div>
     <div>
-    <input class="form-check-input" type="radio" name="radio1" checked>
+    <input class="form-check-input" type="radio" name="base">
     </div>
 </script>
                 <div class="version-list">
@@ -379,6 +379,7 @@ diff_data = <?= json_encode([
     'choosed_version_ids' => $this->choosed_version_ids,
     'source' => $this->source,
     'law_id' => $this->law_id,
+    'base_version_id' => $this->base_version_id,
 ]) ?>;
 ly_api_base = <?= json_encode("https://" . getenv('LYAPI_HOST')) ?>;
 </script>

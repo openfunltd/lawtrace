@@ -287,6 +287,7 @@ class LawController extends MiniEngine_Controller
         }, $versions);
         $this->view->choosed_version_ids = $choosed_version_ids;
         $this->view->all_version_ids = array_map(function($v) { return $v->id; }, $all_versions->versions);
+        $this->view->base_version_id = $_GET['base_version'] ?? $all_versions->versions[0]->id;
 
         // 整合出對照表需要的資料
         $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? []);

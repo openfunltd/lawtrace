@@ -412,11 +412,15 @@ $('.set-compare-target').on('modal-show', function() {
           version_str += '｜' + version_data.subtitle;
       }
       $('label.form-check-label', version_list_dom).text(version_str);
-      $('input.form-check-input', version_list_dom).prop('value', version_id);
+      $('input.form-check-input[name="versions[]"]', version_list_dom).prop('value', version_id);
+      $('input.form-check-input[name="base"]', version_list_dom).prop('value', version_id);
       if (diff_data.choosed_version_ids.indexOf(version_id) != -1) {
-          $('input.form-check-input', version_list_dom).prop('checked', true);
+          $('input.form-check-input[name="versions[]"]', version_list_dom).prop('checked', true);
       } else {
-          $('input.form-check-input', version_list_dom).prop('checked', false);
+          $('input.form-check-input[name="versions[]"]', version_list_dom).prop('checked', false);
+      }
+      if (version_id == diff_data.base_version_id) {
+          $('input.form-check-input[name="base"]', version_list_dom).prop('checked', true);
       }
       $('.version-list').append(version_list_dom);
     }
@@ -568,9 +572,13 @@ $('#btn-update-compare').click(function(e){
     $('.version-list input[name="versions[]"]:checked').each(function(){
         diff_data.choosed_version_ids.push($(this).val());
     });
+    base_version = $('.version-list input[name="base"]:checked').val();
     url = "/law/compare?source=" + encodeURIComponent(diff_data.source);
     for (var version_id of diff_data.choosed_version_ids) {
         url += '&version[]=' + version_id;
+    }
+    if (base_version != diff_data.choosed_version_ids[0]) {
+        url += '&base_version=' + base_version;
     }
     document.location = url;
 });
