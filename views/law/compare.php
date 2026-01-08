@@ -321,12 +321,6 @@ $this->tab = 'compare';
                       </div>
                     </div>
                   </div>
-                  <div>
-                    <button class="btn btn-outline-primary">
-                      <i class="bi icon bi-plus"></i>
-                      新增比較對象
-                    </button>
-                  </div>
                 </div>
                 <!-- 自訂條文時，modal下方選單為以下內容 end -->
 
