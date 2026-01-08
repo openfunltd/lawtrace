@@ -544,6 +544,12 @@ $('.set-compare-target').on('modal-show', function() {
         } else {
             var version_data = $(this).data('version_data');
             for (var log of version_data['歷程']) {
+                if ('undefined' === typeof(log.關係文書)) {
+                    continue;
+                }
+                if ('undefined' === typeof(log.關係文書[0])) {
+                    continue;
+                }
                 if ('undefined' === typeof(log.關係文書[0].billNo)) {
                     continue;
                 }
