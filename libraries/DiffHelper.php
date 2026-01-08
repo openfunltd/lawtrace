@@ -347,41 +347,7 @@ class DiffHelper
                 ];
             }
 
-            if (is_array($bill->提案人 ?? null)) {
-                $version_data->title = sprintf("%s等%d人",
-                    $bill->提案人[0],
-                    count($bill->提案人) + count($bill->連署人 ?? [])
-                );
-                $version_data->party_img = PartyHelper::getImageByTermAndName($bill->屆, $bill->提案人[0]);
-                $date = strtotime($bill->議案流程[0]->日期[0]);
-                $version_data->date = date('Y-m-d', $date);
-                $version_data->subtitle = sprintf("%03d/%02d/%02d 提案版本",
-                    date('Y', $date) - 1911,
-                    date('n', $date),
-                    date('j', $date)
-                );
-            } elseif (strpos($bill->{'提案單位/提案委員'}, '本院') === 0 or
-                preg_match('#委員會$#', $bill->{'提案單位/提案委員'})) {
-                $version_data->title = '審查報告';
-                $date = strtotime($bill->議案流程[0]->日期[0]);
-                $committee = str_replace("本院", "", $bill->{'提案單位/提案委員'});
-                $version_data->date = date('Y-m-d', $date);
-                $version_data->subtitle = sprintf("%03d/%02d/%02d %s",
-                    date('Y', $date) - 1911,
-                    date('n', $date),
-                    date('j', $date),
-                    $committee
-                );
-            } else {
-                $version_data->title = $bill->{'提案單位/提案委員'};
-                $date = strtotime($bill->議案流程[0]->日期[0]);
-                $version_data->date = date('Y-m-d', $date);
-                $version_data->subtitle = sprintf("%03d/%02d/%02d",
-                    date('Y', $date) - 1911,
-                    date('n', $date),
-                    date('j', $date),
-                );
-            }
+            $version_data = self::getVersionDataFromBillData($version_data, $bill);
             $version_data->對照表 = array_values($version_data->對照表);
             $obj->versions[$version_id] = $version_data;
             $obj->bills->{$version_data->title} = $bill;
@@ -637,5 +603,45 @@ class DiffHelper
             $m = self::ruleNoToNumber($a) - self::ruleNoToNumber($b);
         }
         return $m;
+    }
+
+    public static function getVersionDataFromBillData($version_data, $bill)
+    {
+        if (is_array($bill->提案人 ?? null)) {
+            $version_data->title = sprintf("%s等%d人",
+                $bill->提案人[0],
+                count($bill->提案人) + count($bill->連署人 ?? [])
+            );
+            $version_data->party_img = PartyHelper::getImageByTermAndName($bill->屆, $bill->提案人[0]);
+            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $version_data->date = date('Y-m-d', $date);
+            $version_data->subtitle = sprintf("%03d/%02d/%02d 提案版本",
+                date('Y', $date) - 1911,
+                date('n', $date),
+                date('j', $date)
+            );
+        } elseif (strpos($bill->{'提案單位/提案委員'}, '本院') === 0 or
+            preg_match('#委員會$#', $bill->{'提案單位/提案委員'})) {
+            $version_data->title = '審查報告';
+            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $committee = str_replace("本院", "", $bill->{'提案單位/提案委員'});
+            $version_data->date = date('Y-m-d', $date);
+            $version_data->subtitle = sprintf("%03d/%02d/%02d %s",
+                date('Y', $date) - 1911,
+                date('n', $date),
+                date('j', $date),
+                $committee
+            );
+        } else {
+            $version_data->title = $bill->{'提案單位/提案委員'};
+            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $version_data->date = date('Y-m-d', $date);
+            $version_data->subtitle = sprintf("%03d/%02d/%02d",
+                date('Y', $date) - 1911,
+                date('n', $date),
+                date('j', $date),
+            );
+        }
+        return $version_data;
     }
 }

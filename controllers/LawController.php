@@ -340,4 +340,14 @@ class LawController extends MiniEngine_Controller
         }
         return $res->data;
     }
+
+    public function billdataAction()
+    {
+        $billno = $_GET['billno'] ?? null;
+        if (is_null($billno)) {
+            return $this->notfound();
+        }
+        $res = LYAPI::apiQuery("/bills/{$billno}", "查詢議案資料，議案編號：{$billno}");
+        return $this->json(DiffHelper::getVersionDataFromBillData(new StdClass, $res->data));
+    }
 }
