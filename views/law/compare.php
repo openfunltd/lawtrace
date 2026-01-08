@@ -298,12 +298,14 @@ $this->tab = 'compare';
                 <div class="version-list">
                 </div>
 
+              <?php if ($this->source_type != 'custom') { ?>
                 <!-- 非自訂條文時，modal下方選單為以下內容 begin -->
                 <div class="my-3">
                   <button class="btn btn-outline-primary" id="btn-custom-compare">
                     自訂比較對象
                   </button>
               </div>
+              <?php } ?>
               <?php if ($this->source_type == 'custom') { ?>
                 <!-- 非自訂條文時，modal下方選單為以下內容 end -->
 
