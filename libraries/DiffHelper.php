@@ -513,7 +513,7 @@ class DiffHelper
         return $obj;
     }
 
-    public static function mergeVersionsToTable($versions, $choosed_versions)
+    public static function mergeVersionsToTable($versions, $choosed_versions, $base_version = null)
     {
         $ret = new StdClass;
         $ret->versions = new StdClass;
@@ -539,7 +539,7 @@ class DiffHelper
                 $ret->versions->{$version->id}->showed = false;
                 continue;
             }
-            if (is_null($first_version)) {
+            if (!is_null($base_version) and $version->id == $base_version) {
                 $ret->versions->{$version->id}->first_version = true;
                 $first_version = $version->id;
             }
@@ -576,6 +576,20 @@ class DiffHelper
         }
         $ret->rule_diffs = $rule_diffs;
         $ret->rule_diffs = array_values($ret->rule_diffs);
+
+        if (!is_null($first_version)) {
+            // 修改 choosed_versions，把 first_version 放到最前面
+            $new_choosed_version_ids = [$first_version];
+            foreach ($ret->choosed_version_ids as $version_id) {
+                if ($version_id == $first_version) {
+                    continue;
+                }
+                $new_choosed_version_ids[] = $version_id;
+            }
+            $ret->choosed_version_ids = $new_choosed_version_ids;
+        } else {
+            $ret->versions->{$ret->choosed_version_ids[0]}->first_version = true;
+        }
 
         return $ret;
     }
