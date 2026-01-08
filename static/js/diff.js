@@ -396,6 +396,7 @@ $('#btn-custom-compare').click(function(){
     for (var version_id of diff_data.choosed_version_ids) {
         url += '&version[]=' + version_id;
     }
+    url += '#set-compare-target';
     // open in new tab
     window.open(url, '_blank');
 });
@@ -602,3 +603,9 @@ $('#btn-update-compare').click(function(e){
     document.location = url;
 });
 
+$(function(){
+    if (document.location.hash == '#set-compare-target') {
+        $('.set-compare-target').click();
+        document.location.hash = '';
+    }
+});
