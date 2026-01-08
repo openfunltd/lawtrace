@@ -229,7 +229,7 @@ class LawController extends MiniEngine_Controller
         $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS) ?? Null;
 
         // 從來源代碼中取得相關的議案編號
-        $ret = DiffHelper::getBillNosFromSource($source_input);
+        $ret = DiffHelper::getBillNosFromSource($source_input, $_GET['version'] ?? []);
         $type = explode(':', $source_input)[0];
         if ('meet' == $type) {
             $meet_id = explode(':', $source_input)[1];
@@ -241,6 +241,8 @@ class LawController extends MiniEngine_Controller
             $law_id = explode(':', $source_input)[1];
         } elseif ('join-policy' == $type) {
             $policy_uid = explode(':', $source_input)[1];
+        } elseif ('custom' == $type) {
+            $law_id = explode(':', $source_input)[1];
         }
         if ($ret->version_id_input ?? false) {
             $this->view->version_id_input = $ret->version_id_input;
@@ -284,6 +286,7 @@ class LawController extends MiniEngine_Controller
             return $version->id;
         }, $versions);
         $this->view->choosed_version_ids = $choosed_version_ids;
+        $this->view->all_version_ids = array_map(function($v) { return $v->id; }, $all_versions->versions);
 
         // 整合出對照表需要的資料
         $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? []);

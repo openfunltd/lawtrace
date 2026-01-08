@@ -391,14 +391,33 @@ $(function(){
 
 });
 
+$('#btn-custom-compare').click(function(){
+    url = '/law/compare?source=custom:' + diff_data.law_id;
+    for (var version_id of diff_data.choosed_version_ids) {
+        url += '&version[]=' + version_id;
+    }
+    // open in new tab
+    window.open(url, '_blank');
+});
+
 var law_versions = null;
 $('.set-compare-target').on('modal-show', function() {
     // 從 diff_data.diff.versions 把他寫入 
     $('.version-list').html('');
-    for (var version_id of diff_data.diff.choosed_version_ids) {
+    for (var version_id of diff_data.all_version_ids) {
       version_data = diff_data.diff.versions[version_id];
       version_list_dom = $($('#tmpl-version-list').html());
-      $('label.form-check-label', version_list_dom).text(version_data.title + '｜' + version_data.subtitle);
+      version_str = version_data.title;
+      if (version_data.subtitle && version_data.subtitle != '') {
+          version_str += '｜' + version_data.subtitle;
+      }
+      $('label.form-check-label', version_list_dom).text(version_str);
+      $('input.form-check-input', version_list_dom).prop('value', version_id);
+      if (diff_data.choosed_version_ids.indexOf(version_id) != -1) {
+          $('input.form-check-input', version_list_dom).prop('checked', true);
+      } else {
+          $('input.form-check-input', version_list_dom).prop('checked', false);
+      }
       $('.version-list').append(version_list_dom);
     }
     check_term_by_date = function(date) {
@@ -466,6 +485,7 @@ $('.set-compare-target').on('modal-show', function() {
 
                   version_dom = $('<span></span>')
                       .addClass('dropdown-item')
+                      .data('version_data', version)
                       .data('version_id', version['版本編號'])
                       .text(version_str)
                       .appendTo('#version-select-list');
@@ -484,14 +504,74 @@ $('.set-compare-target').on('modal-show', function() {
               }
     });
 
+    $('#version-choose-list').on('click', '.dropdown-item', function(e){
+        var bill_no = $(this).data('bill-no');
+        $.get(ly_api_base + '/bill/' + bill_no).done(function(bill_data){
+            console.log(bill_data);
+        });
+    });
+
     $('#version-select-list').on('click', '.dropdown-item', function(e){
         var version_id = $(this).data('version_id');
         $('#version-choose-list').html('');
+        $('#version-select-selected .text').text($(this).text());
         if (version_id.toString().startsWith('more-')) {
             term = version_id.toString().split('-')[1];
-            return;
+            $.get(ly_api_base + '/law/' + diff_data.law_id + '/progress?屆=' + term).done(function(progress_data){
+                for (var log of progress_data['歷程']) {
+                    for (var bill of log.bill_log) {
+                        if ('undefined' === typeof(bill.關係文書.billNo)) {
+                            continue;
+                        }
+                        if ('undefined' !== typeof(diff_data.diff.versions[bill.關係文書.版本編號])) {
+                            continue;
+                        }
+                        date_term = bill.會議日期.split('-');
+                        bill.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
+                        version_str = bill.主提案 + '｜' + bill.會議日期 + ' 提案版本';
+                        version_dom = $('<span></span>')
+                            .addClass('dropdown-item')
+                            .data('bill-no', bill.關係文書.billNo)
+                            .text(version_str)
+                            .appendTo('#version-choose-list');
+                    }
+                }
+            });
         } else {
+            var version_data = $(this).data('version_data');
+            for (var log of version_data['歷程']) {
+                if ('undefined' === typeof(log.關係文書[0].billNo)) {
+                    continue;
+                }
+                if ('undefined' !== typeof(diff_data.diff.versions[log.關係文書[0].版本編號])) {
+                    continue;
+                }
+                date_term = log.會議日期.split('-');
+                log.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
+                version_str = log.主提案 + '｜' + log.會議日期 + ' 提案版本';
+                version_dom = $('<span></span>')
+                    .addClass('dropdown-item')
+                    .data('bill-no', log.關係文書[0].billNo)
+                    .text(version_str)
+                    .appendTo('#version-choose-list');
+            }
         }
+        $('#version-select-selected').click();
     });
+});
+
+$('#btn-update-compare').click(function(e){
+    e.preventDefault();
+
+    // update choosed_version_ids from .version-list input[name="versions[]"]
+    diff_data.choosed_version_ids = [];
+    $('.version-list input[name="versions[]"]:checked').each(function(){
+        diff_data.choosed_version_ids.push($(this).val());
+    });
+    url = "/law/compare?source=" + encodeURIComponent(diff_data.source);
+    for (var version_id of diff_data.choosed_version_ids) {
+        url += '&version[]=' + version_id;
+    }
+    document.location = url;
 });
 

@@ -286,7 +286,7 @@ $this->tab = 'compare';
               </div>
 <script id="tmpl-version-list" type="text/template">
 <div class="form-check form-switch flex-fill">
-    <input class="form-check-input" type="checkbox" id="ver_1" checked>
+    <input class="form-check-input" type="checkbox" name="versions[]" checked>
     <label class="form-check-label" for="ver_1">
     劉建國等16人｜113/00/00 第幾院期提案版本
     </label>
@@ -300,17 +300,18 @@ $this->tab = 'compare';
 
                 <!-- 非自訂條文時，modal下方選單為以下內容 begin -->
                 <div class="my-3">
-                  <button class="btn btn-outline-primary">
+                  <button class="btn btn-outline-primary" id="btn-custom-compare">
                     自訂比較對象
                   </button>
-                </div>
+              </div>
+              <?php if ($this->source_type == 'custom') { ?>
                 <!-- 非自訂條文時，modal下方選單為以下內容 end -->
 
                 <!-- 自訂條文時，modal下方選單為以下內容 begin -->
                 <div class="d-flex gap-3 align-items-center my-3">
                   <div class="flex-fill dropdown-select">
-                    <div class="selected-item">
-                      選擇屆期或是修正版本
+                    <div class="selected-item" id="version-select-selected">
+                        <span class="text">選擇屆期或是修正版本</span>
                       <i class="bi icon bi-chevron-down"></i>
                   </div>
                     <div class="dropdown-menu select-list">
@@ -358,11 +359,12 @@ $this->tab = 'compare';
                 </div>
                 <!-- 新增比較對象按鈕點選後，modal內為以下內容 end -->
               </div>
-            </div>
+          </div>
+          <?php } ?>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">確認</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-update-compare">確認</button>
               <!-- 新增比較對象按鈕點選後，modal內為以下按鈕 end -->
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal">新增比較對象</button>
+              <!--<button type="button" class="btn btn-primary" data-bs-dismiss="modal">新增比較對象</button>-->
               <!-- 新增比較對象按鈕點選後，modal內為以下按鈕 end -->
             </div>
           </div>
@@ -373,6 +375,7 @@ $this->tab = 'compare';
 <script>
 diff_data = <?= json_encode([
     'diff' => $this->diff,
+    'all_version_ids' => $this->all_version_ids,
     'choosed_version_ids' => $this->choosed_version_ids,
     'source' => $this->source,
     'law_id' => $this->law_id,
