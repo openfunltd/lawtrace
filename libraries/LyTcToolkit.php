@@ -91,9 +91,9 @@ class LyTcToolkit
             $char = array_shift($chars);
             $char_number = $map[$char] ?? null;
             if (is_null($char_number)) {
-                print_r(debug_backtrace());
-                exit;
+                //print_r(debug_backtrace());
                 throw new \Exception("Invalid character: $char ($str)");
+                exit;
             }
 
             // 如果是一到九，放入 stack
