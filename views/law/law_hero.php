@@ -320,8 +320,8 @@ if ($this->version ?? false and !$is_progress) {
         <div>主協辦單位：<?= $this->escape($this->hostname) ?></div>
         <div>發布日期：<?= $this->escape($this->published_date) ?></div>
         <?php } elseif ($this->source_type == 'custom') { ?>
-        <div class="compare-type">比較類型：自訂比較對象</div>
-        <div class="compare-desc">使用者自行勾選及設定比較基準</div>
+        <div class="compare-type">比較類型：自訂比較</div>
+        <div class="compare-desc">比較基準與比較對象由使用者自訂，可跨屆數比較不同版本的條文。若原始資料無抓取到數位化資訊（較舊的資訊可能無法數位化），則無法成為比較對象。</div>
         <?php } ?>
       </div>
       <?php } ?>
