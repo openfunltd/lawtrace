@@ -170,6 +170,12 @@ $this->tab = 'compare';
                           <i class="bi bi-arrow-right-circle"></i>
                         </a>
                       </span>
+                      <?php if (strpos($_SERVER['REQUEST_URI'], '/law/compare') === 0) { ?>
+                      <a class="ms-2 add-compare-target-link set-compare-target">
+                        新增比較對象
+                        <i class="bi bi-plus-circle"></i>
+                      </a>
+                      <?php } ?>
                     </div>
                   <?php } ?>
                   <!-- 如果大於2時，要以空白div補足數量 -->

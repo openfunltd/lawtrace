@@ -634,4 +634,5 @@ $(function(){
         $('.set-compare-target').click();
         document.location.hash = '';
     }
+    $('.set-compare-target').css('cursor', 'pointer');
 });
