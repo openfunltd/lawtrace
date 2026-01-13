@@ -284,6 +284,10 @@ $this->tab = 'compare';
                     </div>
                   </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
 <script id="tmpl-version-list" type="text/template">
 <div class="form-check form-switch flex-fill">
     <input class="form-check-input" type="checkbox" name="versions[]" checked>
