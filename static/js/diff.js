@@ -594,6 +594,20 @@ $('.set-compare-target').on('modal-show', function() {
         }
         $('#version-select-selected').click();
     });
+
+    //隱藏的議案不能選為比較基準
+    $('.form-check-input[type="radio"][name="base"]').on('click', function(e) {
+        if ($('.form-check-input[type="checkbox"][name="versions[]"][value="' + $(this).val() + '"]').is(':not(:checked)')) {
+            e.preventDefault();
+        }
+    });
+
+    //設為比較基準的議案不能隱藏
+    $('.form-check-input[type="checkbox"][name="versions[]"]').on('click', function(e) {
+        if ($('.form-check-input[type="radio"][name="base"][value="' + $(this).val() + '"]').is(':checked')) {
+            e.preventDefault();
+        }
+    });
 });
 
 $('#btn-update-compare').click(function(e){
