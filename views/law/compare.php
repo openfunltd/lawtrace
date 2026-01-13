@@ -283,11 +283,7 @@ $this->tab = 'compare';
                       設為比較基準
                     </div>
                   </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+                </div>
 <script id="tmpl-version-list" type="text/template">
 <div class="form-check form-switch flex-fill">
     <input class="form-check-input" type="checkbox" name="versions[]" checked>
@@ -370,6 +366,7 @@ $this->tab = 'compare';
           </div>
         </div>
       </div>
+    </div>
   </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
