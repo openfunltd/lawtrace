@@ -30,7 +30,11 @@ if ('single' != $this->source_type) {
     if ($this->source ?? false) {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
         $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
-        $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+        if ($this->source_type == 'custom') {
+            $tabs[] = ['條文比較工具', "#", 'compare'];
+        } else {
+            $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+        }
     } else {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
         $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
@@ -303,11 +307,21 @@ if ($this->version ?? false and !$is_progress) {
         <div>案由：<?= $this->escape($this->bill->案由) ?></div>
         <?php } ?>
         <?php } elseif ($this->source_type == 'join-policy') { ?>
+        <div class="original-data">
+          <?php $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]); ?>
+          <a href="<?= $join_policy_url ?>" target="_blank">
+            部預告版原始資料
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+        </div>
         <div class="compare-type">比較類型：部預告版</div>
         <div class="compare-desc">行政院於公共政策網路參與平台之「眾開講」釋出的部預告修法版本</div>
         <hr>
         <div>主協辦單位：<?= $this->escape($this->hostname) ?></div>
         <div>發布日期：<?= $this->escape($this->published_date) ?></div>
+        <?php } elseif ($this->source_type == 'custom') { ?>
+        <div class="compare-type">比較類型：自訂比較對象</div>
+        <div class="compare-desc">使用者自行勾選及設定比較基準</div>
         <?php } ?>
       </div>
       <?php } ?>
