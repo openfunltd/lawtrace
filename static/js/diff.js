@@ -376,7 +376,7 @@ $(function(){
 
     $('input#splitContent').prop('checked', true).change();
     $('div.law-diff-content.original').each(gen_diff);
-    $('input[name="diff-type"][value="only_add"]').prop('checked', true).change();
+    $('input[name="diff-type"][value="update"]').prop('checked', true).change();
 
     //decide to hide horizontal scoll buttons or not
     lawDiffRow = $('.law-diff-row:not(.law-diff-header-row)').first();
