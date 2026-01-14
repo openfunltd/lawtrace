@@ -28,10 +28,14 @@ if ('single' != $this->source_type) {
         $tabs[] = ['瀏覽現行法律', "/law/show/{$this->law_id}", 'show'];
     }
     if ($this->source ?? false) {
-        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
+        if ($this->source_type == 'custom') {
+            $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source=version:" . mb_substr($this->version_id_input, 0, 16) . "&version={$this->version_id_input}", 'history'];
+        } else {
+            $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
+        }
         $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
         if ($this->source_type == 'custom') {
-            $tabs[] = ['條文比較工具', "#", 'compare'];
+            $tabs[] = ['條文比較工具', $_SERVER['REQUEST_URI'], 'compare'];
         } else {
             $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
         }
