@@ -332,9 +332,9 @@ $this->tab = 'compare';
 
                 <!-- 新增比較對象按鈕點選後，modal內為以下內容 begin -->
                 <div class="dropdown-select">
-                  <div class="selected-item">
-                    請選擇條文版本
-                    <i class="bi icon bi-chevron-down"></i>
+                  <div id="version-choose-selected-item" class="selected-item">
+                    <span id="version-choose-list-desc">請選擇條文版本</span>
+                    <i id="version-choose-chevron" class="bi icon bi-chevron-down"></i>
                   </div>
                   <div class="dropdown-menu select-list">
                     <div class="scroller" id="version-choose-list">

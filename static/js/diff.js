@@ -319,6 +319,21 @@ var update_compare_list = function() {
     });
 };
 
+var notify_no_version_option = function(optionCnt) {
+    if (optionCnt == 0) {
+        $('#version-choose-list-desc').text('無提案版本供選擇');
+        $('#version-choose-chevron').remove();
+        $('#version-choose-selected-item').css('background-color', '#EFEFEF');
+    } else {
+        $('#version-choose-list-desc').text('請選擇提案版本');
+        $('#version-choose-selected-item').css('background-color', 'white');
+        if ($('#version-choose-chevron').length === 0) {
+            var html = '<i id="version-choose-chevron" class="bi icon bi-chevron-down"></i>';
+            $('#version-choose-selected-item').append(html);
+        }
+    }
+};
+
 $(function(){
     update_compare_list();
 
@@ -592,6 +607,7 @@ $('.set-compare-target').on('modal-show', function() {
                     .appendTo('#version-choose-list');
             }
         }
+        notify_no_version_option($('#version-choose-list').children('span').length);
         $('#version-select-selected').click();
     });
 
