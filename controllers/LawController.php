@@ -115,6 +115,11 @@ class LawController extends MiniEngine_Controller
                 $law_id = explode(':', $source_input)[1];
                 $this->view->single_version = true;
                 $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+            } elseif ('join-policy') {
+                $policy_uid = explode(':', $source_input)[1];
+                $res = PolicyAPI::apiQuery("/policy/show/$policy_uid", "查詢部預告版 metadata");;
+                $this->view->hostname = $res->data->主協辦單位 ?? '';
+                $this->view->published_date = $res->data->發布日期 ?? '';
             }
             $this->view->source_type = $type;
             $this->view->source = $source_input;

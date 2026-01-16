@@ -19,44 +19,50 @@ if ($this->version_id_input and $this->version_id_input != 'latest') {
     $this->version_id_input = $res->lawversions[0]->版本編號;
 }
 
+//tab start
 $tabs = [];
+//tab 瀏覽法律
 if ('single' != $this->source_type) {
     if ('version' == $this->source_type) {
         $tabs[] = ['瀏覽法律', "/law/show/{$this->law_id}" . $postfix('show'), 'show'];
-        $tabs[] = ['異動條文', "/law/diff/{$this->law_id}" . $postfix('diff'), 'diff'];
     } else {
         $tabs[] = ['瀏覽現行法律', "/law/show/{$this->law_id}", 'show'];
     }
-    if ($this->source ?? false) {
-        if ($this->source_type == 'custom') {
-            $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source=version:" . mb_substr($this->version_id_input, 0, 16) . "&version={$this->version_id_input}", 'history'];
-        } else {
-            $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
-        }
-        $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
-        if ($this->source_type == 'custom') {
-            $tabs[] = ['條文比較工具', $_SERVER['REQUEST_URI'], 'compare'];
-        } else {
-            $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
-        }
+}
+
+//tabs 異動條文
+if ('single' != $this->source_type) {
+    if ('version' == $this->source_type) {
+        $tabs[] = ['異動條文', "/law/diff/{$this->law_id}" . $postfix('diff'), 'diff'];
     } else {
-        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
-        $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
+        $tabs[] = ['異動條文', "/law/diff/{$this->law_id}", 'diff'];
     }
 }
+
+//經歷過程
+if ('single' != $this->source_type) {
+    if ($this->source ?? false) {
+        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
+    } else {
+        $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
+    }
+}
+
+//子法列表
+$tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
+
+//條文比較工具
+$tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+//tabs end
+
 $is_law_compare = (strpos($_SERVER['REQUEST_URI'], '/law/compare') === 0);
 if (!$is_law_compare) { //法律對照表頁面的原始資料連結移動至 metadata
     if ('meet' == $this->source_type) {
-        $tabs[] = ['會議原始資料', $this->meet->會議資料[0]->ppg_url ?? '#', 'meet', ['icon' => 'bi bi-box-arrow-up-right']];
     } elseif ('bill' == $this->source_type) {
         if ($this->bill->提案來源 == '審查報告') {
-            $tabs[] = ['報告原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
         } else {
-            $tabs[] = ['議案原始資料', $this->bill->url ?? '#', 'bill', ['icon' => 'bi bi-box-arrow-up-right']];
         }
     } elseif ('join-policy' == $this->source_type) {
-        $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]);
-        $tabs[] = ['部預告版原始資料', $join_policy_url, 'join-policy', ['icon' => 'bi bi-box-arrow-up-right']];
     }
 }
 
@@ -178,6 +184,13 @@ if ($this->version ?? false and !$is_progress) {
         <!--<img src="images/party/tpp.svg">-->
         <?= $this->escape($this->meet->會議資料[0]->委員會召集委員 ?? '') ?>
       </div>
+      <div class="review-date">
+        原始資料：
+        <a href="<?= $this->meet->會議資料[0]->ppg_url ?>">
+          會議原始資料
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+      </div>
       <?php } elseif ($this->source_type == 'bill' and '審查報告' == $this->bill->提案來源) { ?>
       <div class="review-committee">
           審查委員會：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?>
@@ -187,6 +200,13 @@ if ($this->version ?? false and !$is_progress) {
       </div>
       <div class="review-date">
           議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
+      </div>
+      <div class="review-date">
+        原始資料：
+        <a href="<?= $this->bill->url ?>">
+          報告原始資料
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
       </div>
       <?php } elseif ($this->source_type == 'bill') { ?>
         <?php if ($this->bill->提案人 ?? false) { ?>
@@ -224,12 +244,27 @@ if ($this->version ?? false and !$is_progress) {
             案由：<?= $this->escape($this->bill->案由) ?>
         </div>
         <?php } ?>
+      <div class="review-date">
+        原始資料：
+        <a href="<?= $this->bill->url ?>">
+          議案原始資料
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
+      </div>
       <?php } elseif ($this->source_type == 'join-policy') { ?>
       <div class="review-committee">
         主協辦單位：<?= $this->escape($this->hostname) ?>
       </div>
       <div class="review-date">
         發布日期：<?= $this->escape($this->published_date) ?>
+      </div>
+      <?php $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]); ?>
+      <div class="review-date">
+        原始資料：
+        <a href="<?= $join_policy_url ?>">
+          部預告版原始資料
+          <i class="bi bi-box-arrow-up-right"></i>
+        </a>
       </div>
       <?php } ?>
       </div>
