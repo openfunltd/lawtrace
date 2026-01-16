@@ -105,7 +105,7 @@ if (strpos($version_id_input, "-progress")) {
                       </a>
                     </div>
                   </div>
-                  <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
+                  <?= $this->partial('partial/law_history_timeline', ['history_group' => $history_group]) ?>
                 <?php } else { ?>
                   <?php foreach ($history_group->bill_log as $bill) { ?>
                     <?php $id = $bill->bill_id ?? $bill->policy_uid ?? ''; ?>
