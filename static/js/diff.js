@@ -631,7 +631,7 @@ $('#btn-update-compare').click(function(e){
 
 $(function(){
     if (document.location.hash == '#set-compare-target') {
-        $('.set-compare-target').click();
+        $('.set-compare-target').first().click();
         document.location.hash = '';
     }
     $('.set-compare-target').css('cursor', 'pointer');
