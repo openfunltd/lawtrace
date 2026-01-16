@@ -4,7 +4,7 @@ include_once(__DIR__ . '/LyTcToolkit.php');
 
 class LawHistoryHelper
 {
-    public static function updateDetails($history_groups, $term_selected)
+    public static function updateDetails($history_groups, $term_selected, $law_id)
     {
         //get legislators' data for checking party later
         $res = LYAPI::apiQuery(
@@ -16,7 +16,7 @@ class LawHistoryHelper
         $history_groups = self::removeUngroupedMeet($history_groups);
         $history_groups = self::updateBillDetails($history_groups, $legislators);
         $history_groups = self::updateMeetDetails($history_groups, $legislators);
-        $history_groups = self::updateGroupMetadata($history_groups);
+        $history_groups = self::updateGroupMetadata($history_groups, $law_id);
         $history_groups = self::updateIncidentalResolution($history_groups);
         $history_groups = self::groupByTimeline($history_groups);
         $history_groups = self::orderGroups($history_groups);
@@ -97,7 +97,7 @@ class LawHistoryHelper
         return $history_groups;
     }
 
-    private static function updateGroupMetadata($history_groups)
+    private static function updateGroupMetadata($history_groups, $law_id)
     {
         foreach ($history_groups as $history_group) {
             $histories = $history_group->bill_log;
@@ -125,7 +125,12 @@ class LawHistoryHelper
                 $id_details[3],
                 $id_details[0],
             );
-            $history_group->compare_url = "/law/compare?source=bill:{$id_details[4]}";
+            if ($id_details[0] == '委員會審查') {
+                $meet_id = explode('-', $id, 5)[4];
+                $history_group->compare_url = "/law/compare?source=meet:{$meet_id}:{$law_id}";
+            } else {
+                $history_group->compare_url = "/law/compare?source=bill:{$id_details[4]}";
+            }
             $history_group->review_ppg_url = "https://ppg.ly.gov.tw/ppg/bills/{$id_details[4]}/details";
         }
 
