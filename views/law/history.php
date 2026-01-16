@@ -80,7 +80,7 @@ if (strpos($version_id_input, "-progress")) {
                     因 <a href="https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=<?= $this->law_id ?>" target="_blank">立法院法律系統</a> 尚未提供本次三讀的立法歷程資料，本頁過程為程式推算歷程，可能與實際情況有所出入。<a href="https://docs.google.com/document/d/1OtTTnLCXa8FbsQBPFXmtPmXWvhaSW_n8LxcBnE1AYbA/edit?tab=t.0" target="_blank">了解更多</a>
                 </div>
               <?php } ?>
-              <?= $this->partial('partial/law_history_timeline', ['history_groups' => $this->history_groups]) ?>
+              <?= $this->partial('partial/law_history_timeline', ['history_group' => $this->history_groups[0]]) ?>
             <?php } elseif ($is_progress_history) { ?>
               <div class="alert alert-primary" role="alert">
                 <i class="bi bi-exclamation-triangle-fill"></i>
