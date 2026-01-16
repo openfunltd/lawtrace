@@ -124,7 +124,7 @@ class LawController extends MiniEngine_Controller
             $this->view->source_type = $type;
             $this->view->source = $source_input;
         }
-        $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected);
+        $history_groups = LawHistoryHelper::updateDetails($history_groups, $term_selected, $law_id);
         $history_groups = PolicyHelper::addToHistoryGroup($law_id, $term_selected, $history_groups);
 
         $this->view->history_groups = $history_groups;

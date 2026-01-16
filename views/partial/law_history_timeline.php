@@ -1,8 +1,7 @@
 <?php
-$history_groups = $this->_data['history_groups'];
 ?>
 <div class="timeline">
-  <?php foreach ($history_groups[0]->timeline as $timeline_node) { ?>
+<?php foreach ($this->history_group->timeline as $timeline_node) { ?>
     <div class="timeline-item">
       <div class="item-head">
         <span class="title"><?= $this->escape($timeline_node->進度) ?></span>
