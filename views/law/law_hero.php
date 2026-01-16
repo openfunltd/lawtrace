@@ -52,7 +52,11 @@ if ('single' != $this->source_type) {
 $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
 
 //條文比較工具
-$tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+if (strpos($_SERVER['REQUEST_URI'], '/law/sub_laws') === 0) {
+    $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source=version:" . mb_substr($this->version_id_input, 0, 16), 'compare'];
+} else {
+    $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
+}
 //tabs end
 
 $is_law_compare = (strpos($_SERVER['REQUEST_URI'], '/law/compare') === 0);
