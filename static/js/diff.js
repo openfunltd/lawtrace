@@ -577,10 +577,10 @@ $('.set-compare-target').on('modal-show', function() {
                         }
                         has_options = true;
                         date_term = bill.會議日期.split('-');
-                        bill.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
+                        formatted_date = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
                         version_str = bill.主提案 + '｜' + bill.會議日期 + ' 提案版本';
                         version_str = ('undefined' !== typeof(bill.主提案)) ? bill.主提案 : bill.關係文書.類型;
-                        version_str += '｜' + bill.會議日期 + ' 提案版本';
+                        version_str += '｜' + formatted_date + ' 提案版本';
                         version_dom = $('<span></span>')
                             .addClass('dropdown-item')
                             .data('bill-no', bill.關係文書.billNo)
@@ -608,9 +608,9 @@ $('.set-compare-target').on('modal-show', function() {
                 }
                 has_options = true;
                 date_term = log.會議日期.split('-');
-                log.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
+                formatted_date = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
                 version_str = ('undefined' !== typeof(log.主提案)) ? log.主提案 : log.關係文書[0].類型;
-                version_str += '｜' + log.會議日期 + ' 提案版本';
+                version_str += '｜' + formatted_date + ' 提案版本';
                 version_dom = $('<span></span>')
                     .addClass('dropdown-item')
                     .data('bill-no', log.關係文書[0].billNo)
