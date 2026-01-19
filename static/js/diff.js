@@ -319,18 +319,18 @@ var update_compare_list = function() {
     });
 };
 
-var notify_no_version_option = function(optionCnt) {
-    if (optionCnt == 0) {
-        $('#version-choose-list-desc').text('無提案版本供選擇');
-        $('#version-choose-chevron').remove();
-        $('#version-choose-selected-item').css('background-color', '#EFEFEF');
-    } else {
+var notify_no_version_option = function(has_options) {
+    if (has_options) {
         $('#version-choose-list-desc').text('請選擇提案版本');
         $('#version-choose-selected-item').css('background-color', 'white');
         if ($('#version-choose-chevron').length === 0) {
             var html = '<i id="version-choose-chevron" class="bi icon bi-chevron-down"></i>';
             $('#version-choose-selected-item').append(html);
         }
+    } else {
+        $('#version-choose-list-desc').text('無提案版本供選擇');
+        $('#version-choose-chevron').remove();
+        $('#version-choose-selected-item').css('background-color', '#EFEFEF');
     }
 };
 
@@ -563,17 +563,24 @@ $('.set-compare-target').on('modal-show', function() {
         if (version_id.toString().startsWith('more-')) {
             term = version_id.toString().split('-')[1];
             $.get(ly_api_base + '/law/' + diff_data.law_id + '/progress?屆=' + term).done(function(progress_data){
+                var has_options = false;
                 for (var log of progress_data['歷程']) {
                     for (var bill of log.bill_log) {
+                        if ('undefined' === typeof(bill.關係文書)) {
+                            continue;
+                        }
                         if ('undefined' === typeof(bill.關係文書.billNo)) {
                             continue;
                         }
                         if ('undefined' !== typeof(diff_data.diff.versions[bill.關係文書.版本編號])) {
                             continue;
                         }
+                        has_options = true;
                         date_term = bill.會議日期.split('-');
                         bill.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
                         version_str = bill.主提案 + '｜' + bill.會議日期 + ' 提案版本';
+                        version_str = ('undefined' !== typeof(bill.主提案)) ? bill.主提案 : bill.關係文書.類型;
+                        version_str += '｜' + bill.會議日期 + ' 提案版本';
                         version_dom = $('<span></span>')
                             .addClass('dropdown-item')
                             .data('bill-no', bill.關係文書.billNo)
@@ -581,9 +588,11 @@ $('.set-compare-target').on('modal-show', function() {
                             .appendTo('#version-choose-list');
                     }
                 }
+                notify_no_version_option(has_options);
             });
         } else {
             var version_data = $(this).data('version_data');
+            var has_options = false;
             for (var log of version_data['歷程']) {
                 if ('undefined' === typeof(log.關係文書)) {
                     continue;
@@ -597,17 +606,19 @@ $('.set-compare-target').on('modal-show', function() {
                 if ('undefined' !== typeof(diff_data.diff.versions[log.關係文書[0].版本編號])) {
                     continue;
                 }
+                has_options = true;
                 date_term = log.會議日期.split('-');
                 log.會議日期 = (parseInt(date_term[0]) - 1911) + '/' + date_term[1] + '/' + date_term[2];
-                version_str = log.主提案 + '｜' + log.會議日期 + ' 提案版本';
+                version_str = ('undefined' !== typeof(log.主提案)) ? log.主提案 : log.關係文書[0].類型;
+                version_str += '｜' + log.會議日期 + ' 提案版本';
                 version_dom = $('<span></span>')
                     .addClass('dropdown-item')
                     .data('bill-no', log.關係文書[0].billNo)
                     .text(version_str)
                     .appendTo('#version-choose-list');
             }
+            notify_no_version_option(has_options);
         }
-        notify_no_version_option($('#version-choose-list').children('span').length);
         $('#version-select-selected').click();
     });
 
