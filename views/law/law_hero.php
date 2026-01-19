@@ -41,7 +41,7 @@ if ('single' != $this->source_type) {
 
 //經歷過程
 if ('single' != $this->source_type) {
-    if ($this->source ?? false) {
+    if ($this->source ?? false and strpos($this->source, 'custom') !== 0) {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}?source={$this->source}&version={$this->version_id_input}", 'history'];
     } else {
         $tabs[] = ['經歷過程', "/law/history/{$this->law_id}" . $postfix('history'), 'history'];
@@ -52,7 +52,9 @@ if ('single' != $this->source_type) {
 $tabs[] = ['子法列表', "/law/sub_laws/{$this->law_id}", 'sub_laws'];
 
 //條文比較工具
-if (strpos($_SERVER['REQUEST_URI'], '/law/sub_laws') === 0) {
+if (strpos($_SERVER['REQUEST_URI'], '/law/sub_laws') === 0 or
+    (strpos($_SERVER['REQUEST_URI'], '/law/history') === 0 and !property_exists($this, 'source_type'))
+) {
     $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source=version:" . mb_substr($this->version_id_input, 0, 16), 'compare'];
 } else {
     $tabs[] = ['條文比較工具', "/law/compare/{$this->law_id}?source={$this->source}", 'compare'];
@@ -164,7 +166,7 @@ if ($this->version ?? false and !$is_progress) {
       <?php if ($is_law_compare or $is_law_history) { ?>
       <?php $page = ($is_law_compare) ? 'compare' : 'history'; ?>
       <div class="metadata">
-        <?php if ($this->source_type == 'version') { ?>
+        <?php if (!property_exists($this, 'source_type') or $this->source_type == 'version') { ?>
         <div class="compare-type"><?= MetadataHelper::$title[$page]['version'] ?></div>
         <div class="compare-desc"><?= MetadataHelper::$desc[$page]['version'] ?></div>
         <hr>
