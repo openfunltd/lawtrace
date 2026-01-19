@@ -60,6 +60,7 @@ if (strpos($_SERVER['REQUEST_URI'], '/law/sub_laws') === 0) {
 //tabs end
 
 $is_law_compare = (strpos($_SERVER['REQUEST_URI'], '/law/compare') === 0);
+$is_law_history = (strpos($_SERVER['REQUEST_URI'], '/law/history') === 0);
 if (!$is_law_compare) { //法律對照表頁面的原始資料連結移動至 metadata
     if ('meet' == $this->source_type) {
     } elseif ('bill' == $this->source_type) {
@@ -115,20 +116,9 @@ if ($this->version ?? false and !$is_progress) {
             <li class="breadcrumb-item active">
             條文比較工具
             </li>
-          <?php } elseif ($this->source_type == 'meet') { ?>
+          <?php } elseif ($is_law_history) { ?>
             <li class="breadcrumb-item active">
-            委員會審查
-            </li>
-          <?php } elseif ($this->source_type == 'bill' and $this->bill->提案來源 == '審查報告') { ?>
-            <li class="breadcrumb-item active">
-            審查報告
-            </li>
-          <?php } elseif ($this->source_type == 'bill') { ?>
-            <li class="breadcrumb-item active">
-            法律議案
-            </li>
-            <li class="breadcrumb-item active">
-              <?= $this->escape($this->bill->{'提案單位/提案委員'}) ?>
+            經歷過程
             </li>
           <?php } elseif ($this->source_type == 'version') { ?>
             <li class="breadcrumb-item active">
@@ -146,20 +136,6 @@ if ($this->version ?? false and !$is_progress) {
             <li class="breadcrumb-item active">
             <?= $this->escape($this->law_content_name) ?>
             </li>
-          <?php } elseif ($this->source_type == 'progress') { ?>
-            <li class="breadcrumb-item active">
-            未議決議案
-            </li>
-            <li class="breadcrumb-item active">
-            <?= sprintf("第 %d 屆", $this->progress_term) ?>
-            </li>
-          <?php } elseif ($this->source_type == 'join-policy') { ?>
-            <li class="breadcrumb-item active">
-              部預告版
-            </li>
-            <li class="breadcrumb-item active">
-            <?= $this->escape($this->policy_hostname) ?>
-            </li>
           <?php } ?>
         </ol>
       </nav>
@@ -174,103 +150,6 @@ if ($this->version ?? false and !$is_progress) {
               ：<?= $this->escape(implode('、', $this->aliases)) ?>
           </div>
       <?php } ?>
-      <?php if ($is_law_compare) { ?>
-      <!-- 條文比較工具停用舊版 metadata 介面 -->
-      <?php } elseif ($this->source_type == 'meet') { ?>
-      <div class="review-committee">
-          審查委員會：<?= $this->escape(implode('、', $this->meet->{'委員會代號:str'})) ?>
-      </div>
-      <div class="review-date">
-          審查會議日期：<?= $this->escape(lawversionhelper::getminguodate($this->meet->日期[0])) ?>
-      </div>
-      <div class="convener">
-        召委：
-        <!--<img src="images/party/tpp.svg">-->
-        <?= $this->escape($this->meet->會議資料[0]->委員會召集委員 ?? '') ?>
-      </div>
-      <div class="review-date">
-        原始資料：
-        <a href="<?= $this->meet->會議資料[0]->ppg_url ?>">
-          會議原始資料
-          <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-      </div>
-      <?php } elseif ($this->source_type == 'bill' and '審查報告' == $this->bill->提案來源) { ?>
-      <div class="review-committee">
-          審查委員會：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?>
-      </div>
-      <div class="review-date">
-          審查會發文日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?>
-      </div>
-      <div class="review-date">
-          議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
-      </div>
-      <div class="review-date">
-        原始資料：
-        <a href="<?= $this->bill->url ?>">
-          報告原始資料
-          <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-      </div>
-      <?php } elseif ($this->source_type == 'bill') { ?>
-        <?php if ($this->bill->提案人 ?? false) { ?>
-        <div class="review-committee">
-          提案人：<?php foreach ($this->bill->提案人 as $p) { ?>
-          <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
-          <?php if ($img) { ?>
-          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">
-          <?php } ?>
-          <?= $this->escape($p) ?>&nbsp;
-          <?php } ?>
-        </div>
-        <div class="review-committee">
-          連署人：<?php foreach ($this->bill->連署人 as $p) { ?>
-          <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
-          <?php if ($img) { ?>
-          <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">
-          <?php } ?>
-          <?= $this->escape($p) ?>&nbsp;
-          <?php } ?>
-        </div>
-        <?php } else { ?>
-        <div class="review-committee">
-          提案單位：<?= $this->escape($this->bill->{'提案單位/提案委員'}) ?>
-        </div>
-        <?php } ?>
-      <div class="review-date">
-          提案日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?>
-      </div>
-      <div class="review-date">
-          議案狀態：<?= $this->escape($this->bill->議案狀態) ?>
-      </div>
-        <?php if ($this->bill->案由 ?? false) { ?>
-        <div class="review-committee">
-            案由：<?= $this->escape($this->bill->案由) ?>
-        </div>
-        <?php } ?>
-      <div class="review-date">
-        原始資料：
-        <a href="<?= $this->bill->url ?>">
-          議案原始資料
-          <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-      </div>
-      <?php } elseif ($this->source_type == 'join-policy') { ?>
-      <div class="review-committee">
-        主協辦單位：<?= $this->escape($this->hostname) ?>
-      </div>
-      <div class="review-date">
-        發布日期：<?= $this->escape($this->published_date) ?>
-      </div>
-      <?php $join_policy_url = $this->escape("https://join.gov.tw/policies/detail/" . explode(':', $this->source)[1]); ?>
-      <div class="review-date">
-        原始資料：
-        <a href="<?= $join_policy_url ?>">
-          部預告版原始資料
-          <i class="bi bi-box-arrow-up-right"></i>
-        </a>
-      </div>
-      <?php } ?>
       </div>
       <div class="btn-group law-pages">
           <?php foreach ($tabs as $tab) { ?>
@@ -282,11 +161,12 @@ if ($this->version ?? false and !$is_progress) {
           </a>
           <?php } ?>
       </div>
-      <?php if ($is_law_compare) { ?>
+      <?php if ($is_law_compare or $is_law_history) { ?>
+      <?php $page = ($is_law_compare) ? 'compare' : 'history'; ?>
       <div class="metadata">
         <?php if ($this->source_type == 'version') { ?>
-        <div class="compare-type">比較類型：三讀歷程相關議案</div>
-        <div class="compare-desc">以原版本為比較基準，比較三讀版本、院版本、審查報告版本、不同委員們提案的版本。若原始資料中無抓取到院版本或審查報告版本，則不顯示。</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['version'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['version'] ?></div>
         <hr>
         <div>三讀日期：<?= $version_date ?></div>
         <?php } elseif ($this->source_type == 'bill' and $this->bill->提案來源 == '審查報告') { ?>
@@ -296,8 +176,8 @@ if ($this->version ?? false and !$is_progress) {
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
         </div>
-        <div class="compare-type">比較類型：審查報告相關議案</div>
-        <div class="compare-desc">此為審查報告中的相關議案比較。以原版本為比較基準，比較院版本、審查報告版本、不同委員們提案的版本。</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['bill_report'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['bill_report'] ?></div>
         <hr>
         <div>審查委員會：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?></div>
         <div>審查會發文日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?></div>
@@ -309,8 +189,8 @@ if ($this->version ?? false and !$is_progress) {
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
         </div>
-        <div class="compare-type">比較類型：委員會審查會議相關議案</div>
-        <div class="compare-desc">此為委員會會議公告中提及的所有議案比較。以原版本為比較基準，比較院版本、不同委員們提案的版本。若原始資料中無抓取到院版本，則不顯示。</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['meet'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['meet'] ?></div>
         <hr>
         <div>會議名稱：<?= $this->escape($this->meet->會議標題) ?></div>
         <div>審查委員會：<?= $this->escape(implode('、', $this->meet->{'委員會代號:str'})) ?></div>
@@ -323,8 +203,8 @@ if ($this->version ?? false and !$is_progress) {
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
         </div>
-        <div class="compare-type">比較類型：法律議案</div>
-        <div class="compare-desc">以原版本為比較基準，比較法律議案的修法提案。</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['bill'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['bill'] ?></div>
         <hr>
         <div>
           提案人：<?php foreach ($this->bill->提案人 as $p) { ?>
@@ -357,14 +237,14 @@ if ($this->version ?? false and !$is_progress) {
             <i class="bi bi-box-arrow-up-right"></i>
           </a>
         </div>
-        <div class="compare-type">比較類型：部預告版</div>
-        <div class="compare-desc">行政院於公共政策網路參與平台之「眾開講」釋出的部預告修法版本</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['join-policy'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['join-policy'] ?></div>
         <hr>
         <div>主協辦單位：<?= $this->escape($this->hostname) ?></div>
         <div>發布日期：<?= $this->escape($this->published_date) ?></div>
         <?php } elseif ($this->source_type == 'custom') { ?>
-        <div class="compare-type">比較類型：自訂比較</div>
-        <div class="compare-desc">比較基準與比較對象由使用者自訂，可跨屆數比較不同版本的條文。若原始資料無抓取到數位化資訊（較舊的資訊可能無法數位化），則無法成為比較對象。</div>
+        <div class="compare-type"><?= MetadataHelper::$title[$page]['custom'] ?></div>
+        <div class="compare-desc"><?= MetadataHelper::$desc[$page]['custom'] ?></div>
         <?php } ?>
       </div>
       <?php } ?>
