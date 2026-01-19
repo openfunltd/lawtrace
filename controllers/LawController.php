@@ -115,6 +115,11 @@ class LawController extends MiniEngine_Controller
                 $law_id = explode(':', $source_input)[1];
                 $this->view->single_version = true;
                 $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+            } elseif ('join-policy') {
+                $policy_uid = explode(':', $source_input)[1];
+                $res = PolicyAPI::apiQuery("/policy/show/$policy_uid", "查詢部預告版 metadata");;
+                $this->view->hostname = $res->data->主協辦單位 ?? '';
+                $this->view->published_date = $res->data->發布日期 ?? '';
             }
             $this->view->source_type = $type;
             $this->view->source = $source_input;
@@ -229,7 +234,7 @@ class LawController extends MiniEngine_Controller
         $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS) ?? Null;
 
         // 從來源代碼中取得相關的議案編號
-        $ret = DiffHelper::getBillNosFromSource($source_input);
+        $ret = DiffHelper::getBillNosFromSource($source_input, $_GET['version'] ?? []);
         $type = explode(':', $source_input)[0];
         if ('meet' == $type) {
             $meet_id = explode(':', $source_input)[1];
@@ -241,6 +246,8 @@ class LawController extends MiniEngine_Controller
             $law_id = explode(':', $source_input)[1];
         } elseif ('join-policy' == $type) {
             $policy_uid = explode(':', $source_input)[1];
+        } elseif ('custom' == $type) {
+            $law_id = explode(':', $source_input)[1];
         }
         if ($ret->version_id_input ?? false) {
             $this->view->version_id_input = $ret->version_id_input;
@@ -284,9 +291,11 @@ class LawController extends MiniEngine_Controller
             return $version->id;
         }, $versions);
         $this->view->choosed_version_ids = $choosed_version_ids;
+        $this->view->all_version_ids = array_map(function($v) { return $v->id; }, $all_versions->versions);
+        $this->view->base_version_id = $_GET['base_version'] ?? $all_versions->versions[0]->id;
 
         // 整合出對照表需要的資料
-        $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? []);
+        $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? [], $_GET['base_version'] ?? null);
         $this->view->choosed_version_ids = $this->view->diff->choosed_version_ids;
         $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
     }
@@ -335,5 +344,15 @@ class LawController extends MiniEngine_Controller
             exit;
         }
         return $res->data;
+    }
+
+    public function billdataAction()
+    {
+        $billno = $_GET['billno'] ?? null;
+        if (is_null($billno)) {
+            return $this->notfound();
+        }
+        $res = LYAPI::apiQuery("/bills/{$billno}", "查詢議案資料，議案編號：{$billno}");
+        return $this->json(DiffHelper::getVersionDataFromBillData(new StdClass, $res->data));
     }
 }

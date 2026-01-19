@@ -115,6 +115,7 @@ function init () {
 
   $('.add-compare-target, .add-compare-target-link, .set-compare-target').on('click', event => {
     $('.compare-target-modal').modal('show');
+    $(event.target).trigger('modal-show');
     event.preventDefault();
   });
 

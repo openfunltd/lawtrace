@@ -170,6 +170,12 @@ $this->tab = 'compare';
                           <i class="bi bi-arrow-right-circle"></i>
                         </a>
                       </span>
+                      <?php if (strpos($_SERVER['REQUEST_URI'], '/law/compare') === 0) { ?>
+                      <a class="ms-2 add-compare-target-link set-compare-target">
+                        新增比較對象
+                        <i class="bi bi-plus-circle"></i>
+                      </a>
+                      <?php } ?>
                     </div>
                   <?php } ?>
                   <!-- 如果大於2時，要以空白div補足數量 -->
@@ -265,103 +271,120 @@ $this->tab = 'compare';
           <div class="modal-content">
             <div class="modal-header">
               <h6 class="modal-title">
-              設定比較對象：<?= $this->escape($this->law->名稱 ?? '') ?>
+                <?= $this->escape($this->law->名稱) ?>
+                <br>
+                調整比較對象
+                <!-- 自訂條文時需更改為：自訂比較對象 -->
               </h6>
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <div class="compare-row single">
-                <div class="compare-target">
-                  <div class="title">
-                    比較對象
-                  </div>
-                  <div class="dropdown-select">
-                    <div class="selected-item" id="selected-item">
-                      請選擇比較對象 (6)
-                      <i class="bi icon bi-chevron-down"></i>
+              <div class="compare-section">
+                <div class="title">
+                  <div class="d-flex">
+                    <div class="flex-fill">
+                      顯示/隱藏
                     </div>
-                    <div class="dropdown-menu select-list">
-                      <div class="scroller">
-                        <div class="dropdown-item disabled group-label">
-                          關聯議案
-                        </div>
+                    <div>
+                      設為比較基準
+                    </div>
+                  </div>
+                </div>
+<script id="tmpl-version-list" type="text/template">
+<div class="form-check form-switch flex-fill">
+    <input class="form-check-input" type="checkbox" name="versions[]" checked>
+    <label class="form-check-label" for="ver_1">
+    劉建國等16人｜113/00/00 第幾院期提案版本
+    </label>
+    </div>
+    <div>
+    <input class="form-check-input" type="radio" name="base">
+    </div>
+</script>
+                <div class="version-list">
+                </div>
 
-                        <?php foreach ($this->diff->versions as $version) { ?>
-                        <div class="dropdown-item">
-                          <?php if ($version->id == '現行版本') continue; ?>
-                          <input 
-                            type="checkbox"
-                            name="choosed_version_ids[]"
-                            value="<?= $version->id ?>"
-                            <?= $this->if(in_array($version->id, $this->choosed_version_ids), 'checked') ?>
-                          >
-                          <?= $this->escape($version->title) ?>｜<?= $this->escape($version->subtitle) ?>
-                        </div>
-                        <?php } ?>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="tags" id="compare-list">
-                  </div>
-                </div>
-                <!--
-                <div class="compare-base">
-                  <div class="title">
-                    調整條文範圍
-                  </div>
-                  <div class="dropdown-select">
-                    <div class="selected-item">
-                      請選擇條文
-                      <i class="bi icon bi-chevron-down"></i>
-                    </div>
-                    <div class="dropdown-menu select-list">
-                      <input type="text" placeholder="搜尋" class="form-control filter-input">
-                      <div class="scroller">
-                        <?php foreach ($this->diff->rule_diffs as $idx => $rule_diff) { ?>
-                        <div class="dropdown-item">
-                          <input type="checkbox">
-                          <?= $this->escape($rule_diff->條文) ?>
-                        </div>
-                        <?php } ?>
-                      </div>
-                    </div>
-                  </div>
-  
-                  <div class="tags">
-                    <span class="tag">
-                      第二條
-                      <i class="bi bi-x-lg"></i>
-                    </span>
-                    <span class="tag">
-                      第六條
-                      <i class="bi bi-x-lg"></i>
-                    </span>
-                    <span class="tag">
-                      第九十二條
-                      <i class="bi bi-x-lg"></i>
-                    </span>
-                    <a href="#" class="show-all">
-                      顯示全部
-                    </a>
-                  </div>
-                </div>
-                -->
+              <?php if ($this->source_type != 'custom') { ?>
+                <!-- 非自訂條文時，modal下方選單為以下內容 begin -->
+                <div class="my-3">
+                  <button class="btn btn-outline-primary" id="btn-custom-compare">
+                    自訂比較對象
+                  </button>
               </div>
-            </div>
+              <?php } ?>
+              <?php if ($this->source_type == 'custom') { ?>
+                <!-- 非自訂條文時，modal下方選單為以下內容 end -->
+
+                <!-- 自訂條文時，modal下方選單為以下內容 begin -->
+                <div class="d-flex gap-3 align-items-center my-3">
+                  <div class="flex-fill dropdown-select">
+                    <div class="selected-item" id="version-select-selected">
+                        <span class="text">選擇屆期或是修正版本</span>
+                      <i class="bi icon bi-chevron-down"></i>
+                  </div>
+                    <div class="dropdown-menu select-list">
+                      <div class="scroller" id="version-select-list">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- 自訂條文時，modal下方選單為以下內容 end -->
+
+                <!-- 新增比較對象按鈕點選後，modal內為以下內容 begin -->
+                <div class="dropdown-select">
+                  <div id="version-choose-selected-item" class="selected-item">
+                    <span id="version-choose-list-desc">請選擇條文版本</span>
+                    <i id="version-choose-chevron" class="bi icon bi-chevron-down"></i>
+                  </div>
+                  <div class="dropdown-menu select-list">
+                    <div class="scroller" id="version-choose-list">
+                      <span class="dropdown-item">
+                        113/12/12 修正通過修正通過修正通過修正通過修正通過修正通過修正通過（現行）
+                      </span>
+                      <span class="dropdown-item">
+                        113/00/00 三讀版本
+                      </span>
+                      <span class="dropdown-item">
+                        113/00/00 行政院版本
+                      </span>
+                      <div class="dropdown-item disabled group-label">
+                        第Ｏ屆
+                      </div>
+                      <span class="dropdown-item">
+                        113/00/00 修正通過
+                      </span>
+                      <span class="dropdown-item">
+                        113/00/00 三讀版本
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- 新增比較對象按鈕點選後，modal內為以下內容 end -->
+              </div>
+          </div>
+          <?php } ?>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-submit">確認</button>
+              <button type="button" class="btn btn-primary" data-bs-dismiss="modal" id="btn-update-compare">確認</button>
+              <!-- 新增比較對象按鈕點選後，modal內為以下按鈕 end -->
+              <!--<button type="button" class="btn btn-primary" data-bs-dismiss="modal">新增比較對象</button>-->
+              <!-- 新增比較對象按鈕點選後，modal內為以下按鈕 end -->
             </div>
-            </div>
+          </div>
         </div>
       </div>
+    </div>
   </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 diff_data = <?= json_encode([
     'diff' => $this->diff,
+    'all_version_ids' => $this->all_version_ids,
     'choosed_version_ids' => $this->choosed_version_ids,
     'source' => $this->source,
+    'law_id' => $this->law_id,
+    'base_version_id' => $this->base_version_id,
 ]) ?>;
+ly_api_base = <?= json_encode("https://" . getenv('LYAPI_HOST')) ?>;
 </script>
 <script src="/static/js/diff.js"></script>
 <script src="/static/js/scroll.js"></script>
