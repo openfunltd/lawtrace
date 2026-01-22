@@ -3,6 +3,7 @@ $version_id_input = $this->version_id_input;
 $this->tab = 'diff';
 $this->source_type = 'version';
 $this->version = $version_id_input;
+$is_announced = $this->is_announced; //總統府是否已公告
 
 $is_draft = is_null($this->versions_data); //還在草案階段的
 $this->is_draft = $is_draft;
@@ -102,6 +103,21 @@ $this->nav_link_history = $history_endpoint;
       </section>
     </div>
     </div>
+    <?= $this->partial('common/footer') ?>
+    <?php exit; ?>
+  <?php } else if (!$is_announced) { ?>
+    <div class="main-content">
+      <section class="law-details">
+        <div class="container">
+          <div class="alert alert-primary" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+              本三讀通過之版本，需待總統府公告後，才能於「立法院法律系統」查詢取得條文內容，並於本站顯示。
+          </div>
+        </div>
+      </section>
+    </div>
+    </div>
+    <?= $this->partial('common/footer') ?>
     <?php exit; ?>
   <?php } ?>
   <div class="main-content">

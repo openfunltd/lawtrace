@@ -52,6 +52,7 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
     </div>
     </div>
     <?php exit; ?>
+    <?= $this->partial('common/footer') ?>
   <?php } else if (!$is_announced) { ?>
     <div class="main-content">
       <section class="law-details">
@@ -64,6 +65,7 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
       </section>
     </div>
     </div>
+    <?= $this->partial('common/footer') ?>
     <?php exit; ?>
   <?php } ?>
   <div class="main-content">

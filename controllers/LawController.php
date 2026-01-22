@@ -71,6 +71,23 @@ class LawController extends MiniEngine_Controller
         $this->view->single_version = false;
         $history_groups = $version_selected->歷程 ?? [];
 
+        $is_announced = true;
+        if (is_null($version_id_selected)) {
+            //在立法院法律系統中查無此版本時，檢查是係否因總統府尚未公告的關係
+            $res = LYAPI::apiQuery("/laws?limit=100", "近期三讀法律");
+            $laws_new = $res->laws ?? [];
+            foreach ($laws_new as $law_new) {
+                $law_id_new = $law_new->法律編號;
+                $date_new = $law_new->最新版本->日期;
+                $version_id_new = "$law_id_new:$date_new";
+                if ($law_id_new == $law_id and $version_id_new == $version_id_input) {
+                    $is_announced = false;
+                    break;
+                }
+            }
+        }
+        $this->view->is_announced = $is_announced;
+
         if ($source_input) {
             $ret = DiffHelper::getBillNosFromSource($source_input);
             $type = explode(':', $source_input)[0];
@@ -212,6 +229,23 @@ class LawController extends MiniEngine_Controller
             $source = "version:{$law_id}:{$version_selected->日期}";
             $this->view->law_contents = $res->lawcontents;
         }
+
+        $is_announced = true;
+        if (is_null($version_id_selected)) {
+            //在立法院法律系統中查無此版本時，檢查是係否因總統府尚未公告的關係
+            $res = LYAPI::apiQuery("/laws?limit=100", "近期三讀法律");
+            $laws_new = $res->laws ?? [];
+            foreach ($laws_new as $law_new) {
+                $law_id_new = $law_new->法律編號;
+                $date_new = $law_new->最新版本->日期;
+                $version_id_new = "$law_id_new:$date_new";
+                if ($law_id_new == $law_id and $version_id_new == $version_id_input) {
+                    $is_announced = false;
+                    break;
+                }
+            }
+        }
+        $this->view->is_announced = $is_announced;
 
         if (!is_null($version_id_previous)) {
             $res = LYAPI::apiQuery(
