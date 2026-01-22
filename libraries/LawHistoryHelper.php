@@ -163,6 +163,7 @@ class LawHistoryHelper
             '屆',
             '提案來源',
             '對照表',
+            '議案流程',
         ];
         $url = sprintf('/bills?output_fields=%s&議案編號=%s',
             implode('&output_fields=', $output_fields),
@@ -229,6 +230,18 @@ class LawHistoryHelper
                         $history->related_doc_url = $related_doc->連結;
                     }
                     continue;
+                }
+
+                //check direct second-reading 確認是否為逕付二讀
+                $bill_statuses = $bill->{'議案流程'} ?? [];
+                if ($bill_statuses) {
+                    foreach ($bill_statuses as $status) {
+                        $status = $status->狀態 ?? '';
+                        if (str_contains($status, '逕付二讀')) {
+                            $history->direct_second_reading_status = $status;
+                            break;
+                        }
+                    }
                 }
 
                 //get proposer or progress title
