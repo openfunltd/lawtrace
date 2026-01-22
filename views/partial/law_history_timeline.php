@@ -33,6 +33,9 @@
                     <?php if (property_exists($history, '該提案最新狀態') and $history->該提案最新狀態 == '撤案') { ?>
                       （已撤案）
                     <?php } ?>
+                    <?php if ($history->direct_second_reading_status) { ?>
+                      （逕付二讀）
+                    <?php } ?>
                     <?php if (property_exists($history, 'article_numbers')) { ?>
                       第 <?= implode(', ', ($history->article_numbers)) ?> 條
                     <?php } ?>

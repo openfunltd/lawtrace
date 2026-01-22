@@ -50,6 +50,9 @@ foreach ($history_groups as $history_group) {
               <?php if ($bill->withdraw_status) { ?>
                 （<?= $this->escape($bill->withdraw_status) ?>）
               <?php } ?>
+              <?php if ($bill->direct_second_reading_status) { ?>
+                （<?= $this->escape($bill->direct_second_reading_status) ?>）
+              <?php } ?>
             </li>
           <?php } ?>
         <?php } ?>

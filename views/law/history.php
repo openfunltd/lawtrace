@@ -119,6 +119,9 @@ if (strpos($version_id_input, "-progress")) {
                         <?php if ($bill->withdraw_status) { ?>
                           （<?= $this->escape($bill->withdraw_status) ?>）
                         <?php } ?>
+                        <?php if ($bill->direct_second_reading_status) { ?>
+                          （<?= $this->escape($bill->direct_second_reading_status) ?>）
+                        <?php } ?>
                       </div>
                       <div class="actions">
                         <?php if ($bill->compare_url) { ?>
