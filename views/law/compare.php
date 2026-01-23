@@ -60,13 +60,13 @@ $this->tab = 'compare';
             <div class="law-compare-wrapper">
               <div class="alert alert-primary" role="alert">
                 <i class="bi bi-exclamation-triangle-fill"></i>
-                  立法院第 8 屆以前(~2016-01-31)的議案檔案，並非完整的數位化，僅為掃描成圖檔後存成 PDF 的檔案。
-                  故無法在本頁利用對照表進行條文比較，還請見諒。
+                  若議案檔案不是完整的數位化檔案（例如：第九屆以前的議案關係文書都是掃描圖檔），將無法在本頁利用對照表進行條文比較，還請見諒。
               </div>
             </div>
           </div>
         </section>
       </div>
+      <?= $this->partial('common/footer') ?>
       <?php exit; ?>
       <?php } ?>
       <div class="main-content">
