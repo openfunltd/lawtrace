@@ -169,6 +169,13 @@ class LawVersionHelper
 
     public static function getVersionsWithProgresses($law_id, $version_id_input)
     {
+        $version_suffix = explode(':', $version_id_input)[1] ?? '';
+        if ($version_id_input != 'latest' &&
+            !preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_suffix) &&
+            !preg_match('/^\d+-progress$/', $version_suffix)) {
+            return null;
+        }
+
         $versions_data = self::getVersionsData($law_id, $version_id_input) ?? (object) [];
         $versions_in_terms = $versions_data->versions_in_terms ?? null;
         $latest_third_reading_date = $versions_data->latest_third_reading_date ?? null;
