@@ -171,7 +171,7 @@ if ($this->version ?? false and !$is_progress) {
       <?php if ($is_law_compare or $is_law_history) { ?>
       <?php $page = ($is_law_compare) ? 'compare' : 'history'; ?>
       <div class="metadata">
-        <?php if (!property_exists($this, 'source_type') or $this->source_type == 'version') { ?>
+        <?php if (!isset($this->source_type) or $this->source_type == 'version') { ?>
         <div class="compare-type"><?= MetadataHelper::$title[$page]['version'] ?></div>
         <div class="compare-desc"><?= MetadataHelper::$desc[$page]['version'] ?></div>
         <hr>
