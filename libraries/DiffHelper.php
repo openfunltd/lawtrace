@@ -322,6 +322,8 @@ class DiffHelper
                     continue;
                 }
 
+                $rule_no = trim($rule_no);
+
                 if ('' == ($row->{'修正'} ?? '') and $row->{'審查會通過條文:備註'} ?? false) {
                     $new = "(" . $row->{'審查會通過條文:備註'} . ")\n" . $new;
                 } elseif ('' == ($row->{'增訂'} ?? '') and $row->{'審查會通過條文:備註'} ?? false) {
