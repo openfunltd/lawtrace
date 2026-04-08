@@ -13,7 +13,7 @@ class LYAPI
         return self::$log;
     }
 
-    public static function apiQuery($url, $reason, $cache = null)
+    public static function apiQuery($url, $reason, $cache = 3600)
     {
         $url = 'https://' . getenv('LYAPI_HOST') . $url;
 
