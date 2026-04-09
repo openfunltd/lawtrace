@@ -43,6 +43,8 @@ class LYAPI
         }
         curl_setopt($curl, CURLOPT_URL, $api_url);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        // set timeout 10 seconds
+        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
         // referer
         curl_setopt($curl, CURLOPT_REFERER, 'https://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']);
         // user agent
@@ -59,6 +61,10 @@ class LYAPI
                 'reason' => $reason,
                 'delta' => $delta,
             ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL, FILE_APPEND);
+        }
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if ($http_code !== 200) {
+            throw new Exception("API request failed with status code $http_code");
         }
         $res_json = json_decode($res);
         curl_close($curl);
