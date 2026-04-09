@@ -23,7 +23,7 @@ class LYAPI
         if (!is_null($cache)) {
             $cache_key = 'lyapi_' . crc32($url) . '_' . md5($url);
             $cache_file = "/tmp/lyapicache-{$cache_key}.json";
-            if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $cache) {
+            if (file_exists($cache_file) && (time() - filemtime($cache_file)) < $cache and !($_GET['nocache'] ?? false)) {
                 $res_json = json_decode(file_get_contents($cache_file));
                 if (is_null(self::$log)) {
                     self::$log = [];
@@ -48,7 +48,18 @@ class LYAPI
         // user agent
         $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
         curl_setopt($curl, CURLOPT_USERAGENT, $user_agent);
+        $start = microtime(true);
         $res = curl_exec($curl);
+        $delta = microtime(true) - $start;
+        if ($delta > 1) {
+            file_put_contents("/tmp/lyapi-slow-" . date('Ymd'), json_encode([
+                'time' => date('Y-m-d H:i:s'),
+                'query' => $_SERVER['REQUEST_URI'],
+                'url' => $url,
+                'reason' => $reason,
+                'delta' => $delta,
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) . PHP_EOL, FILE_APPEND);
+        }
         $res_json = json_decode($res);
         curl_close($curl);
         if (is_null(self::$log)) {
