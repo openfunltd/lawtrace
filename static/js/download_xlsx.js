@@ -1,4 +1,4 @@
-$("#download-xlsx").on("click", function() {
+$("#download-xlsx").on("click", async function() {
   let data = [];
   let data_split = [];
   let titles = ['版本名稱'];
@@ -63,85 +63,189 @@ $("#download-xlsx").on("click", function() {
   //metadata
   const metadata_aoa = getMetadataAoa();
 
-  //build xlsx
-  //create worksheets
-  const worksheet1 = XLSX.utils.aoa_to_sheet(data);
-  const worksheet2 = XLSX.utils.aoa_to_sheet(data_split);
-  const worksheet3 = XLSX.utils.aoa_to_sheet(ppg_link_aoa);
-  const worksheet4 = XLSX.utils.aoa_to_sheet(metadata_aoa);
+  //build xlsx using ExcelJS for rich text diff formatting
+  let ExcelJS;
+  try {
+    ExcelJS = await loadExcelJS();
+  } catch (e) {
+    alert('無法載入 ExcelJS，請確認網路連線後再試。');
+    return;
+  }
 
-  //create workbook
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet1, "對照表");
-  XLSX.utils.book_append_sheet(workbook, worksheet2, "對照表（分句）");
-  XLSX.utils.book_append_sheet(workbook, worksheet3, "提案原始資料連結");
-  XLSX.utils.book_append_sheet(workbook, worksheet4, "詮釋資料");
+  const workbook = new ExcelJS.Workbook();
 
-  //get law_name, source_str and timestamp for excel file name
+  function addSheetFromAoa(name, aoa) {
+    const ws = workbook.addWorksheet(name);
+    ws.views = [{ state: 'frozen', xSplit: 2, ySplit: 1, topLeftCell: 'C2', activeCell: 'C2' }];
+
+    for (let rowIdx = 0; rowIdx < aoa.length; rowIdx++) {
+      const rowValues = aoa[rowIdx];
+      const row = ws.addRow(new Array(rowValues.length).fill(null));
+      rowValues.forEach((v, i) => {
+        const cell = row.getCell(i + 1);
+        cell.value = v;
+        cell.alignment = { wrapText: true, vertical: 'top' };
+      });
+      // First 3 rows (版本名稱 / 提案日期 / 原始資料) keep default height
+      if (rowIdx >= 3) {
+        row.height = 80;
+      }
+    }
+
+    const colCount = aoa.length > 0 ? Math.max(...aoa.map(r => r.length)) : 0;
+    if (colCount > 0) {
+      ws.getColumn(1).width = 10;
+      for (let c = 2; c <= colCount; c++) {
+        ws.getColumn(c).width = 45;
+      }
+    }
+  }
+
+  addSheetFromAoa('對照表', data);
+  addSheetFromAoa('對照表（分句）', data_split);
+  addSheetFromAoa('提案原始資料連結', ppg_link_aoa);
+  addSheetFromAoa('詮釋資料', metadata_aoa);
+
+  //get law_name, source_str for excel file name
   const law_name = $('li.breadcrumb-item').eq(1).find('a').text().trim();
   const source_str = buildSourceStr();
 
-  //downlaod excel file
-  XLSX.writeFile(workbook, `${law_name}-${source_str}.xlsx`);
+  //download excel file
+  const buffer = await workbook.xlsx.writeBuffer();
+  const blob = new Blob([buffer], {
+    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${law_name}-${source_str}.xlsx`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
-function getLawAoa(last_section_idx, articleNums, bill_count, split) {
-  law_aoa = [];
-  classname = (split) ? 'law-diff-content-section' : 'law-diff-content-origin';
+function loadExcelJS() {
+  return new Promise((resolve, reject) => {
+    if (window.ExcelJS) { resolve(window.ExcelJS); return; }
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+    script.onload = () => resolve(window.ExcelJS);
+    script.onerror = () => reject(new Error('Failed to load ExcelJS'));
+    document.head.appendChild(script);
+  });
+}
 
-  for (section_idx = 0; section_idx <= last_section_idx; section_idx++) {
+// Walk DOM contents and collect text runs with diff type (add/remove/null)
+function parseDiffContent($container) {
+  const runs = [];
+  $container.contents().each(function() {
+    if (this.nodeType === 3) {
+      const text = this.textContent;
+      if (text) runs.push({ text, type: null });
+    } else if (this.nodeType === 1) {
+      const $el = $(this);
+      if ($el.is('br')) return;
+      if ($el.hasClass('add')) {
+        const text = $el.text();
+        if (text) runs.push({ text, type: 'add' });
+      } else if ($el.hasClass('remove')) {
+        const text = $el.text();
+        if (text) runs.push({ text, type: 'remove' });
+      } else {
+        parseDiffContent($el).forEach(r => runs.push(r));
+      }
+    }
+  });
+  return runs;
+}
+
+// Convert diff runs to ExcelJS cell value:
+// plain string when no diff markup, richText object when diff exists
+function runsToValue(runs) {
+  const nonEmpty = runs.filter(r => r.text !== '');
+  if (nonEmpty.length === 0) return '';
+  if (!nonEmpty.some(r => r.type)) {
+    return nonEmpty.map(r => r.text).join('').trim();
+  }
+  const richText = nonEmpty.map(r => {
+    if (r.type === 'add') {
+      return { text: r.text, font: { color: { argb: 'FF006600' }, underline: true } };
+    }
+    if (r.type === 'remove') {
+      return { text: r.text, font: { color: { argb: 'FFCC0000' }, strike: true } };
+    }
+    return { text: r.text };
+  });
+  return { richText };
+}
+
+function getLawAoa(last_section_idx, articleNums, bill_count, split) {
+  const law_aoa = [];
+
+  for (let section_idx = 0; section_idx <= last_section_idx; section_idx++) {
+    let divBetween;
     if (section_idx < last_section_idx) {
       divBetween = $('#section-' + section_idx).nextUntil('#section-' + (section_idx + 1));
     } else {
       divBetween = $('#section-' + section_idx).nextAll();
     }
 
-    divBetween = divBetween.filter('.law-diff-content.' + classname).toArray();
-    law_content = divBetween.map(function(ele) {
-      return getLawText(ele, split);
-    });
+    // Always read section divs — they have diff markup (span.add / span.remove) applied by diff.js.
+    // Origin divs are server-rendered plain text and never receive diff markup.
+    // Layout in DOM: [line0_v0, line0_v1, ..., line1_v0, line1_v1, ...] repeating bill_count per line.
+    const sectionDivs = divBetween.filter('.law-diff-content.law-diff-content-section').toArray();
 
-    //法律內文 law_content
-    law_content_aoa = chunkArray(law_content, bill_count);
-
-    //first column: article number(條號) or 空白
-    for (let i = 0; i < law_content_aoa.length; i++) {
-      prepend = '';
-      if (i == 0) {
-        prepend = articleNums[section_idx];
+    if (split) {
+      //分句: one row per sentence, one cell per version
+      const law_content = sectionDivs.map(ele => getLawText(ele, true));
+      const law_content_aoa = chunkArray(law_content, bill_count);
+      for (let i = 0; i < law_content_aoa.length; i++) {
+        law_content_aoa[i].unshift(i === 0 ? articleNums[section_idx] : '');
       }
-      law_content_aoa[i].unshift(prepend);
+      law_aoa.push(...law_content_aoa);
+    } else {
+      //對照表: one row per article — aggregate all sentences for each version into one cell
+      const versionCells = [];
+      for (let vi = 0; vi < bill_count; vi++) {
+        const versionDivs = sectionDivs.filter((_, i) => i % bill_count === vi);
+        const allRuns = [];
+        versionDivs.forEach((ele, lineIdx) => {
+          const $content = hasReason(ele, true) ? $(ele).children('div').first() : $(ele);
+          const runs = parseDiffContent($content);
+          if (lineIdx > 0 && allRuns.length > 0) {
+            allRuns.push({ text: '\n', type: null });
+          }
+          runs.forEach(r => allRuns.push(r));
+        });
+        versionCells.push(runsToValue(allRuns));
+      }
+      law_aoa.push([articleNums[section_idx], ...versionCells]);
     }
 
-    law_aoa = law_aoa.concat(law_content_aoa);
-
-    //立法理由 law_reason
-    divLastRow = divBetween.slice(-1 * bill_count);
-    law_reason_aoa = divLastRow.map(function (ele) {
-      return getLawReason(ele, split);
-    });
+    //立法理由: last bill_count section divs carry the card-help for each version
+    const divLastRow = sectionDivs.slice(-bill_count);
+    const law_reason_aoa = divLastRow.map(ele => getLawReason(ele, true));
     law_reason_aoa.unshift('立法理由');
-
     law_aoa.push(law_reason_aoa);
-
   }
 
   return law_aoa;
 }
 
 function getLawText(ele, split) {
+  let $content;
   if (hasReason(ele, split)) {
-    if (split) {
-      return $(ele).children('div').first().text().trim();
-    }
-    return $(ele).children('span').first().text().trim();
+    $content = split ? $(ele).children('div').first() : $(ele).children('span').first();
+  } else {
+    $content = $(ele);
   }
-  return $(ele).text().trim();
+  return runsToValue(parseDiffContent($content));
 }
 
 function getLawReason(ele, split) {
   if (hasReason(ele, split)) {
-    return $(ele).find('div.help-body').text().trim();
+    return runsToValue(parseDiffContent($(ele).find('div.help-body')));
   }
   return '';
 }
@@ -154,94 +258,95 @@ function hasReason(ele, split) {
   return $(ele).find('> div').length === 1;
 }
 
+// Read a labelled field from the .metadata div rendered by law_hero.php
+// e.g. getMetaText('審查委員會') returns the text after '審查委員會：'
+function getMetaText(label) {
+  let result = '';
+  $('.metadata > div').each(function() {
+    const text = $(this).text().trim();
+    const prefix = label + '：';
+    if (text.startsWith(prefix)) {
+      result = text.substring(prefix.length).trim();
+      return false;
+    }
+  });
+  return result;
+}
+
+// Extract a list of names from a labelled div (handles img+text nodes for 提案人/連署人)
+function getMetaNames(label) {
+  let names = [];
+  $('.metadata > div').each(function() {
+    const text = $(this).text().trim();
+    if (!text.startsWith(label + '：')) return;
+    $(this).contents().each(function() {
+      if (this.nodeType === 3) {
+        const t = this.textContent.replace(/ /g, '').trim();
+        if (t) names.push(t);
+      }
+    });
+    return false;
+  });
+  return names;
+}
+
 function buildSourceStr() {
-  const source_type_str = $('li.breadcrumb-item').eq(2).text().trim();
-  let str = source_type_str;
-  if (source_type_str == '三讀版本') {
-    str = str + '-' + $('li.breadcrumb-item').eq(3).text().trim().replace(/\s+/g, '');
-  } else if (source_type_str == '審查報告') {
-    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
-    str = str + '-' + $('div.review-committee').first().text().trim().split('：')[1];
-  } else if (source_type_str == '法律議案') {
-    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
-    str = str + '-' + $('li.breadcrumb-item').eq(3).text().trim();
-  } else if (source_type_str == '委員會審查') {
-    str = str + '-' + $('div.review-date').eq(0).text().trim().replace(/\s+/g, '').split('：')[1];
-    str = str + '-' + $('div.review-committee').first().text().trim().split('：')[1];
-  } else {
-    str = str + '-unknown_source';
+  const src = diff_data.source;
+  const prefix = src.split(':')[0];
+
+  if (prefix === 'version') {
+    return '三讀版本-' + getMetaText('三讀日期').replace(/\s+/g, '');
+  } else if (prefix === 'bill') {
+    const reviewDate = getMetaText('審查會發文日期');
+    if (reviewDate !== '') {
+      return '審查報告-' + reviewDate.replace(/\s+/g, '') + '-' + getMetaText('審查委員會');
+    }
+    return '法律議案-' + getMetaText('提案日期').replace(/\s+/g, '');
+  } else if (prefix === 'meet') {
+    return '委員會審查-' + getMetaText('審查會議日期').replace(/\s+/g, '') + '-' + getMetaText('審查委員會');
+  } else if (prefix === 'join-policy') {
+    return '部預告版-' + getMetaText('發布日期').replace(/\s+/g, '');
+  } else if (prefix === 'custom') {
+    return '自訂比較';
   }
-  return str;
+  return prefix;
 }
 
 function getMetadataAoa() {
   let metadata_aoa = [];
-  const source_type_str = $('li.breadcrumb-item').eq(2).text().trim();
+  const src = diff_data.source;
+  const prefix = src.split(':')[0];
+
   metadata_aoa.push(['Lawtrace 網址', window.location.href]);
   metadata_aoa.push(['檔案下載時間', getTimestamp()]);
   metadata_aoa.push(['法律名稱', $('li.breadcrumb-item').eq(1).find('a').text().trim()]);
-  metadata_aoa.push(['比較來源', source_type_str]);
+  metadata_aoa.push(['比較來源', buildSourceStr()]);
 
-  //不同 source 的詳細資訊
-  if (source_type_str == '三讀版本') {
-    metadata_aoa.push(['版本', $('li.breadcrumb-item').eq(3).text().trim()]);
-  } else if (source_type_str == '審查報告') {
-    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().split('：')[1].trim()]);
-    metadata_aoa.push(['審查會發文日期', $('div.review-date').eq(0).text().split('：')[1].trim()]);
-    metadata_aoa.push(['議案狀態', $('div.review-date').eq(1).text().split('：')[1].trim()]);
-  } else if (source_type_str == '法律議案') {
-    divs = $('div.review-committee').toArray();
-
-    //提案人 array
-    let proposers = [];
-    for (let i = 0; i < divs.length; i++) {
-      if ($(divs[i]).text().includes('提案人')) {
-        let imgs = $(divs[i]).find('img').toArray();
-        for (let j = 0; j < imgs.length; j++) {
-          proposers.push($(imgs[j]).attr('alt').trim());
-        }
-      }
+  if (prefix === 'version') {
+    metadata_aoa.push(['三讀日期', getMetaText('三讀日期')]);
+  } else if (prefix === 'bill') {
+    const reviewDate = getMetaText('審查會發文日期');
+    if (reviewDate !== '') {
+      metadata_aoa.push(['審查委員會', getMetaText('審查委員會')]);
+      metadata_aoa.push(['審查會發文日期', reviewDate]);
+      metadata_aoa.push(['議案狀態', getMetaText('議案狀態')]);
+    } else {
+      const proposers = getMetaNames('提案人');
+      const cosigners = getMetaNames('連署人');
+      metadata_aoa.push(['提案人'].concat(proposers));
+      metadata_aoa.push(['連署人'].concat(cosigners));
+      metadata_aoa.push(['提案日期', getMetaText('提案日期')]);
+      metadata_aoa.push(['議案狀態', getMetaText('議案狀態')]);
+      const 案由 = getMetaText('案由');
+      if (案由) metadata_aoa.push(['案由', 案由]);
     }
-    const proposer_aoa = ['提案人'].concat(proposers);
-
-    //連署人 array
-    let cosigners = [];
-    for (let i = 0; i < divs.length; i++) {
-      if ($(divs[i]).text().includes('連署人')) {
-        let imgs = $(divs[i]).find('img').toArray();
-        for (let j = 0; j < imgs.length; j++) {
-          cosigners.push($(imgs[j]).attr('alt').trim());
-        }
-      }
-    }
-    const cosigner_aoa = ['連署人'].concat(cosigners);
-
-    //提案單位
-    let proposing_unit_aoa = ['提案單位', ''];
-    for (let i = 0; i < divs.length; i++) {
-      if ($(divs[i]).text().includes('提案單位')) {
-        proposing_unit_aoa = ['提案單位', $(divs[i]).text().split('：')[1].trim()];
-      }
-    }
-
-    //案由
-    let bill_proposal_aoa = ['案由', ''];
-    for (let i = 0; i < divs.length; i++) {
-      if ($(divs[i]).text().includes('案由')) {
-        bill_proposal_aoa = ['案由', $(divs[i]).text().split('：')[1].trim()];
-      }
-    }
-
-    metadata_aoa.push(proposer_aoa);
-    metadata_aoa.push(cosigner_aoa);
-    metadata_aoa.push(proposing_unit_aoa);
-    metadata_aoa.push(['提案日期', $('div.review-date').eq(0).text().split('：')[1].trim()]);
-    metadata_aoa.push(['提案狀態', $('div.review-date').eq(1).text().split('：')[1].trim()]);
-    metadata_aoa.push(bill_proposal_aoa);
-  } else if (source_type_str == '委員會審查') {
-    metadata_aoa.push(['審查委員會', $('div.review-committee').first().text().split('：')[1].trim()]);
-    metadata_aoa.push(['審查會議日期', $('div.review-date').first().text().split('：')[1].trim()]);
-    metadata_aoa.push(['召委', $('div.convener').first().text().split('：')[1].trim()]);
+  } else if (prefix === 'meet') {
+    metadata_aoa.push(['審查委員會', getMetaText('審查委員會')]);
+    metadata_aoa.push(['審查會議日期', getMetaText('審查會議日期')]);
+    metadata_aoa.push(['召委', getMetaText('召委')]);
+  } else if (prefix === 'join-policy') {
+    metadata_aoa.push(['主協辦單位', getMetaText('主協辦單位')]);
+    metadata_aoa.push(['發布日期', getMetaText('發布日期')]);
   }
 
   return metadata_aoa;
