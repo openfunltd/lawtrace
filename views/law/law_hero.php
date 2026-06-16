@@ -215,7 +215,7 @@ if ($this->version ?? false and !$is_progress) {
         <div class="compare-desc"><?= MetadataHelper::$desc[$page]['bill'] ?></div>
         <hr>
         <div>
-          提案人：<?php foreach ($this->bill->提案人 as $p) { ?>
+          提案人：<?php foreach ($this->bill->提案人 ?? [] as $p) { ?>
           <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
           <?php if ($img) { ?>
           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">
@@ -224,7 +224,7 @@ if ($this->version ?? false and !$is_progress) {
           <?php } ?>
         </div>
         <div>
-          連署人：<?php foreach ($this->bill->連署人 as $p) { ?>
+          連署人：<?php foreach ($this->bill->連署人 ?? [] as $p) { ?>
           <?php $img = PartyHelper::getImageByTermAndName($this->bill->屆, $p); ?>
           <?php if ($img) { ?>
           <img src="<?= $img ?>" alt="<?= $this->escape($p) ?>" height="16">

@@ -458,6 +458,7 @@ class LawHistoryHelper
                                 return $legislator->委員姓名 == $convener;
                             });
                             $legislator = reset($legislators_filtered);
+                            $party_img_path = null;
                             if ($legislator !== false) {
                                 $party = $legislator->黨籍;
                                 $party_img_path = PartyHelper::getImage($party);

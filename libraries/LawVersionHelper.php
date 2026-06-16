@@ -183,7 +183,7 @@ class LawVersionHelper
         $version_id_selected = $versions_data->version_id_selected ?? null;
         $term_selected = $versions_data->term_selected ?? null;
         $term_dates = LyDateHelper::$term_dates;
-        $version_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
+        $version_date = substr(explode(':', $version_id_input ?? '')[1] ?? '', 0, 10) ?: null;
 
         //repack 歷程 as 歷程 in progress
         if ($version_selected->歷程 ?? false) {

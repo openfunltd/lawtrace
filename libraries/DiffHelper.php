@@ -290,12 +290,12 @@ class DiffHelper
                 $law_content_id = $row->law_content_id ?? null;
                 if (($row->現行 ?? false) and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->現行)[0];
-                    $origin = explode('　', $row->現行, 2)[1];
+                    $origin = explode('　', $row->現行, 2)[1] ?? '';
                     $law_content_id = $row->law_content_id ?? null;
                     $new = explode('　', $row->修正, 2)[1] ?? '';
                 } else if (($row->現行法 ?? false) and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->現行法)[0];
-                    $origin = explode('　', $row->現行法, 2)[1];
+                    $origin = explode('　', $row->現行法, 2)[1] ?? '';
                     $new = explode('　', $row->修正, 2)[1] ?? '';
                 } elseif ($row->增訂 ?? false) {
                     if ($row->條號 ?? false and strlen($row->條號) < 20) {
@@ -311,10 +311,10 @@ class DiffHelper
                     $origin = '';
                     $new = explode('　', $row->修正, 2)[1] ?? '';
                 } elseif (property_exists($row, '增訂') and $row->增訂 == '' and property_exists($row, '審查會通過條文:備註')) {
-                    if (strpos(trim($row->條號), '名稱：') === 0) {
+                    if (strpos(trim($row->條號 ?? ''), '名稱：') === 0) {
                         $rule_no = '法律名稱';
                     } else {
-                        $rule_no = explode('　', $row->條號)[0];
+                        $rule_no = explode('　', $row->條號 ?? '')[0];
                     }
                     $origin = '';
                     $new = '';
@@ -557,7 +557,9 @@ class DiffHelper
             }
             $ret->choosed_version_ids = $new_choosed_version_ids;
         } else {
-            $ret->versions->{$ret->choosed_version_ids[0]}->first_version = true;
+            if (!empty($ret->choosed_version_ids)) {
+                $ret->versions->{$ret->choosed_version_ids[0]}->first_version = true;
+            }
         }
 
         return $ret;

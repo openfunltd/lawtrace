@@ -6,7 +6,7 @@
       <div class="item-head">
         <span class="title"><?= $this->escape($timeline_node->進度) ?></span>
         <small><?= $this->escape($timeline_node->會議民國日期) ?></small>
-        <?php if ($timeline_node->items[0]->is_meet and property_exists($timeline_node->items[0], 'ppg_url')) { ?>
+        <?php if (($timeline_node->items[0]->is_meet ?? false) and property_exists($timeline_node->items[0], 'ppg_url')) { ?>
           <a href="<?= $this->escape($timeline_node->items[0]->ppg_url) ?>" target="_blank">
             原始資料
             <i class="bi bi-box-arrow-up-right"></i>
@@ -28,7 +28,7 @@
                       <img width="16" height="16" src="<?= $history->party_img_path ?>">
                     <?php } ?>
                   </div>
-                  <div class="party"><?= $this->escape($history->proposers_str ?? $history->主提案) ?></div>
+                  <div class="party"><?= $this->escape($history->proposers_str ?? $history->主提案 ?? '') ?></div>
                   <div class="sections">
                     <?php if (property_exists($history, '該提案最新狀態') and $history->該提案最新狀態 == '撤案') { ?>
                       （已撤案）

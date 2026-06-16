@@ -78,7 +78,7 @@ class PolicyHelper
                 }
             }
         }
-        $policy_log = array_filter($policy_log, fn($policy) => !$policy->is_linked);
+        $policy_log = array_filter($policy_log, fn($policy) => !($policy->is_linked ?? false));
 
         //剩下的 policies 放進未審查分類中
         foreach ($history_groups as $key => $history_group) {

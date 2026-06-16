@@ -29,9 +29,9 @@ $html_patterns = [
 $amendment_idx = 0;
 foreach ($modified_contents as $content) {
     $modification = new stdClass();
-    $article_number = $content->條號;
+    $article_number = $content->條號 ?? '';
     $modified_text = $content->內容 ?? '';
-    if (mb_strpos($modified_text, $article_number) === 0) {
+    if ($article_number !== '' && mb_strpos($modified_text, $article_number) === 0) {
         $modified_text = mb_substr($modified_text, mb_strlen($article_number) + 1);
     }
     $reason = $content->立法理由 ?? '';
@@ -66,7 +66,7 @@ foreach ($modified_contents as $content) {
     $modification->modified_text = $modified_text;
     if (!empty((array) $base_content)) {
         $base_text = $base_content->內容 ?? '';
-        if (mb_strpos($base_text, $article_number) === 0) {
+        if ($article_number !== '' && mb_strpos($base_text, $article_number) === 0) {
             $base_text = mb_substr($base_text, mb_strlen($article_number) + 1);
         }
         $modification->base_text = $base_text;
@@ -144,7 +144,7 @@ $this->nav_link_history = $history_endpoint;
                     <div class="menu-body">
                       <?php foreach ($versions as $version) { ?>
                         <div class="menu-item level-3">
-                          <div class="menu-head <?= ($version->版本編號 == $this->versions_data->version_id_selected) ? 'active' : '' ?>">
+                          <div class="menu-head <?= (($version->版本編號 ?? null) == $this->versions_data->version_id_selected) ? 'active' : '' ?>">
                             <a href="/law/diff/<?= $this->escape($this->law_id) ?>?version=<?= $this->escape($version->版本編號) ?>">
                               <?= $this->escape("{$version->民國日期_format2} {$version->動作}") ?>
                             </a>
