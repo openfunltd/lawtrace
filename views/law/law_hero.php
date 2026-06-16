@@ -79,6 +79,7 @@ if (!$is_law_compare) { //法律對照表頁面的原始資料連結移動至 me
 }
 
 // 如果是以 law_id: 開頭的版本，後面應該會是三讀日期動作；還要檢查不是未議決議案
+$version_date = '';
 $is_progress = (strpos($this->version_id_input, 'progress') !== false);
 if (strpos($this->version_id_input, "{$this->law_id}:") === 0 and !$is_progress) {
     $version_date = substr($this->version_id_input, strlen("{$this->law_id}:"));

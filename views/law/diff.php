@@ -30,7 +30,7 @@ $amendment_idx = 0;
 foreach ($modified_contents as $content) {
     $modification = new stdClass();
     $article_number = $content->條號;
-    $modified_text = $content->內容;
+    $modified_text = $content->內容 ?? '';
     if (mb_strpos($modified_text, $article_number) === 0) {
         $modified_text = mb_substr($modified_text, mb_strlen($article_number) + 1);
     }
@@ -65,7 +65,7 @@ foreach ($modified_contents as $content) {
     $modification->type = $type;
     $modification->modified_text = $modified_text;
     if (!empty((array) $base_content)) {
-        $base_text = $base_content->內容;
+        $base_text = $base_content->內容 ?? '';
         if (mb_strpos($base_text, $article_number) === 0) {
             $base_text = mb_substr($base_text, mb_strlen($article_number) + 1);
         }
