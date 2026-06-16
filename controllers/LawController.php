@@ -4,7 +4,7 @@ class LawController extends MiniEngine_Controller
 {
     public function showAction($law_id)
     {
-        $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
+        $version_id_input = filter_input(INPUT_GET, 'version', FILTER_DEFAULT) ?? 'latest';
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
@@ -53,7 +53,7 @@ class LawController extends MiniEngine_Controller
 
     public function historyAction($law_id)
     {
-        $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
+        $version_id_input = filter_input(INPUT_GET, 'version', FILTER_DEFAULT) ?? 'latest';
         $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS);
 
         $this->view->law_id = $law_id;
@@ -155,7 +155,7 @@ class LawController extends MiniEngine_Controller
 
     public function singleAction($law_content_id)
     {
-        $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
+        $version_id_input = filter_input(INPUT_GET, 'version', FILTER_DEFAULT) ?? 'latest';
 
         $this->view->law_content_id = $law_content_id;
         $this->view->version_id_input = $version_id_input;
@@ -204,7 +204,7 @@ class LawController extends MiniEngine_Controller
 
     public function diffAction($law_id)
     {
-        $version_id_input = filter_input(INPUT_GET, 'version',FILTER_SANITIZE_STRING) ?? 'latest';
+        $version_id_input = filter_input(INPUT_GET, 'version', FILTER_DEFAULT) ?? 'latest';
 
         $this->view->law_id = $law_id;
         $this->view->version_id_input = $version_id_input;
@@ -276,6 +276,7 @@ class LawController extends MiniEngine_Controller
         // 從來源代碼中取得相關的議案編號
         $ret = DiffHelper::getBillNosFromSource($source_input, $_GET['version'] ?? []);
         $type = explode(':', $source_input)[0];
+        $policy_uid = null;
         if ('meet' == $type) {
             $meet_id = explode(':', $source_input)[1];
             $this->view->meet = $ret->meet;

@@ -469,7 +469,7 @@ class DiffHelper
 
         $policy_comparison_data_arr = [];
         foreach ($obj->versions as $key => $version) {
-            if (!str_contains($version->提案單位, '行政院')) continue;
+            if (!str_contains($version->提案單位 ?? '', '行政院')) continue;
             if (is_null($policy_comparison_data = PolicyHelper::getPolicyComparison($obj->law_id, $version->議案編號))) continue;
             $policy_comparison_data_arr[$version->議案編號] = array_merge([$key], $policy_comparison_data);
         }

@@ -52,7 +52,7 @@ class PolicyHelper
         foreach ($history_groups as $group_key => $history_group) {
             if ($history_group->id == '未分類') continue;
             foreach ($history_group->bill_log  as $bill) {
-                if (mb_strpos($bill->主提案, '行政院') === false) continue;
+                if (mb_strpos($bill->主提案 ?? '', '行政院') === false) continue;
                 if (!property_exists($bill, 'bill_id')) continue;
                 $res = PolicyAPI::apiQuery("/policy/bybill/{$law_id}/{$bill->bill_id}", "依法律{$law_id}查詢部預告版");
                 $linked_policies = $res->policies ?? [];

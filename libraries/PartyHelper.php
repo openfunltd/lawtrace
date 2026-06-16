@@ -25,6 +25,7 @@ class PartyHelper
 
     public static function getImage($input)
     {
+        if (is_null($input)) return NULL;
         $img_paths = self::$img_paths;
         foreach ($img_paths as $key_name => $path) {
             if (mb_strpos($input, $key_name) !== false) {

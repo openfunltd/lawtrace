@@ -315,7 +315,7 @@ class LawHistoryHelper
                 if (is_object($related_docs)) {
                     $related_docs = [$related_docs];
                 }
-                if (mb_substr($gazette_id, -2) === '00') {
+                if ($gazette_id !== null && mb_substr($gazette_id, -2) === '00') {
                     $gazette_id = mb_substr($gazette_id, 0, -2) . '01';
                 }
 
@@ -424,7 +424,7 @@ class LawHistoryHelper
         foreach ($history_groups as $history_group) {
             $histories = $history_group->bill_log;
             foreach ($histories as $history) {
-                if (!($history->is_meet)) {
+                if (!($history->is_meet ?? false)) {
                     continue;
                 }
                 foreach ($meets as $meet) {

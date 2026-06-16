@@ -111,7 +111,7 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
               $law_reason = $content->立法理由 ?? '';
               $law_reason_source_version = $content->版本追蹤 ?? '';
               if ($law_reason_source_version != '') {
-                  $law_reason_source_version = explode(':', $law_reason_source_version)[1];
+                  $law_reason_source_version = explode(':', $law_reason_source_version)[1] ?? '';
                   $law_reason_source_version_date = mb_substr($law_reason_source_version, 0, 10);
                   $law_reason_source_version_action = mb_substr($law_reason_source_version, 11);
               }

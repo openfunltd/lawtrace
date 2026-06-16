@@ -116,10 +116,10 @@ if (strpos($version_id_input, "-progress")) {
                         <?php } ?>
                         <?= $this->escape($bill->主提案 ?? $bill->proposers_str) ?>版本
                         <small><?= $this->escape($bill->會議民國日期v2) ?>提案</small>
-                        <?php if ($bill->withdraw_status) { ?>
+                        <?php if ($bill->withdraw_status ?? null) { ?>
                           （<?= $this->escape($bill->withdraw_status) ?>）
                         <?php } ?>
-                        <?php if ($bill->direct_second_reading_status) { ?>
+                        <?php if ($bill->direct_second_reading_status ?? null) { ?>
                           （<?= $this->escape($bill->direct_second_reading_status) ?>）
                         <?php } ?>
                       </div>
