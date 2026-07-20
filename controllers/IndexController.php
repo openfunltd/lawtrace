@@ -14,6 +14,7 @@ class IndexController extends MiniEngine_Controller
     {
         header('Content-Type: text/plain');
         echo "User-agent: *\nCrawl-delay: 60\n";
+        echo "Disallow: /.within.website/\n";
         return $this->noview();
     }
 }
