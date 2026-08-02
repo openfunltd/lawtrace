@@ -83,6 +83,15 @@ $this->tab = 'compare';
                     匯出 excel
                     <i class="bi bi-download ms-1"></i>
                   </button>
+                  <button id="copy-prompt" class="btn btn-outline-primary ms-1">
+                    <span class="copy-prompt-label">複製 Prompt</span>
+                    <i class="bi bi-clipboard ms-1"></i>
+                  </button>
+                  <i
+                    class="bi bi-exclamation-triangle-fill text-warning ms-1 copy-prompt-warning-icon"
+                    style="display: none;"
+                    title="目前比較版本數較多，複製的內容可能相當長"
+                  ></i>
               </div>
                 <div class="range-info">
               <!-- TODO: 待實作
@@ -389,4 +398,5 @@ ly_api_base = <?= json_encode("https://" . getenv('LYAPI_HOST')) ?>;
 <script src="/static/js/diff.js"></script>
 <script src="/static/js/scroll.js"></script>
 <script src="/static/js/download_xlsx.js"></script>
+<script src="/static/js/copy_prompt.js"></script>
 <?= $this->partial('common/footer') ?>
