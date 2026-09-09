@@ -236,7 +236,7 @@ class DiffHelper
             }
             arsort($law_id_count);
             $obj->law_id = key($law_id_count);
-            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, $bill->屆);
+            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, $bill->屆 ?? 0);
             $obj->versions['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $obj->law_id;
             $obj->versions['現行版本']->law_id = $obj->law_id;
         }
@@ -287,7 +287,7 @@ class DiffHelper
                 }
             } else {
                 foreach ($bill->對照表 as $table) {
-                    if ($table->law_id == $obj->law_id) {
+                    if (($table->law_id ?? null) == $obj->law_id) {
                         break;
                     }
                 }

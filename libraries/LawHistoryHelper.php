@@ -7,11 +7,14 @@ class LawHistoryHelper
     public static function updateDetails($history_groups, $term_selected, $law_id)
     {
         //get legislators' data for checking party later
-        $res = LYAPI::apiQuery(
-            "/legislators?屆={$term_selected}&limit=300",
-            "查詢第 {$term_selected} 屆立委基本資料（主要查詢黨籍）"
-        );
-        $legislators = $res->legislators ?? [];
+        $legislators = [];
+        if (!empty($term_selected)) {
+            $res = LYAPI::apiQuery(
+                "/legislators?屆={$term_selected}&limit=300",
+                "查詢第 {$term_selected} 屆立委基本資料（主要查詢黨籍）"
+            );
+            $legislators = $res->legislators ?? [];
+        }
 
         $history_groups = self::removeUngroupedMeet($history_groups);
         $history_groups = self::updateBillDetails($history_groups, $legislators);
@@ -184,7 +187,7 @@ class LawHistoryHelper
                     $related_doc = $related_doc[0] ?? new stdClass();
                 }
                 $bill_id = $related_doc->billNo ?? null;
-                $date = $history->會議日期;
+                $date = $history->會議日期 ?? null;
                 $history->會議民國日期 = self::getMinguoDateFormat2($date);
                 $history->會議民國日期v2 = self::getMinguoDateFormat3($date);
                 $history->compare_url = "/law/compare?source=bill:{$bill_id}";
@@ -595,6 +598,10 @@ class LawHistoryHelper
 
     public static function getMinguoDateFormat2($version_date)
     {
+        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date ?? '') === 1);
+        if (!$is_valid) {
+            return $version_date;
+        }
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "{$minguo}/{$month}/{$day}";
@@ -602,6 +609,10 @@ class LawHistoryHelper
 
     public static function getMinguoDateFormat3($version_date)
     {
+        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date ?? '') === 1);
+        if (!$is_valid) {
+            return $version_date;
+        }
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "{$minguo}年{$month}月{$day}日";

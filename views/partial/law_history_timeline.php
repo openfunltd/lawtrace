@@ -60,7 +60,7 @@
             </div>
           </div>
         </div>
-      <?php } elseif ($timeline_node->items[0]->is_meet or $timeline_node->items[0]->is_incidental_resolution) { ?>
+      <?php } elseif ($timeline_node->items[0]->is_meet or ($timeline_node->items[0]->is_incidental_resolution ?? false)) { ?>
         <div class="item-body">
           <?php $history = $timeline_node->items[0]; ?>
           <?php if (property_exists($history, 'convener')) { ?>

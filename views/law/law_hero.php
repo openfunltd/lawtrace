@@ -16,7 +16,7 @@ if ($this->version_id_input and $this->version_id_input != 'latest') {
     $postfixes['default'] = "?version={$this->version_id_input}";
 } else {
     $res = LYAPI::apiQuery("/laws/{$this->law_id}/versions?limit=1&sort=日期>", "查詢法律 {$this->law_id} 最新版本");
-    $this->version_id_input = $res->lawversions[0]->版本編號;
+    $this->version_id_input = $res->lawversions[0]->版本編號 ?? '';
 }
 
 //tab start
