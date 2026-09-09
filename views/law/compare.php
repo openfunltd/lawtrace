@@ -20,7 +20,7 @@ if ($this->source_type == 'bill') {
         );
     } else {
         $this->title = "{$this->law->名稱} | {$this->bill->{'提案單位/提案委員'}}";
-        $this->description = $this->bill->案由;
+        $this->description = $this->bill->案由 ?? '';
     }
 } elseif ($this->source_type == 'meet') {
     $this->title = "{$this->law->名稱} | 審查會議";

@@ -312,8 +312,8 @@ class LawController extends MiniEngine_Controller
                 $current_policy_uid = $bill->policy_uid ?? null;
                 if ($current_policy_uid == $policy_uid) {
                     $this->view->policy_hostname = $bill_name;
-                    $this->view->hostname = $bill->主協辦單位;
-                    $this->view->published_date = $bill->發布日期;
+                    $this->view->hostname = $bill->主協辦單位 ?? null;
+                    $this->view->published_date = $bill->發布日期 ?? null;
                 };
             }
         }

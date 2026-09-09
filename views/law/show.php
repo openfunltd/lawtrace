@@ -74,8 +74,8 @@ $chapter_units = LawChapterHelper::getChapterUnits($chapters);
         <div class="law-version">
           <div class="dropdown">
             <button class="btn btn-sm btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                版本：<?= $this->escape("{$this->versions_data->version_selected->民國日期} {$this->versions_data->version_selected->動作}") ?>
-                <?= ($this->versions_data->version_selected->現行版本 == '現行') ? '(現行版本)' : '' ?>
+                版本：<?= $this->escape("{$this->versions_data->version_selected?->民國日期} {$this->versions_data->version_selected?->動作}") ?>
+                <?= ($this->versions_data->version_selected?->現行版本 == '現行') ? '(現行版本)' : '' ?>
             </button>
             <ul class="dropdown-menu">
               <?php foreach ($this->versions_data->versions as $version) { ?>

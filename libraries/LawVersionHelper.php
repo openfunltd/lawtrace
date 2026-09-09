@@ -22,11 +22,13 @@ class LawVersionHelper
 
         $invalid_version = true;
         $version_id_selected = null;
+        $version_id_previous = null;
+        $version_previous = null;
 
         if ($version_id_input != 'latest') {
             $filtered_versions = array_filter($versions, function ($version) use ($version_id_input) {
                 $version_date = $version->日期 ?? NULL;
-                $check_date = substr(explode(':', $version_id_input)[1], 0, 10) ?? NULL;
+                $check_date = substr(explode(':', $version_id_input)[1] ?? '', 0, 10);
                 return 7 * 86400 > abs(strtotime($version_date) - strtotime($check_date));
             });
             foreach ($filtered_versions as $idx => $version) {
@@ -90,6 +92,11 @@ class LawVersionHelper
                 'latest_third_reading_date' => $latest_third_reading_date,
                 'versions_in_terms' => $versions_in_terms,
                 'versions_in_terms_filtered' => $versions_in_terms_filtered,
+                'version_selected' => null,
+                'version_id_selected' => null,
+                'term_selected' => null,
+                'version_id_previous' => null,
+                'version_previous' => null,
             ];
         }
 
@@ -104,6 +111,8 @@ class LawVersionHelper
             'version_selected' => $version_selected,
             'version_id_selected' => $version_id_selected,
             'term_selected' => $term_selected,
+            'version_id_previous' => null,
+            'version_previous' => null,
         ];
 
         if (!is_null($version_id_previous)) {
@@ -299,7 +308,7 @@ class LawVersionHelper
 
     public static function getMinguoDate($version_date)
     {
-        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date) !== false);
+        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date ?? '') === 1);
         if (!$is_valid) {
             return $version_date;
         }
@@ -310,6 +319,10 @@ class LawVersionHelper
 
     public static function getMinguoDateFormat2($version_date)
     {
+        $is_valid = (preg_match('/^\d{4}-\d{2}-\d{2}$/', $version_date ?? '') === 1);
+        if (!$is_valid) {
+            return $version_date;
+        }
         [$year, $month, $day] = explode('-', $version_date);
         $minguo = intval($year) - 1911;
         return "{$minguo}/{$month}/{$day}";

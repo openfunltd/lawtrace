@@ -120,18 +120,19 @@ class LawHistoryHelper
             }
             $id_details = explode('-', $id);
             $history_group->review_date = sprintf('%d年%d月%d日%s',
-                intval($id_details[1]) - 1911,
-                $id_details[2],
-                $id_details[3],
-                $id_details[0],
+                intval($id_details[1] ?? 0) - 1911,
+                $id_details[2] ?? '',
+                $id_details[3] ?? '',
+                $id_details[0] ?? '',
             );
-            if ($id_details[0] == '委員會審查') {
-                $meet_id = explode('-', $id, 5)[4];
+            $bill_no = $id_details[4] ?? '';
+            if (($id_details[0] ?? null) == '委員會審查') {
+                $meet_id = explode('-', $id, 5)[4] ?? '';
                 $history_group->compare_url = "/law/compare?source=meet:{$meet_id}:{$law_id}";
             } else {
-                $history_group->compare_url = "/law/compare?source=bill:{$id_details[4]}";
+                $history_group->compare_url = "/law/compare?source=bill:{$bill_no}";
             }
-            $history_group->review_ppg_url = "https://ppg.ly.gov.tw/ppg/bills/{$id_details[4]}/details";
+            $history_group->review_ppg_url = "https://ppg.ly.gov.tw/ppg/bills/{$bill_no}/details";
         }
 
         return $history_groups;

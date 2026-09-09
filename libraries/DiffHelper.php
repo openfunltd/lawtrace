@@ -66,6 +66,9 @@ class DiffHelper
                 if (is_null($hit_version)) {
                     $hit_version = new StdClass;
                 }
+                if (!property_exists($hit_version, '歷程')) {
+                    $hit_version->歷程 = null;
+                }
                 $ret = LYAPI::apiQuery("/laws/{$law_id}/progress", "抓取法律 {$law_id} 未議決進度");
                 foreach ($ret->歷程 as $log) {
                     if (strpos($log->id, "三讀-") !== 0) {
@@ -79,8 +82,8 @@ class DiffHelper
                 if (is_null($hit_version->歷程)) {
                     // 找不到三讀的，可以先拿有「二讀(討論)」來頂一下
                     foreach ($ret->歷程 as $log) {
-                        $last_bill_log = $log->bill_log[count($log->bill_log) - 1];
-                        if ($last_bill_log->進度 != '二讀(討論)') {
+                        $last_bill_log = !empty($log->bill_log) ? $log->bill_log[count($log->bill_log) - 1] : null;
+                        if (is_null($last_bill_log) or $last_bill_log->進度 != '二讀(討論)') {
                             continue;
                         }
                         $log_date = $last_bill_log->會議日期;
@@ -89,7 +92,7 @@ class DiffHelper
                     }
                 }
             }
-            foreach ($hit_version->歷程 as $record) {
+            foreach ($hit_version->歷程 ?? [] as $record) {
                 if (is_array($record->關係文書 ?? false)) {
                     foreach ($record->關係文書 as $bill) {
                         if ($bill->billNo ?? false) {
@@ -496,7 +499,7 @@ class DiffHelper
                 'title' => $version->title,
                 'subtitle' => $version->subtitle,
                 'party_img' => $version->party_img ?? null,
-                '議案編號' => $version->議案編號,
+                '議案編號' => $version->議案編號 ?? null,
                 '原始資料' => $version->原始資料,
                 'article_numbers' => $version->article_numbers ?? [],
                 'showed' => true,
@@ -612,13 +615,14 @@ class DiffHelper
 
     public static function getVersionDataFromBillData($version_data, $bill)
     {
+        $bill_process_date = $bill->議案流程[0]->日期[0] ?? null;
         if (is_array($bill->提案人 ?? null)) {
             $version_data->title = sprintf("%s等%d人",
                 $bill->提案人[0],
                 count($bill->提案人) + count($bill->連署人 ?? [])
             );
             $version_data->party_img = PartyHelper::getImageByTermAndName($bill->屆, $bill->提案人[0]);
-            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $date = strtotime($bill_process_date ?? '');
             $version_data->date = date('Y-m-d', $date);
             $version_data->subtitle = sprintf("%03d/%02d/%02d 提案版本",
                 date('Y', $date) - 1911,
@@ -628,7 +632,7 @@ class DiffHelper
         } elseif (strpos($bill->{'提案單位/提案委員'}, '本院') === 0 or
             preg_match('#委員會$#', $bill->{'提案單位/提案委員'})) {
             $version_data->title = '審查報告';
-            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $date = strtotime($bill_process_date ?? '');
             $committee = str_replace("本院", "", $bill->{'提案單位/提案委員'});
             $version_data->date = date('Y-m-d', $date);
             $version_data->subtitle = sprintf("%03d/%02d/%02d %s",
@@ -639,7 +643,7 @@ class DiffHelper
             );
         } else {
             $version_data->title = $bill->{'提案單位/提案委員'};
-            $date = strtotime($bill->議案流程[0]->日期[0]);
+            $date = strtotime($bill_process_date ?? '');
             $version_data->date = date('Y-m-d', $date);
             $version_data->subtitle = sprintf("%03d/%02d/%02d",
                 date('Y', $date) - 1911,
