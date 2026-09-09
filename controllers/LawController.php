@@ -116,7 +116,7 @@ class LawController extends MiniEngine_Controller
                 $bill_id = explode(':', $source_input)[1];
                 $history_groups = array_values(array_filter($history_groups, function ($group) use ($bill_id) {
                     foreach ($group->bill_log as $log) {
-                        $related_doc = $log->關係文書;
+                        $related_doc = $log->關係文書 ?? null;
                         if (is_array($related_doc) and count($related_doc) > 0) {
                             $related_doc = $log->關係文書[0];
                         }
@@ -126,7 +126,7 @@ class LawController extends MiniEngine_Controller
                     }
                     return false;
                 }));
-                if ($history_groups[0]->id == '未分類') { // 未分類就只要留一個就好
+                if (($history_groups[0]->id ?? null) == '未分類') { // 未分類就只要留一個就好
                     $history_groups[0]->bill_log = array_values(array_filter($history_groups[0]->bill_log, function ($log) use ($bill_id) {
                         return ($log->關係文書->billNo ?? false) == $bill_id;
                     }));
@@ -177,7 +177,7 @@ class LawController extends MiniEngine_Controller
         $this->view->law_content = $law_content;
         $this->view->chapter_name = $chapter_name;
 
-        $law_content_name = $law_content->條號;
+        $law_content_name = $law_content->條號 ?? null;
         $versions_data = LawVersionHelper::getVersionsForSingle($law_id, $version_id_input, $law_content_name);
         if (is_null($versions_data)) {
             header('HTTP/1.1 404 No Found');
@@ -333,7 +333,7 @@ class LawController extends MiniEngine_Controller
         }, $versions);
         $this->view->choosed_version_ids = $choosed_version_ids;
         $this->view->all_version_ids = array_map(function($v) { return $v->id; }, $all_versions->versions);
-        $this->view->base_version_id = $_GET['base_version'] ?? $all_versions->versions[0]->id;
+        $this->view->base_version_id = $_GET['base_version'] ?? ($all_versions->versions[0]->id ?? null);
 
         // 整合出對照表需要的資料
         $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? [], $_GET['base_version'] ?? null);

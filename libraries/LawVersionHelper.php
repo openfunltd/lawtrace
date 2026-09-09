@@ -133,7 +133,7 @@ class LawVersionHelper
         if (is_null($versions)) {
             return NULL;
         }
-        $law_content_name_encoded = mb_ereg_replace(' ', '%20', $law_content_name);
+        $law_content_name_encoded = mb_ereg_replace(' ', '%20', $law_content_name ?? '');
         $version_ids = array_reduce($versions, function ($carry, $version) {
             $carry[] = $version->版本編號;
             return $carry;

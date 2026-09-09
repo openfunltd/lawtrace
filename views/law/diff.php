@@ -8,7 +8,7 @@ $is_announced = $this->is_announced; //總統府是否已公告
 $is_draft = is_null($this->versions_data); //還在草案階段的
 $this->is_draft = $is_draft;
 
-$selected_version_law_name = $this->law_contents[0]->內容;
+$selected_version_law_name = $this->law_contents[0]->內容 ?? null;
 if (!is_null($this->law_contents_previous)) {
     $previous_law_name = $this->law_contents_previous[0]->內容;
 }
