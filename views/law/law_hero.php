@@ -97,7 +97,7 @@ if ($this->version ?? false and !$is_progress) {
             $this->version->動作
         );
     } else {
-        $version_date = explode(':', $this->version_id_input)[1];
+        $version_date = explode(':', $this->version_id_input)[1] ?? '';
         $version_date = sprintf("%s %s",
             LawVersionHelper::getMinguoDate($version_date),
             '修正'
