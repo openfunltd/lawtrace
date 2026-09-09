@@ -51,7 +51,10 @@ class DiffHelper
                 $obj->billNos[] = $bill->議案編號;
             }
         } elseif ('version' == $type) {
-            $law_id = $terms[1];
+            $law_id = $terms[1] ?? null;
+            if (empty($law_id) or !($terms[2] ?? false)) {
+                throw new Exception("version_id 必須指定 law_id 與日期");
+            }
             $date = $terms[2];
             $obj->version_id_input = "{$law_id}:{$date}";
             $ret = LYAPI::apiQuery("/laws/{$law_id}/versions", "抓取法律 {$law_id} 版本");
