@@ -211,11 +211,11 @@ class LawController extends MiniEngine_Controller
         $this->view->law = $this->getLawData($law_id);
 
         $versions_data = LawVersionHelper::getVersionsData($law_id, $version_id_input);
-        $versions_in_terms_filtered = $versions_data->versions_in_terms_filtered;
-        $version_selected = $versions_data->version_selected;
-        $version_previous = $versions_data->version_previous;
-        $version_id_selected = $versions_data->version_id_selected;
-        $version_id_previous = $versions_data->version_id_previous;
+        $versions_in_terms_filtered = $versions_data->versions_in_terms_filtered ?? null;
+        $version_selected = $versions_data->version_selected ?? null;
+        $version_previous = $versions_data->version_previous ?? null;
+        $version_id_selected = $versions_data->version_id_selected ?? null;
+        $version_id_previous = $versions_data->version_id_previous ?? null;
         $this->view->version = $version_selected;
         $this->view->versions_data = $versions_data;
         $source = '';

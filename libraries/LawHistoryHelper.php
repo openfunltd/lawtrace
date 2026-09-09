@@ -429,7 +429,7 @@ class LawHistoryHelper
                     continue;
                 }
                 foreach ($meets as $meet) {
-                    if ($meet->會議代碼 != $history->meet_id) {
+                    if ($meet->會議代碼 != ($history->meet_id ?? null)) {
                         continue;
                     }
 
@@ -473,7 +473,7 @@ class LawHistoryHelper
                     //get ppg_gazette_url, agenda_id in meet property 公報發言紀錄
                     if (property_exists($meet, '公報發言紀錄')) {
                         foreach ($meet->公報發言紀錄 as $single_gazette_data) {
-                            if ($single_gazette_data->會議代碼 != $history->meet_id or !in_array($history->會議日期, $single_gazette_data->meetingDate ?? [])) {
+                            if ($single_gazette_data->會議代碼 != ($history->meet_id ?? null) or !in_array($history->會議日期, $single_gazette_data->meetingDate ?? [])) {
                                 continue;
                             }
                             if (!property_exists($history, 'ppg_gazette_url')) {

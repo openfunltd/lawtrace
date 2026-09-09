@@ -403,7 +403,9 @@ class DiffHelper
                         $lawcontent->內容 = str_replace('　　', "\n", $lawcontent->內容);
                     }
                     if ($lawcontent->章名 ?? false) {
-                        list($rule_no, $name) = explode(' ', $lawcontent->章名, 2);
+                        $chapter_parts = explode(' ', $lawcontent->章名, 2);
+                        $rule_no = $chapter_parts[0];
+                        $name = $chapter_parts[1] ?? '';
                         $version_data->對照表[$rule_no] = [
                             '條文' => $rule_no,
                             '內容' => $name,

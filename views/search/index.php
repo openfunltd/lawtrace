@@ -42,6 +42,10 @@ if ($no_result_from_law_name) {
 
 $matched_law_article_cnt = 0;
 foreach ($laws as $law) {
+    if (!($law->最新版本->版本編號 ?? null)) {
+        $law->law_contents = [];
+        continue;
+    }
     $law_content_id =  "{$law->法律編號}:{$law->最新版本->版本編號}";
     $res = LYAPI::apiQuery(
         "/law_contents?q=\"{$q}\"&版本編號={$law_content_id}&limit=1000",
