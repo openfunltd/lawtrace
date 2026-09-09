@@ -292,7 +292,7 @@ class DiffHelper
                     }
                 }
             }
-            foreach ($table->rows as $row) {
+            foreach ($table->rows ?? [] as $row) {
                 $law_content_id = $row->law_content_id ?? null;
                 if (($row->現行 ?? false) and property_exists($row, '修正')) {
                     $rule_no = explode('　', $row->現行)[0];

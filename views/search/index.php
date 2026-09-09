@@ -17,7 +17,7 @@ $laws = array_filter($laws, function($law) {
 $no_result_from_law_name = empty($laws);
 if ($no_result_from_law_name) {
     $res = LYAPI::apiQuery(
-        "/law_contents?q=\"{$q}\"&agg=法律編號",
+        "/law_contents?q=\"{$q_url_encoded}\"&agg=法律編號",
         "查詢 law_contents 關鍵字: {$q}"
     );
     $law_content_cnt = $res->total ?? 0;
@@ -48,7 +48,7 @@ foreach ($laws as $law) {
     }
     $law_content_id =  "{$law->法律編號}:{$law->最新版本->版本編號}";
     $res = LYAPI::apiQuery(
-        "/law_contents?q=\"{$q}\"&版本編號={$law_content_id}&limit=1000",
+        "/law_contents?q=\"{$q_url_encoded}\"&版本編號={$law_content_id}&limit=1000",
         "查詢 {$law->名稱}({$law->法律編號}) 的法條 關鍵字：{$q}"
     );
     $law_contents = [];

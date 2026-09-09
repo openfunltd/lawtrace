@@ -521,7 +521,7 @@ class LawHistoryHelper
     public static function getArticleNumbers($amendment)
     {
         $type = $amendment->立法種類;
-        $rows = $amendment->rows;
+        $rows = $amendment->rows ?? [];
         $key = '修正'; // if type == '修正條文'
         if ($type == '增訂條文') {
             $key = '增訂';
