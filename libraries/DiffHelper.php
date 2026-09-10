@@ -14,7 +14,7 @@ class DiffHelper
         //   JOIN 平台眾開講(policy)
         //     id 格式: {8hex}-{4hex}-{4hex}-{4hex}-{12hex}
         //     一個 policy 可能有多個法案，需指定 law_id
-        $terms = explode(':', $id);
+        $terms = explode(':', $id ?? '');
         $type = $terms[0];
         $obj = new StdClass;
         $obj->billNos = [];
