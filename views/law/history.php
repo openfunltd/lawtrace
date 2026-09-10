@@ -4,8 +4,8 @@ $versions_in_terms = $this->versions_data->versions_in_terms;
 $version_id_selected = $this->versions_data->version_id_selected;
 $version_warning = $this->versions_data->warning ?? false;
 
-$is_third_read_history = (strpos($version_id_selected, 'progress') === false);
-$is_progress_history = (strpos($version_id_selected, 'progress') !== false);
+$is_third_read_history = (strpos($version_id_selected ?? '', 'progress') === false);
+$is_progress_history = (strpos($version_id_selected ?? '', 'progress') !== false);
 $this->tab = 'history';
 if (strpos($version_id_input, "-progress")) {
     $this->progress_term = substr($version_id_input, 6, strpos($version_id_input, "-progress"));
@@ -26,6 +26,7 @@ if (strpos($version_id_input, "-progress")) {
               </div>
               <div class="side-menu version-menu">
                 <?php $is_current_term = true; ?>
+                <?php $term_selected = null; ?>
                 <?php foreach ($versions_in_terms as $term => $versions) { ?>
                   <div class="menu-item level-1">
                     <div class="menu-head">

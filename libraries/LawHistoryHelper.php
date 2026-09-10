@@ -448,7 +448,7 @@ class LawHistoryHelper
                     //flatten meet related data into history(object)
                     $meet_data = $meet->會議資料 ?? [];
                     foreach ($meet_data as $single_date_meet_data) {
-                        if ($single_date_meet_data->日期 != $history->會議日期) {
+                        if ($single_date_meet_data->日期 != ($history->會議日期 ?? null)) {
                             continue;
                         }
                         //get ppg_url
@@ -476,7 +476,7 @@ class LawHistoryHelper
                     //get ppg_gazette_url, agenda_id in meet property 公報發言紀錄
                     if (property_exists($meet, '公報發言紀錄')) {
                         foreach ($meet->公報發言紀錄 as $single_gazette_data) {
-                            if ($single_gazette_data->會議代碼 != ($history->meet_id ?? null) or !in_array($history->會議日期, $single_gazette_data->meetingDate ?? [])) {
+                            if ($single_gazette_data->會議代碼 != ($history->meet_id ?? null) or !in_array($history->會議日期 ?? null, $single_gazette_data->meetingDate ?? [])) {
                                 continue;
                             }
                             if (!property_exists($history, 'ppg_gazette_url')) {
@@ -527,7 +527,7 @@ class LawHistoryHelper
             $key = '增訂';
         }
         $article_numbers = array_map(function($row) use ($key) {
-            $text = $row->{$key};
+            $text = $row->{$key} ?? '';
             $text = mb_ereg_replace('　', ' ', $text);
             $article_number = explode(' ', $text)[0];
 

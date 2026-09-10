@@ -45,7 +45,7 @@ class DiffHelper
         } elseif ('bill' == $type) {
             $billNo = $terms[1];
             $ret = LYAPI::apiQuery("/bills/" . $billNo, "抓取議案 {$billNo} 資料");
-            $obj->bill = $ret->data;
+            $obj->bill = $ret->data ?? null;
             $obj->billNos[] = $billNo;
             foreach ($ret->data->關連議案 ?? [] as $bill) {
                 $obj->billNos[] = $bill->議案編號;
@@ -236,7 +236,7 @@ class DiffHelper
             }
             arsort($law_id_count);
             $obj->law_id = key($law_id_count);
-            $obj->version_id_input = sprintf("%s:%d-progress", $law_id, $bill->屆 ?? 0);
+            $obj->version_id_input = sprintf("%s:%d-progress", $obj->law_id, $bill->屆 ?? 0);
             $obj->versions['現行版本']->原始資料 = 'https://www.ly.gov.tw/Pages/ashx/LawRedirect.ashx?CODE=' . $obj->law_id;
             $obj->versions['現行版本']->law_id = $obj->law_id;
         }
@@ -279,6 +279,10 @@ class DiffHelper
                 }
                 return true;
             }));
+
+            if (empty($bill->對照表)) {
+                continue;
+            }
 
             if (count($bill->對照表) == 1) {
                 $table = $bill->對照表[0];

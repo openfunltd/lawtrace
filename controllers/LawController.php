@@ -138,7 +138,7 @@ class LawController extends MiniEngine_Controller
                 $law_id = explode(':', $source_input)[1];
                 $this->view->single_version = true;
                 $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
-            } elseif ('join-policy') {
+            } elseif ('join-policy' == $type) {
                 $policy_uid = explode(':', $source_input)[1];
                 $res = PolicyAPI::apiQuery("/policy/show/$policy_uid", "查詢部預告版 metadata");;
                 $this->view->hostname = $res->data->主協辦單位 ?? '';
@@ -338,7 +338,7 @@ class LawController extends MiniEngine_Controller
         // 整合出對照表需要的資料
         $this->view->diff = DiffHelper::mergeVersionsToTable($all_versions->versions, $_GET['version'] ?? [], $_GET['base_version'] ?? null);
         $this->view->choosed_version_ids = $this->view->diff->choosed_version_ids;
-        $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+        $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data ?? null;
     }
 
     public function sub_lawsAction($law_id)

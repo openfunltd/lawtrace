@@ -6,10 +6,13 @@ class PolicyHelper
     {
         //搜尋部預告版 by law_id
         $res = PolicyAPI::apiQuery("/policy/bylaw/{$law_id}", "依法律{$law_id}查詢部預告版");
-        $policies = $res->policies;
+        $policies = $res->policies ?? [];
         //根據當前選擇的 term 剔除掉 隨後屆期的部預告版 與 太久遠的部預告版（暫定一年以上算是太久遠)
-        $term_start_date = LyDateHelper::$term_dates[$term][0];
-        $term_end_date = LyDateHelper::$term_dates[$term][1];
+        $term_start_date = LyDateHelper::$term_dates[$term][0] ?? null;
+        $term_end_date = LyDateHelper::$term_dates[$term][1] ?? null;
+        if (empty($policies) or is_null($term_start_date) or is_null($term_end_date)) {
+            return $history_groups;
+        }
         $policy_start_date = date("Y-m-d", strtotime("-1 year", strtotime($term_start_date)));
         $policies = array_filter($policies, function($policy) use ($policy_start_date, $term_end_date){
             $publish_date = $policy->發布日期;
