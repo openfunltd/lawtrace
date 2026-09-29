@@ -105,7 +105,7 @@
                 <div class="hostory-rec">
                   <?php if (mb_strpos($history->進度, '委員會') !== false and property_exists($history, 'agenda_id')) { ?>
                   <a class="btn btn-sm btn-outline-primary"
-                    href="https://wtocabqhfbuwyhwhhdcg.supabase.co/functions/v1/find-by-agenda-id?agenda_id=<?= $history->agenda_id ?>"
+                    href="https://lyzer.tw/gazettes/<?= $history->agenda_id ?>/"
                     target="_blank"
                   >
                     LYZER AI 公報摘要
