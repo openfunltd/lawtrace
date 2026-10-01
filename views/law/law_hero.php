@@ -250,7 +250,7 @@ if ($this->version ?? false and !$is_progress) {
         <hr>
         <div>主協辦單位：<?= $this->escape($this->hostname) ?></div>
         <div>發布日期：<?= $this->escape($this->published_date) ?></div>
-        <?php } elseif ($this->source_type == 'custom') { ?>
+        <?php } elseif ($this->source_type == 'custom' and is_null($this->error)) { ?>
         <div class="compare-type"><?= MetadataHelper::$title[$page]['custom'] ?></div>
         <div class="compare-desc"><?= MetadataHelper::$desc[$page]['custom'] ?></div>
         <?php } ?>
