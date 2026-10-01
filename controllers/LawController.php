@@ -273,9 +273,16 @@ class LawController extends MiniEngine_Controller
     {
         $source_input = filter_input(INPUT_GET, 'source', FILTER_SANITIZE_SPECIAL_CHARS) ?? Null;
 
+        $type = explode(':', $source_input ?? '')[0];
+        if (!in_array($type, ['meet', 'bill', 'version', 'join-policy', 'custom'])) {
+            header('HTTP/1.1 404 No Found');
+            echo "<h1>404 No Found</h1>";
+            echo "<p>Invalid or missing source parameter</p>";
+            exit;
+        }
+
         // 從來源代碼中取得相關的議案編號
         $ret = DiffHelper::getBillNosFromSource($source_input, $_GET['version'] ?? []);
-        $type = explode(':', $source_input ?? '')[0];
         $policy_uid = null;
         if ('meet' == $type) {
             $meet_id = explode(':', $source_input)[1];
