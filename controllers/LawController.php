@@ -296,11 +296,15 @@ class LawController extends MiniEngine_Controller
         $this->view->source_type = $type;
         $this->view->source = $source_input;
 
-        if (empty($ret->billNos) and $type == 'version') {
-            $this->view->error = 'version_without_bills';
-            $law_id = explode(':', $this->view->version_id_input)[0];
+        if (empty($ret->billNos) and in_array($type, ['version', 'meet'])) {
+            $this->view->error = ('version' == $type) ? 'version_without_bills' : 'meet_without_bills';
+            if ('version' == $type) {
+                $law_id = explode(':', $this->view->version_id_input)[0];
+            } else {
+                $law_id = explode(':', $source_input)[2] ?? null;
+            }
             $this->view->law_id = $law_id;
-            $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data;
+            $this->view->law = LYAPI::apiQuery("/laws/{$law_id}", "抓取法律 {$law_id} 資料")->data ?? null;
             return;
         }
 

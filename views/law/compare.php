@@ -7,7 +7,7 @@ if (is_null($this->error)) {
         $versions[] = $version->title;
     }
 }
-if ($this->source_type == 'bill') {
+if ($this->source_type == 'bill' and is_null($this->error)) {
     if ($this->bill->提案來源 == '審查報告') {
         $this->title = "{$this->law->名稱} | 審查報告";
         $this->description = sprintf("審查完成「%s」，審查委員會：%s\n"
@@ -22,7 +22,7 @@ if ($this->source_type == 'bill') {
         $this->title = "{$this->law->名稱} | {$this->bill->{'提案單位/提案委員'}}";
         $this->description = $this->bill->案由 ?? '';
     }
-} elseif ($this->source_type == 'meet') {
+} elseif ($this->source_type == 'meet' and is_null($this->error)) {
     $this->title = "{$this->law->名稱} | 審查會議";
     $this->description = sprintf("%s\n"
         . "會議日期：%s\n"

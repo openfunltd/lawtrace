@@ -177,7 +177,7 @@ if ($this->version ?? false and !$is_progress) {
         <div class="compare-desc"><?= MetadataHelper::$desc[$page]['version'] ?></div>
         <hr>
         <div>三讀日期：<?= $version_date ?></div>
-        <?php } elseif ($this->source_type == 'bill' and $this->bill->提案來源 == '審查報告') { ?>
+        <?php } elseif ($this->source_type == 'bill' and is_null($this->error) and $this->bill->提案來源 == '審查報告') { ?>
         <div class="original-data">
           <a href="<?= $this->escape($this->bill->url) ?>" target="_blank">
             報告原始資料
@@ -190,7 +190,7 @@ if ($this->version ?? false and !$is_progress) {
         <div>審查委員會：<?= $this->escape(str_replace('本院', '', $this->bill->{'提案單位/提案委員'})) ?></div>
         <div>審查會發文日期：<?= $this->escape(LawVersionHelper::getMinguoDate($this->bill->議案流程[0]->日期[0] ?? '')) ?></div>
         <div>議案狀態：<?= $this->escape($this->bill->議案狀態) ?></div>
-        <?php } elseif ($this->source_type == 'meet') { ?>
+        <?php } elseif ($this->source_type == 'meet' and is_null($this->error)) { ?>
         <div class="original-data">
           <a href="<?= $this->escape($this->meet->會議資料[0]->ppg_url) ?>" target="_blank">
             會議原始資料
@@ -204,7 +204,7 @@ if ($this->version ?? false and !$is_progress) {
         <div>審查委員會：<?= $this->escape(implode('、', $this->meet->{'委員會代號:str'})) ?></div>
         <div>審查會議日期：<?= $this->escape(lawversionhelper::getminguodate($this->meet->日期[0])) ?></div>
         <div>召委：<?= $this->escape($this->meet->會議資料[0]->委員會召集委員 ?? '') ?></div>
-        <?php } elseif ($this->source_type == 'bill') { ?>
+        <?php } elseif ($this->source_type == 'bill' and is_null($this->error)) { ?>
         <div class="original-data">
           <a href="<?= $this->escape($this->bill->url) ?>" target="_blank">
             議案原始資料
